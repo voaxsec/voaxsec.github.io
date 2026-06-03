@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xavier Olvera — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #161616;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.15);
+    --text: #e8e8e8;
+    --text-muted: #666;
+    --text-dim: #444;
+    --accent: #00ff88;
+    --accent-dim: rgba(0,255,136,0.08);
+    --accent-mid: rgba(0,255,136,0.15);
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--text-muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 48px;
+  }
+
+  section:first-of-type { padding-top: 180px; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 48px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 32px;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-title-sub {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 12px 24px;
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: opacity 0.2s, transform 0.2s;
+    border-radius: 2px;
+  }
+
+  .hero-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+
+  .about-text p:last-child { margin-bottom: 0; }
+
+  .about-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stat-item {
+    padding: 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .stat-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+  }
+
+  .stat-number {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* EXPERIENCE */
+  .exp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .exp-item {
+    padding: 28px 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .exp-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+  }
+
+  .exp-item:hover::before { opacity: 1; }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 16px;
+  }
+
+  .exp-role {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .exp-company {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  .exp-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* EDUCATION */
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .edu-item {
+    padding: 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .edu-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+  }
+
+  .edu-year {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 60px;
+    padding-top: 3px;
+  }
+
+  .edu-degree {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .edu-school {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
+
+  .edu-badge {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  /* CERTS */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .cert-item {
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    opacity: 0.5;
+  }
+
+  .cert-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+    opacity: 0.8;
+  }
+
+  .cert-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .cert-org {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .cert-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .cert-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+  }
+
+  /* PROJECTS */
+  .projects-placeholder {
+    padding: 64px 48px;
+    background: var(--bg2);
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+    text-align: center;
+  }
+
+  .projects-placeholder-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .projects-placeholder-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .projects-placeholder-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  /* CONTACT */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .contact-item:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+  }
+
+  .contact-icon {
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--accent);
+    min-width: 20px;
+  }
+
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+
+  .contact-value {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-text span { color: var(--accent); }
+
+  /* FADE IN ANIMATION */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    section:first-of-type { padding-top: 140px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    .contact-grid { grid-template-columns: 1fr; }
+    .divider { margin: 0 24px; }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">voax<span>sec</span>.com</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-status">Available for opportunities</div>
+  <h1>Xavier<br><em>Olvera</em></h1>
+  <p class="hero-title-sub">IT Support Specialist &amp; Aspiring Cybersecurity Professional</p>
+  <p class="hero-desc">
+    Based in New York. I keep systems running, users unblocked, and networks secure.
+    Currently building toward a career in cybersecurity and penetration testing.
+  </p>
+  <a href="#contact" class="hero-cta">Get in touch →</a>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label">About me</p>
+  <div class="about-grid fade-up">
+    <div class="about-text">
+      <p>
+        I'm an IT Support Specialist with hands-on experience managing Office 365,
+        Active Directory, and remote technical support at a nonprofit organization.
+      </p>
+      <p>
+        My background in network administration drives my passion for cybersecurity.
+        I'm focused on building expertise in penetration testing, network security,
+        and ethical hacking — starting with my Bachelor's degree this September.
+      </p>
+      <p>
+        I believe in learning by doing. Every system I support, every network I
+        configure, and every problem I solve brings me closer to my goal.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Years in IT Support</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">O365</div>
+        <div class="stat-label">Active Directory &amp; Office 365 Admin</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">→</div>
+        <div class="stat-label">Pursuing B.S. in Network &amp; Cybersecurity</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">Experience</p>
+  <div class="exp-list fade-up">
+    <div class="exp-item">
+      <div class="exp-header">
+        <div class="exp-role">IT Support Specialist</div>
+        <div class="exp-date">Present</div>
+      </div>
+      <div class="exp-company">Sinergia Inc. — New York, NY</div>
+      <div class="exp-desc">
+        Managing Office 365 and Active Directory user accounts for a nonprofit
+        serving individuals with developmental needs. Providing remote technical
+        support and software training to staff across multiple programs.
+      </div>
+      <div class="exp-tags">
+        <span class="tag">Office 365</span>
+        <span class="tag">Active Directory</span>
+        <span class="tag">Remote Support</span>
+        <span class="tag">User Training</span>
+        <span class="tag">Helpdesk</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- EDUCATION -->
+<section id="education">
+  <p class="section-label">Education</p>
+  <div class="edu-list fade-up">
+    <div class="edu-item">
+      <div class="edu-year">2025 →</div>
+      <div>
+        <div class="edu-degree">B.S. in Computer Network &amp; Cybersecurity</div>
+        <div class="edu-school">Monroe University — New York</div>
+      </div>
+      <div class="edu-badge">Starting Sept 2025</div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-year">Completed</div>
+      <div>
+        <div class="edu-degree">A.S. in Network Administration &amp; Security</div>
+        <div class="edu-school">Monroe University — New York</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <p class="section-label">Certifications</p>
+  <div class="cert-grid fade-up">
+    <div class="cert-item">
+      <div class="cert-name">CompTIA Security+</div>
+      <div class="cert-org">CompTIA</div>
+      <div class="cert-status">— In progress</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">CompTIA Network+</div>
+      <div class="cert-org">CompTIA</div>
+      <div class="cert-status">— In progress</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">CySA+</div>
+      <div class="cert-org">CompTIA</div>
+      <div class="cert-status">— Planned</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">CEH</div>
+      <div class="cert-org">EC-Council</div>
+      <div class="cert-status">— Planned</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">CCNA Security</div>
+      <div class="cert-org">Cisco</div>
+      <div class="cert-status">— Planned</div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-name">More coming</div>
+      <div class="cert-org">—</div>
+      <div class="cert-status">— Stay tuned</div>
+    </div>
+  </div>
+  <p class="cert-note">// Certifications in progress — this section will grow.</p>
+</section>
+
+<hr class="divider">
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">Projects</p>
+  <div class="projects-placeholder fade-up">
+    <div class="projects-placeholder-icon">⌗</div>
+    <div class="projects-placeholder-title">// Projects loading...</div>
+    <div class="projects-placeholder-desc">
+      Currently building. First projects in the pipeline include an
+      AI-powered IT helpdesk system and cybersecurity labs.
+      Check back soon.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">Contact</p>
+  <div class="contact-grid fade-up">
+    <a href="mailto:voaxsec@gmail.com" class="contact-item">
+      <div class="contact-icon">@</div>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-value">voaxsec@gmail.com</div>
+      </div>
+    </a>
+    <a href="https://github.com/voaxsec" target="_blank" class="contact-item">
+      <div class="contact-icon">&lt;/&gt;</div>
+      <div>
+        <div class="contact-label">GitHub</div>
+        <div class="contact-value">github.com/voaxsec</div>
+      </div>
+    </a>
+    <a href="https://x.com/voaxsec" target="_blank" class="contact-item">
+      <div class="contact-icon">𝕏</div>
+      <div>
+        <div class="contact-label">X / Twitter</div>
+        <div class="contact-value">@voaxsec</div>
+      </div>
+    </a>
+    <a href="https://linkedin.com/in/xavierolvera" target="_blank" class="contact-item">
+      <div class="contact-icon">in</div>
+      <div>
+        <div class="contact-label">LinkedIn</div>
+        <div class="contact-value">Xavier Olvera</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-text">© 2025 <span>Xavier Olvera</span> · voaxsec.com · Built with purpose.</p>
+</footer>
+
+<script>
+  // Fade in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.classList.add('visible');
+        observer.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Nav active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id');
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--accent)' : '';
+    });
+  });
+</script>
+
+</body>
+</html>
