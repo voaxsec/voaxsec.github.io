@@ -10,21 +10,100 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ═══════════════════════════════
+     LIGHT MODE (default)
+  ═══════════════════════════════ */
   :root {
-    --bg: #0a0a0a;
-    --bg2: #111111;
-    --bg3: #161616;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.15);
-    --text: #e8e8e8;
-    --text-muted: #666;
-    --text-dim: #444;
-    --accent: #00ff88;
-    --accent-dim: rgba(0,255,136,0.08);
-    --accent-mid: rgba(0,255,136,0.15);
+    --bg:          #f5f5f3;
+    --bg2:         #ebebea;
+    --bg3:         #e0e0de;
+    --border:      rgba(0,0,0,0.08);
+    --border-hover:rgba(0,0,0,0.18);
+    --text:        #1a1a1a;
+    --text-muted:  #666;
+    --text-dim:    #999;
+    --accent:      #007a42;
+    --accent-dim:  rgba(0,122,66,0.08);
+    --accent-mid:  rgba(0,122,66,0.15);
     --mono: 'DM Mono', monospace;
     --sans: 'DM Sans', sans-serif;
   }
+
+  /* ═══════════════════════════════
+     DARK MODE
+  ═══════════════════════════════ */
+  :root.dark {
+    --bg:          #0a0a0a;
+    --bg2:         #111111;
+    --bg3:         #161616;
+    --border:      rgba(255,255,255,0.07);
+    --border-hover:rgba(255,255,255,0.15);
+    --text:        #e8e8e8;
+    --text-muted:  #666;
+    --text-dim:    #444;
+    --accent:      #00ff88;
+    --accent-dim:  rgba(0,255,136,0.08);
+    --accent-mid:  rgba(0,255,136,0.15);
+  }
+
+  /* Grid adapts to mode */
+  :root.dark body::before {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  }
+
+  /* ═══════════════════════════════
+     THEME TOGGLE BUTTON
+  ═══════════════════════════════ */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px 5px 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  /* The pill / switch track */
+  .toggle-track {
+    width: 28px;
+    height: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+
+  :root.dark .toggle-track { background: var(--accent); border-color: var(--accent); }
+
+  /* The moving circle */
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 10px; height: 10px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.25s, background 0.25s;
+  }
+
+  :root.dark .toggle-thumb { transform: translateX(12px); background: #0a0a0a; }
 
   html { scroll-behavior: smooth; }
 
@@ -43,8 +122,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
     background-size: 48px 48px;
     pointer-events: none;
     z-index: 0;
@@ -641,6 +720,10 @@
     <li><a href="support.html">Support</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="toggle-label">Light</span>
+    </button>
 </nav>
 
 <!-- HERO -->
@@ -921,6 +1004,32 @@
         ? 'var(--accent)' : '';
     });
   });
+
+  // ─────────────────────────────────────────────
+  // THEME TOGGLE — Light / Dark
+  // Default: light. Persists via localStorage.
+  // ─────────────────────────────────────────────
+  (function() {
+    // Check saved preference; default is light
+    const saved = localStorage.getItem('voaxsec-theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+    updateToggleLabel();
+  })();
+
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('voaxsec-theme', isDark ? 'dark' : 'light');
+    updateToggleLabel();
+  }
+
+  function updateToggleLabel() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const labels = document.querySelectorAll('.toggle-label');
+    labels.forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
+  }
+
 </script>
 
 </body>
