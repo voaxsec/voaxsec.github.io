@@ -627,39 +627,125 @@
   }
 
   // ─────────────────────────────────────────────
-  // FETCH DATA FROM ip-api.com (free, no key needed)
-  // Returns: status, country, regionName, city, zip,
-  //          lat, lon, timezone, isp, org, as,
-  //          hosting, proxy, mobile, query
+  // FETCH — tries multiple APIs as fallback
+  // API 1: ip-api.com  (most data, CORS ok on live domains)
+  // API 2: ipapi.co    (fallback, generous free tier)
+  // API 3: ipwho.is    (fallback, no key needed)
   // ─────────────────────────────────────────────
   async function lookupIP(ip) {
     document.getElementById('ip-input').value = ip;
     showLoading();
 
+    // Try each API in order
+    let data = null;
+    data = await tryIpApi(ip);
+    if (!data) data = await tryIpapiCo(ip);
+    if (!data) data = await tryIpwho(ip);
+
+    if (!data) {
+      showError('All lookup services failed. This may be a private IP or a network issue. Try again shortly.');
+      return;
+    }
+
+    renderResults(data);
+    addToHistory(ip, `${data.city}, ${data.country}`);
+  }
+
+  // ── API 1: ip-api.com ─────────────────────────
+  async function tryIpApi(ip) {
     try {
       const fields = 'status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,hosting,proxy,mobile,query';
       const res  = await fetch(`https://ip-api.com/json/${ip}?fields=${fields}`);
-      const data = await res.json();
-
-      if (data.status === 'fail') {
-        showError(data.message === 'private range'
-          ? `${ip} is a private/local IP address — not routable on the public internet.`
-          : `Could not find data for "${ip}". Please check the IP and try again.`);
-        return;
+      if (!res.ok) return null;
+      const d = await res.json();
+      if (d.status === 'fail') {
+        // Private range is a real answer, surface it
+        if (d.message === 'private range') {
+          showError(`${ip} is a private/local IP address — not routable on the public internet.`);
+          return 'private'; // sentinel so we don't try further
+        }
+        return null;
       }
+      // Normalize to common shape
+      return {
+        query:       d.query,
+        country:     d.country,
+        countryCode: d.countryCode,
+        city:        d.city,
+        regionName:  d.regionName,
+        zip:         d.zip,
+        lat:         d.lat,
+        lon:         d.lon,
+        timezone:    d.timezone,
+        isp:         d.isp,
+        org:         d.org,
+        as:          d.as,
+        hosting:     d.hosting,
+        proxy:       d.proxy,
+        mobile:      d.mobile,
+      };
+    } catch { return null; }
+  }
 
-      renderResults(data);
-      addToHistory(ip, `${data.city}, ${data.country}`);
+  // ── API 2: ipapi.co ───────────────────────────
+  async function tryIpapiCo(ip) {
+    try {
+      const res = await fetch(`https://ipapi.co/${ip}/json/`);
+      if (!res.ok) return null;
+      const d = await res.json();
+      if (d.error) return null;
+      return {
+        query:       d.ip,
+        country:     d.country_name,
+        countryCode: d.country_code,
+        city:        d.city,
+        regionName:  d.region,
+        zip:         d.postal,
+        lat:         d.latitude,
+        lon:         d.longitude,
+        timezone:    d.timezone,
+        isp:         d.org,
+        org:         d.org,
+        as:          d.asn,
+        hosting:     false,
+        proxy:       false,
+        mobile:      false,
+      };
+    } catch { return null; }
+  }
 
-    } catch(err) {
-      showError('Network error — please check your connection and try again.');
-    }
+  // ── API 3: ipwho.is ───────────────────────────
+  async function tryIpwho(ip) {
+    try {
+      const res = await fetch(`https://ipwho.is/${ip}`);
+      if (!res.ok) return null;
+      const d = await res.json();
+      if (!d.success) return null;
+      return {
+        query:       d.ip,
+        country:     d.country,
+        countryCode: d.country_code,
+        city:        d.city,
+        regionName:  d.region,
+        zip:         d.postal,
+        lat:         d.latitude,
+        lon:         d.longitude,
+        timezone:    d.timezone?.id || '—',
+        isp:         d.connection?.isp || '—',
+        org:         d.connection?.org || '—',
+        as:          d.connection?.asn ? `AS${d.connection.asn}` : '—',
+        hosting:     false,
+        proxy:       false,
+        mobile:      false,
+      };
+    } catch { return null; }
   }
 
   // ─────────────────────────────────────────────
   // RENDER RESULTS INTO THE CARD
   // ─────────────────────────────────────────────
   function renderResults(d) {
+    if (d === 'private') return; // already showed error
     hideStates();
     document.getElementById('results-card').style.display = 'block';
 
