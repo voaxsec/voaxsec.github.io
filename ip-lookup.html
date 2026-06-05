@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Lookup Tool — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #f5f5f3;
+    --bg2:         #ebebea;
+    --bg3:         #e0e0de;
+    --border:      rgba(0,0,0,0.08);
+    --border-hover:rgba(0,0,0,0.18);
+    --text:        #1a1a1a;
+    --text-muted:  #666;
+    --text-dim:    #999;
+    --accent:      #007a42;
+    --accent-dim:  rgba(0,122,66,0.08);
+    --accent-mid:  rgba(0,122,66,0.15);
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --red:   #cc2200;
+    --yellow:#996600;
+    --green: #007a42;
+  }
+
+  :root.dark {
+    --bg:          #0a0a0a;
+    --bg2:         #111111;
+    --bg3:         #161616;
+    --border:      rgba(255,255,255,0.07);
+    --border-hover:rgba(255,255,255,0.15);
+    --text:        #e8e8e8;
+    --text-muted:  #666;
+    --text-dim:    #444;
+    --accent:      #00ff88;
+    --accent-dim:  rgba(0,255,136,0.08);
+    --accent-mid:  rgba(0,255,136,0.15);
+    --red:   #ff4444;
+    --yellow:#ffcc00;
+    --green: #00ff88;
+  }
+
+  /* Toggle */
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px 5px 8px;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+  .toggle-track {
+    width: 28px; height: 16px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    position: relative; transition: background 0.25s; flex-shrink: 0;
+  }
+  :root.dark .toggle-track { background: var(--accent); border-color: var(--accent); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 10px; height: 10px; background: var(--text-muted);
+    border-radius: 50%; transition: transform 0.25s, background 0.25s;
+  }
+  :root.dark .toggle-thumb { transform: translateX(12px); background: #0a0a0a; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 48px;
+    background: rgba(245,245,243,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+  :root.dark nav { background: rgba(10,10,10,0.88); }
+
+  .nav-logo {
+    font-family: var(--mono); font-size: 13px; color: var(--accent);
+    letter-spacing: 0.05em; text-decoration: none;
+  }
+  .nav-logo span { color: var(--text-muted); }
+
+  .nav-back {
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em;
+    transition: color 0.2s; text-transform: uppercase;
+  }
+  .nav-back:hover { color: var(--accent); }
+
+  /* BODY */
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); min-height: 100vh;
+    padding: 100px 24px 60px; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none; z-index: 0;
+  }
+  :root.dark body::before {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 720px; margin: 0 auto;
+  }
+
+  /* HEADER */
+  .page-label {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-size: clamp(28px, 5vw, 48px); font-weight: 300;
+    letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.1;
+  }
+
+  .page-title em { font-style: normal; color: var(--accent); }
+
+  .page-desc {
+    font-size: 14px; color: var(--text-muted);
+    line-height: 1.8; margin-bottom: 40px; max-width: 520px;
+  }
+
+  /* SEARCH BOX */
+  .search-box {
+    display: flex; gap: 0; margin-bottom: 32px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 2px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus-within { border-color: var(--accent); }
+
+  .search-prefix {
+    font-family: var(--mono); font-size: 13px; color: var(--accent);
+    padding: 0 16px; display: flex; align-items: center;
+    background: var(--accent-dim); border-right: 1px solid var(--border);
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1; padding: 16px 18px;
+    background: transparent; border: none; outline: none;
+    color: var(--text); font-family: var(--mono); font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); font-size: 13px; }
+
+  .search-btn {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--bg); background: var(--accent);
+    border: none; padding: 0 24px; cursor: pointer;
+    transition: opacity 0.2s; white-space: nowrap; flex-shrink: 0;
+  }
+
+  .search-btn:hover { opacity: 0.85; }
+  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* MY IP BUTTON */
+  .my-ip-btn {
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    background: none; border: 1px solid var(--border);
+    padding: 8px 16px; border-radius: 2px; cursor: pointer;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: all 0.2s; margin-bottom: 32px;
+  }
+  .my-ip-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* STATE: LOADING */
+  .state-loading {
+    display: none; padding: 48px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 2px; text-align: center;
+  }
+
+  .loader {
+    display: inline-block; width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* STATE: ERROR */
+  .state-error {
+    display: none; padding: 20px 24px;
+    background: rgba(204,34,0,0.06);
+    border: 1px solid rgba(204,34,0,0.2);
+    border-radius: 2px;
+    font-family: var(--mono); font-size: 13px; color: var(--red);
+    letter-spacing: 0.04em; margin-bottom: 24px;
+  }
+
+  /* RESULTS CARD */
+  .results-card {
+    display: none;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 2px; overflow: hidden;
+  }
+
+  /* IP HEADER */
+  .result-header {
+    padding: 24px 28px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+
+  .result-ip {
+    font-family: var(--mono); font-size: 26px; font-weight: 400;
+    color: var(--accent); letter-spacing: 0.04em;
+  }
+
+  .result-hostname {
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    margin-top: 4px; letter-spacing: 0.04em;
+  }
+
+  /* RISK BADGE */
+  .risk-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px;
+    padding: 8px 14px; border-radius: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0;
+  }
+
+  .risk-badge::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: currentColor;
+  }
+
+  .risk-safe    { color: var(--green); background: rgba(0,122,66,0.1); border: 1px solid rgba(0,122,66,0.25); }
+  .risk-warning { color: var(--yellow); background: rgba(153,102,0,0.1); border: 1px solid rgba(153,102,0,0.25); }
+  .risk-danger  { color: var(--red); background: rgba(204,34,0,0.1); border: 1px solid rgba(204,34,0,0.25); }
+
+  :root.dark .risk-safe    { background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.2); }
+  :root.dark .risk-warning { background: rgba(255,204,0,0.08); border-color: rgba(255,204,0,0.2); }
+  :root.dark .risk-danger  { background: rgba(255,68,68,0.08); border-color: rgba(255,68,68,0.2); }
+
+  /* INFO GRID */
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+  }
+
+  .info-cell {
+    padding: 18px 28px;
+    background: var(--bg2);
+    transition: background 0.15s;
+  }
+
+  .info-cell:hover { background: var(--bg3); }
+
+  .info-label {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 5px;
+  }
+
+  .info-value {
+    font-size: 14px; color: var(--text); font-weight: 400;
+    word-break: break-all; line-height: 1.4;
+  }
+
+  .info-value.mono { font-family: var(--mono); font-size: 13px; }
+
+  /* MAP SECTION */
+  .map-section {
+    border-top: 1px solid var(--border);
+    padding: 20px 28px;
+    display: flex; align-items: center; gap: 20px;
+  }
+
+  .map-coords {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .map-link {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    text-decoration: none; border: 1px solid var(--border);
+    padding: 7px 14px; border-radius: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: border-color 0.2s, background 0.2s;
+    margin-left: auto; white-space: nowrap;
+  }
+
+  .map-link:hover { border-color: var(--accent); background: var(--accent-dim); }
+
+  /* BLACKLIST SECTION */
+  .blacklist-section { border-top: 1px solid var(--border); }
+
+  .blacklist-header {
+    padding: 16px 28px;
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .blacklist-status {
+    font-size: 12px; padding: 4px 10px; border-radius: 2px;
+  }
+
+  .blacklist-list {
+    display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 28px;
+  }
+
+  .bl-tag {
+    font-family: var(--mono); font-size: 10px;
+    padding: 4px 10px; border-radius: 2px;
+    border: 1px solid var(--border); color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  /* HISTORY */
+  .history-section { margin-top: 32px; }
+
+  .history-label {
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+  }
+
+  .history-label button {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    background: none; border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 2px; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-left: auto;
+  }
+
+  .history-label button:hover { color: var(--red); border-color: var(--red); }
+
+  .history-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .history-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 2px; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .history-item:hover { border-color: var(--border-hover); background: var(--bg3); }
+
+  .history-ip {
+    font-family: var(--mono); font-size: 13px; color: var(--text);
+    flex: 1;
+  }
+
+  .history-loc {
+    font-size: 12px; color: var(--text-dim);
+  }
+
+  .history-arrow {
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+  }
+
+  /* FOOTER */
+  .page-footer {
+    margin-top: 48px; text-align: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.06em;
+  }
+
+  .page-footer a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .page-footer a:hover { color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    body { padding: 90px 16px 40px; }
+    .result-header { flex-direction: column; align-items: flex-start; }
+    .info-grid { grid-template-columns: 1fr; }
+    .search-prefix { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <a href="index.html" class="nav-back">← Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <p class="page-label">// Tool_02</p>
+  <h1 class="page-title">IP <em>Lookup</em></h1>
+  <p class="page-desc">
+    Analyze any IP address — geolocation, ISP, organization, timezone,
+    and blacklist status. Use your own IP as a starting point.
+  </p>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <span class="search-prefix">$ lookup</span>
+    <input
+      class="search-input"
+      type="text"
+      id="ip-input"
+      placeholder="Enter IP address... e.g. 8.8.8.8"
+      maxlength="45"
+      onkeydown="if(event.key==='Enter') lookup()"
+    >
+    <button class="search-btn" id="search-btn" onclick="lookup()">Analyze →</button>
+  </div>
+
+  <button class="my-ip-btn" onclick="lookupMyIP()">⊕ Use my IP address</button>
+
+  <!-- LOADING -->
+  <div class="state-loading" id="state-loading">
+    <div class="loader"></div>
+    <p class="loading-text">// Querying IP data...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="state-error" id="state-error"></div>
+
+  <!-- RESULTS -->
+  <div class="results-card" id="results-card">
+
+    <div class="result-header">
+      <div>
+        <div class="result-ip" id="res-ip">—</div>
+        <div class="result-hostname" id="res-hostname">—</div>
+      </div>
+      <div class="risk-badge risk-safe" id="res-risk">Safe</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell">
+        <div class="info-label">Country</div>
+        <div class="info-value" id="res-country">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">Region / City</div>
+        <div class="info-value" id="res-region">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">ISP / Organization</div>
+        <div class="info-value" id="res-isp">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">ASN</div>
+        <div class="info-value mono" id="res-asn">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">Timezone</div>
+        <div class="info-value" id="res-timezone">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">IP Type</div>
+        <div class="info-value" id="res-type">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">VPN / Proxy / Tor</div>
+        <div class="info-value mono" id="res-proxy">—</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">Mobile Network</div>
+        <div class="info-value" id="res-mobile">—</div>
+      </div>
+    </div>
+
+    <div class="map-section">
+      <div class="map-coords" id="res-coords">Lat: — / Lon: —</div>
+      <a class="map-link" id="map-link" href="#" target="_blank" rel="noopener">
+        View on map →
+      </a>
+    </div>
+
+    <div class="blacklist-section">
+      <div class="blacklist-header">
+        <span>// Reputation check</span>
+        <span class="blacklist-status" id="bl-status">—</span>
+      </div>
+      <div class="blacklist-list" id="bl-list"></div>
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section" id="history-section" style="display:none">
+    <div class="history-label">
+      Recent lookups
+      <button onclick="clearHistory()">Clear</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+
+  <p class="page-footer">
+    Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com ·
+    Data via <a href="https://ip-api.com" target="_blank">ip-api.com</a>
+  </p>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  // THEME
+  // ─────────────────────────────────────────────
+  (function() {
+    const saved = localStorage.getItem('voaxsec-theme');
+    if (saved === 'dark') document.documentElement.classList.add('dark');
+    updateToggleLabel();
+  })();
+
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('voaxsec-theme', isDark ? 'dark' : 'light');
+    updateToggleLabel();
+  }
+
+  function updateToggleLabel() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.querySelectorAll('.toggle-label').forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
+  }
+
+  // ─────────────────────────────────────────────
+  // HISTORY — stored in memory only
+  // ─────────────────────────────────────────────
+  let history = [];
+
+  function addToHistory(ip, location) {
+    // Remove duplicate if exists
+    history = history.filter(h => h.ip !== ip);
+    // Add to front
+    history.unshift({ ip, location });
+    // Keep max 5
+    if (history.length > 5) history.pop();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('history-section');
+    const list    = document.getElementById('history-list');
+
+    if (history.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    list.innerHTML = history.map(h => `
+      <div class="history-item" onclick="lookupIP('${h.ip}')">
+        <span class="history-ip">${h.ip}</span>
+        <span class="history-loc">${h.location}</span>
+        <span class="history-arrow">→</span>
+      </div>
+    `).join('');
+  }
+
+  function clearHistory() {
+    history = [];
+    renderHistory();
+  }
+
+  // ─────────────────────────────────────────────
+  // VALIDATE IP (IPv4 and IPv6 basic check)
+  // ─────────────────────────────────────────────
+  function isValidIP(ip) {
+    // IPv4
+    const ipv4 = /^(\d{1,3}\.){3}\d{1,3}$/;
+    // IPv6 (basic)
+    const ipv6 = /^[0-9a-fA-F:]{2,39}$/;
+    if (ipv4.test(ip)) {
+      return ip.split('.').every(n => parseInt(n) <= 255);
+    }
+    return ipv6.test(ip);
+  }
+
+  // ─────────────────────────────────────────────
+  // LOOKUP MY IP
+  // ─────────────────────────────────────────────
+  async function lookupMyIP() {
+    showLoading();
+    try {
+      const res  = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      document.getElementById('ip-input').value = data.ip;
+      await lookupIP(data.ip);
+    } catch {
+      showError('Could not detect your IP address. Please enter it manually.');
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // MAIN LOOKUP ENTRY POINT
+  // ─────────────────────────────────────────────
+  function lookup() {
+    const input = document.getElementById('ip-input').value.trim();
+    if (!input) { showError('Please enter an IP address.'); return; }
+    if (!isValidIP(input)) { showError(`"${input}" doesn't look like a valid IP address.`); return; }
+    lookupIP(input);
+  }
+
+  // ─────────────────────────────────────────────
+  // FETCH DATA FROM ip-api.com (free, no key needed)
+  // Returns: status, country, regionName, city, zip,
+  //          lat, lon, timezone, isp, org, as,
+  //          hosting, proxy, mobile, query
+  // ─────────────────────────────────────────────
+  async function lookupIP(ip) {
+    document.getElementById('ip-input').value = ip;
+    showLoading();
+
+    try {
+      const fields = 'status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,hosting,proxy,mobile,query';
+      const res  = await fetch(`https://ip-api.com/json/${ip}?fields=${fields}`);
+      const data = await res.json();
+
+      if (data.status === 'fail') {
+        showError(data.message === 'private range'
+          ? `${ip} is a private/local IP address — not routable on the public internet.`
+          : `Could not find data for "${ip}". Please check the IP and try again.`);
+        return;
+      }
+
+      renderResults(data);
+      addToHistory(ip, `${data.city}, ${data.country}`);
+
+    } catch(err) {
+      showError('Network error — please check your connection and try again.');
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // RENDER RESULTS INTO THE CARD
+  // ─────────────────────────────────────────────
+  function renderResults(d) {
+    hideStates();
+    document.getElementById('results-card').style.display = 'block';
+
+    // IP + hostname (using AS as proxy for org)
+    document.getElementById('res-ip').textContent       = d.query;
+    document.getElementById('res-hostname').textContent = d.org || d.isp || '—';
+
+    // Location
+    const flag = countryFlag(d.countryCode);
+    document.getElementById('res-country').textContent  = `${flag} ${d.country} (${d.countryCode})`;
+    document.getElementById('res-region').textContent   = [d.city, d.regionName, d.zip].filter(Boolean).join(', ') || '—';
+
+    // Network
+    document.getElementById('res-isp').textContent      = d.isp || '—';
+    document.getElementById('res-asn').textContent      = d.as  || '—';
+
+    // Other
+    document.getElementById('res-timezone').textContent = d.timezone || '—';
+    document.getElementById('res-type').textContent     = d.hosting ? 'Datacenter / Hosting' : 'Residential / Business';
+    document.getElementById('res-mobile').textContent   = d.mobile ? 'Yes — mobile network' : 'No';
+
+    // VPN / Proxy / Tor
+    const proxyFlags = [];
+    if (d.proxy)   proxyFlags.push('Proxy detected');
+    if (d.hosting) proxyFlags.push('Hosting/VPN likely');
+    document.getElementById('res-proxy').textContent = proxyFlags.length ? proxyFlags.join(' · ') : 'None detected';
+
+    // Coordinates + map link
+    document.getElementById('res-coords').textContent = `Lat: ${d.lat} / Lon: ${d.lon}`;
+    document.getElementById('map-link').href = `https://www.openstreetmap.org/?mlat=${d.lat}&mlon=${d.lon}&zoom=10`;
+
+    // Risk assessment
+    let riskLevel = 'safe';
+    let riskText  = 'Low risk';
+    if (d.proxy)              { riskLevel = 'warning'; riskText = 'Proxy / VPN'; }
+    if (d.hosting && d.proxy) { riskLevel = 'danger';  riskText = 'High risk'; }
+
+    const riskEl = document.getElementById('res-risk');
+    riskEl.className = `risk-badge risk-${riskLevel}`;
+    riskEl.textContent = riskText;
+
+    // Blacklist / reputation (simulated known categories)
+    renderBlacklist(d);
+  }
+
+  // ─────────────────────────────────────────────
+  // BLACKLIST / REPUTATION TAGS
+  // ip-api free tier doesn't include real blacklist data,
+  // so we show what we DO know from the response.
+  // ─────────────────────────────────────────────
+  function renderBlacklist(d) {
+    const blList   = document.getElementById('bl-list');
+    const blStatus = document.getElementById('bl-status');
+
+    const checks = [
+      { label: 'Proxy / Anonymizer', flagged: d.proxy },
+      { label: 'Datacenter / Hosting', flagged: d.hosting },
+      { label: 'Mobile Network', flagged: d.mobile },
+    ];
+
+    const anyFlagged = checks.some(c => c.flagged);
+
+    blStatus.textContent  = anyFlagged ? '⚠ Flags found' : '✓ Clean';
+    blStatus.style.color  = anyFlagged ? 'var(--yellow)' : 'var(--green)';
+
+    blList.innerHTML = checks.map(c => `
+      <span class="bl-tag" style="${c.flagged ? 'color:var(--yellow);border-color:var(--yellow);opacity:1' : ''}">
+        ${c.flagged ? '⚑' : '✓'} ${c.label}
+      </span>
+    `).join('');
+  }
+
+  // ─────────────────────────────────────────────
+  // COUNTRY FLAG EMOJI from country code
+  // ─────────────────────────────────────────────
+  function countryFlag(code) {
+    if (!code || code.length !== 2) return '🌐';
+    return String.fromCodePoint(
+      ...code.toUpperCase().split('').map(c => 0x1F1E6 + c.charCodeAt(0) - 65)
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  // UI STATE HELPERS
+  // ─────────────────────────────────────────────
+  function showLoading() {
+    hideStates();
+    document.getElementById('state-loading').style.display = 'block';
+    document.getElementById('search-btn').disabled = true;
+  }
+
+  function showError(msg) {
+    hideStates();
+    const el = document.getElementById('state-error');
+    el.style.display = 'block';
+    el.textContent   = '✗  ' + msg;
+  }
+
+  function hideStates() {
+    document.getElementById('state-loading').style.display  = 'none';
+    document.getElementById('state-error').style.display    = 'none';
+    document.getElementById('results-card').style.display   = 'none';
+    document.getElementById('search-btn').disabled = false;
+  }
+</script>
+
+</body>
+</html>

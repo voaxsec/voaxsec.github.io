@@ -137,10 +137,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px 48px;
-    background: rgba(10,10,10,0.85);
+    background: rgba(245,245,243,0.88);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
   }
+
+  :root.dark nav { background: rgba(10,10,10,0.88); }
 
   .nav-logo {
     font-family: var(--mono);
