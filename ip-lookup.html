@@ -394,6 +394,29 @@
   .page-footer a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
   .page-footer a:hover { color: var(--accent); }
 
+  /* DISCLAIMER */
+  .disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-mid);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .disclaimer-icon {
+    font-size: 14px;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     nav { padding: 16px 20px; }
@@ -425,6 +448,12 @@
     Analyze any IP address — geolocation, ISP, organization, timezone,
     and blacklist status. Use your own IP as a starting point.
   </p>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <span class="disclaimer-icon">ⓘ</span>
+    <span>This tool is for educational and network diagnostic purposes only. All data is retrieved from public APIs and does not provide access to any private systems.</span>
+  </div>
 
   <!-- SEARCH -->
   <div class="search-box">
