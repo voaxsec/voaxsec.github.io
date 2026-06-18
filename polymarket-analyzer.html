@@ -113,6 +113,27 @@
   footer { position:relative; z-index:1; text-align:center; padding:32px 48px; border-top:1px solid var(--border); }
   .footer-text { font-family:var(--mono); font-size:11px; color:var(--text-dim); letter-spacing:0.08em; }
   .footer-text span { color:var(--accent); }
+
+  /* ── SGP CARDS ── */
+  .sgp-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+  .sgp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .sgp-title { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
+  .sgp-sub { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em; }
+  .sgp-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 12px 14px; margin-bottom: 6px; transition: border-color 0.2s; }
+  .sgp-card:hover { border-color: var(--border-hover); }
+  .sgp-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sgp-label { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--text); letter-spacing: 0.06em; }
+  .sgp-prob-wrap { display: flex; flex-direction: column; align-items: flex-end; }
+  .sgp-prob { font-family: var(--mono); font-size: 16px; font-weight: 500; line-height: 1; }
+  .sgp-prob-lbl { font-family: var(--mono); font-size: 8px; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+  .sgp-prob-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+  .sgp-prob-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .sgp-legs { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .sgp-leg { display: flex; align-items: center; gap: 8px; }
+  .leg-type { font-family: var(--mono); font-size: 8px; color: var(--text-dim); background: var(--bg2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+  .leg-pick { font-size: 12px; color: var(--text); font-weight: 500; }
+  .sgp-reasoning { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.03em; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 6px; }
+  .sgp-disclaimer { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 2px; line-height: 1.5; }
   @media(max-width:680px){.main-grid{grid-template-columns:1fr}.page{padding:100px 24px 60px}nav{padding:16px 24px}.nav-links{display:none}.divider{margin:0 24px}.stats-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -411,45 +432,93 @@ async function analyzeMatch(){
   if(!selected) return;
   const m=selected;
   const played=m.score!==null;
+  const fav=m.home_pct>=m.away_pct?m.home:m.away;
   document.getElementById('btn-analyze').disabled=true;
-  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is analyzing the match...</div></div>`;
+  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is generating analysis + SGP picks...</div></div>`;
 
-  const prompt=played
-    ?`You are an expert football analyst. Analyze this FIFA World Cup 2026 match that has already been played.
-
+  const playedPrompt=`You are an expert football analyst for FIFA World Cup 2026.
 MATCH: ${m.home} ${m.score} ${m.away}
-GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date}
-RESULT: ${m.result}
-VENUE: ${m.venue}
+GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date} | RESULT: ${m.result} | VENUE: ${m.venue}
+Respond ONLY with valid JSON, no markdown, no backticks:
+{"analysis":{"result_summary":"2-3 sentences on what happened","key_moments":"2-3 sentences on what decided it","standings_impact":"1-2 sentences on group effect","whats_next":"1 sentence for each team"},"sgp":[]}`;
 
-Provide a concise post-match analysis:
-**Result summary** — What happened? Was this result surprising or expected?
-**Key moments** — What likely decided the match (tactics, goals, errors)?
-**Standings impact** — How does this affect the group standings and qualification picture?
-**What's next** — What should each team focus on going forward?
-
-Keep it under 200 words. Be factual and analytical. Respond in English.`
-    :`You are an expert football analyst specializing in FIFA World Cup 2026.
-
+  const upcomingPrompt=`You are an expert football analyst and DraftKings SGP specialist for FIFA World Cup 2026.
 MATCH: ${m.home} vs ${m.away}
-GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date}
-VENUE: ${m.venue}
+GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date} | VENUE: ${m.venue}
 WIN ODDS: ${m.home} ${m.home_pct}% | Draw ${m.draw_pct>0?m.draw_pct+'%':'N/A'} | ${m.away} ${m.away_pct}%
+FAVORITE: ${fav}
 
-Provide a concise pre-match analysis:
-**Context** — Brief background on both teams, recent form, World Cup history.
-**Market read** — Does the favorite at ${Math.max(m.home_pct,m.away_pct)}% seem right? What's the market pricing in?
-**Key factors** — 2–3 decisive factors for this match.
-**What to watch** — One specific wildcard that could change the result.
+Respond ONLY with valid JSON, no markdown, no backticks. Build 5 DraftKings-style SGPs using real markets: Match Result, Double Chance, Total Goals (Over/Under), Both Teams to Score (Yes/No), Total Corners (Over/Under), Shots on Target (Over/Under), Anytime Goalscorer, First Goal Method, Draw No Bet. Order from most probable to least. Use realistic probabilities based on team styles.
 
-Keep it under 200 words. Be factual, analytical, neutral. Do not recommend betting. Respond in English.`;
+{"analysis":{"context":"2-3 sentences on both teams form and World Cup history","market_read":"Is the ${fav} favorite probability accurate? Why?","key_factors":"List 2-3 decisive factors","wildcard":"One specific thing that could flip the result"},"sgp":[{"rank":1,"probability":75,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Why this is the safest combo"},{"rank":2,"probability":61,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"Both Teams to Score","pick":"No","type":"BTTS"}],"reasoning":"Why this combo makes sense"},{"rank":3,"probability":47,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"Both Teams to Score","pick":"Yes","type":"BTTS"},{"market":"Total Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Medium risk combo"},{"rank":4,"probability":31,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Total Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Higher risk, better payout"},{"rank":5,"probability":16,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"Both Teams to Score","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Total Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Long shot but high value if it hits"}]}`;
+
+  const prompt=played?playedPrompt:upcomingPrompt;
 
   try{
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
     if(!res.ok) throw new Error(res.status);
     const data=await res.json();
-    const text=(data.content?.[0]?.text||'Analysis unavailable.').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-    document.getElementById('analysis-content').innerHTML=`<div id="ai-output">${text}</div>`;
+    const raw=data.content?.[0]?.text||'{}';
+
+    let parsed;
+    try{ parsed=JSON.parse(raw); }
+    catch(e){
+      const m2=raw.match(/\{[\s\S]*\}/);
+      try{ parsed=m2?JSON.parse(m2[0]):{analysis:{},sgp:[]}; }
+      catch(e2){ parsed={analysis:{context:raw},sgp:[]}; }
+    }
+
+    const a=parsed.analysis||{};
+    const sgp=parsed.sgp||[];
+
+    const analysisHTML=played
+      ?`<div id="ai-output" style="font-size:13px;color:var(--text-muted);line-height:1.75;">
+          ${a.result_summary?`<p><strong style="color:var(--accent)">Result</strong><br>${a.result_summary}</p>`:''}
+          ${a.key_moments?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key moments</strong><br>${a.key_moments}</p>`:''}
+          ${a.standings_impact?`<p style="margin-top:10px"><strong style="color:var(--accent)">Standings</strong><br>${a.standings_impact}</p>`:''}
+          ${a.whats_next?`<p style="margin-top:10px"><strong style="color:var(--accent)">What's next</strong><br>${a.whats_next}</p>`:''}
+        </div>`
+      :`<div id="ai-output" style="font-size:13px;color:var(--text-muted);line-height:1.75;">
+          ${a.context?`<p><strong style="color:var(--accent)">Context</strong><br>${a.context}</p>`:''}
+          ${a.market_read?`<p style="margin-top:10px"><strong style="color:var(--accent)">Market read</strong><br>${a.market_read}</p>`:''}
+          ${a.key_factors?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key factors</strong><br>${a.key_factors}</p>`:''}
+          ${a.wildcard?`<p style="margin-top:10px"><strong style="color:var(--accent)">Wildcard</strong><br>${a.wildcard}</p>`:''}
+        </div>`;
+
+    let sgpHTML='';
+    if(sgp.length>0 && !played){
+      sgpHTML=`<div class="sgp-section">
+        <div class="sgp-header">
+          <span class="sgp-title">// DraftKings SGP Picks</span>
+          <span class="sgp-sub">Most → least probable</span>
+        </div>
+        ${sgp.map(s=>{
+          const pct=s.probability||0;
+          const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
+          const legs=(s.legs||[]).map(l=>`
+            <div class="sgp-leg">
+              <span class="leg-type">${l.type}</span>
+              <span class="leg-pick">${l.pick}</span>
+            </div>`).join('');
+          return `<div class="sgp-card">
+            <div class="sgp-card-header">
+              <span class="sgp-label">${s.label||'SGP #'+s.rank}</span>
+              <div class="sgp-prob-wrap">
+                <span class="sgp-prob" style="color:${barColor}">${pct}%</span>
+                <span class="sgp-prob-lbl">est. prob.</span>
+              </div>
+            </div>
+            <div class="sgp-prob-bar"><div class="sgp-prob-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            <div class="sgp-legs">${legs}</div>
+            ${s.reasoning?`<div class="sgp-reasoning">→ ${s.reasoning}</div>`:''}
+          </div>`;
+        }).join('')}
+        <div class="sgp-disclaimer">⚠️ For entertainment only. Not financial or betting advice. Always gamble responsibly.</div>
+      </div>`;
+    }
+
+    document.getElementById('analysis-content').innerHTML=analysisHTML+sgpHTML;
+
   }catch(err){
     console.error(err);
     document.getElementById('analysis-content').innerHTML=`<div class="error-msg">// Could not reach Claude worker.<br>// Check WORKER_URL configuration.</div>`;
