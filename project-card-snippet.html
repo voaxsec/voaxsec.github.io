@@ -1,0 +1,95 @@
+<!--
+  ════════════════════════════════════════════════════════════
+  INSTRUCCIONES DE INSTALACIÓN
+  Copia esta tarjeta dentro de tu contenedor de proyectos
+  en projects.html (o index.html según tu estructura).
+  Colócala como cuarto proyecto, después de los tres existentes.
+  ════════════════════════════════════════════════════════════
+-->
+
+<div class="project-card">
+
+  <!-- Ícono / preview del proyecto -->
+  <div class="project-icon" style="background: linear-gradient(135deg, #071411 0%, #0d2a1e 100%); border: 1px solid #00ff8822;">
+    <span style="font-size: 2rem;">📊</span>
+  </div>
+
+  <!-- Contenido -->
+  <div class="project-content">
+
+    <div class="project-header">
+      <h3 class="project-title">Polymarket AI Analyzer</h3>
+      <div class="project-tags">
+        <span class="tag">Claude API</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">REST API</span>
+        <span class="tag">Cloudflare Workers</span>
+      </div>
+    </div>
+
+    <p class="project-description">
+      Dashboard que analiza mercados de predicción de Polymarket en tiempo real usando Claude AI.
+      Busca cualquier evento (política, crypto, deportes), ve las probabilidades actuales del mercado
+      y obtén un análisis inteligente con contexto, factores clave y posibles sesgos del mercado.
+      Proyecto educativo de portafolio — no constituye asesoramiento financiero.
+    </p>
+
+    <!-- Tech stack visual -->
+    <div class="project-stack" style="margin: 0.75rem 0; display: flex; flex-wrap: wrap; gap: 6px;">
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #071411; border: 1px solid #00ff8833; color: #00ff88;">Polymarket API</span>
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #071411; border: 1px solid #00ff8833; color: #00ff88;">Claude Sonnet</span>
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #071411; border: 1px solid #00ff8833; color: #00ff88;">Workers Proxy</span>
+      <span style="font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #071411; border: 1px solid #00ff8833; color: #00ff88;">CORS Seguro</span>
+    </div>
+
+    <!-- Links -->
+    <div class="project-links">
+      <a href="polymarket-analyzer.html" class="btn-project">Ver Proyecto →</a>
+      <a href="https://github.com/TU-USUARIO/voaxsec/blob/main/polymarket-analyzer.html"
+         target="_blank" rel="noopener" class="btn-project btn-ghost">GitHub</a>
+    </div>
+
+  </div>
+</div>
+
+<!--
+  Si tu CSS no tiene las clases .project-card, .project-content, etc.,
+  usa el bloque de respaldo de abajo:
+-->
+
+<!--  ══ RESPALDO — si no tienes estilos de tarjeta ya definidos ══
+
+<style>
+.project-card {
+  background: #0d1117;
+  border: 1px solid #1e2a3a;
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.2s;
+}
+.project-card:hover { border-color: #00ff8844; }
+.project-title { font-size: 1.1rem; font-weight: 700; color: #e8eaf6; margin: 0 0 8px; }
+.project-description { font-size: 14px; color: #9fa8c0; line-height: 1.6; margin: 0; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tag { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #1a2332; color: #4a5568; }
+.project-links { display: flex; gap: 10px; margin-top: 8px; }
+.btn-project {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #00ff88;
+  color: #0a0f1e;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-project:hover { opacity: 0.85; }
+.btn-ghost { background: transparent; border: 1px solid #1e2a3a; color: #9fa8c0; }
+.btn-ghost:hover { border-color: #00ff8844; color: #e8eaf6; opacity: 1; }
+</style>
+
+-->
