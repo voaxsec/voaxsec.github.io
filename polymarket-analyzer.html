@@ -60,7 +60,7 @@
   .filter-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:32px; }
   .filter-pill { font-family:var(--mono); font-size:10px; color:var(--text-dim); background:var(--bg2); border:1px solid var(--border); padding:5px 12px; border-radius:2px; cursor:pointer; letter-spacing:0.08em; text-transform:uppercase; transition:border-color 0.2s,color 0.2s,background 0.2s; }
   .filter-pill:hover,.filter-pill.active { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
-  .main-grid { display:grid; grid-template-columns:1fr 300px; gap:2px; align-items:start; }
+  .main-grid { display:grid; grid-template-columns:1fr 360px; gap:16px; align-items:start; }
   .matches-col { display:flex; flex-direction:column; gap:2px; }
   .col-label { font-family:var(--mono); font-size:10px; color:var(--text-dim); letter-spacing:0.12em; text-transform:uppercase; padding:0 0 12px; }
   .match-card { padding:20px 24px; background:var(--bg2); border:1px solid var(--border); border-radius:2px; cursor:pointer; transition:border-color 0.2s,background 0.2s; position:relative; overflow:hidden; }
@@ -91,8 +91,8 @@
   .match-vol,.match-date { font-family:var(--mono); font-size:10px; color:var(--text-dim); letter-spacing:0.05em; }
   .match-venue { font-family:var(--mono); font-size:9px; color:var(--text-dim); letter-spacing:0.04em; margin-top:4px; }
   /* Analysis */
-  .analysis-col { position:sticky; top:80px; }
-  .analysis-box { background:var(--bg2); border:1px solid var(--border); border-radius:2px; padding:24px; min-height:360px; display:flex; flex-direction:column; }
+  .analysis-col { position:sticky; top:80px; max-height:calc(100vh - 100px); overflow-y:auto; }
+  .analysis-box { background:var(--bg2); border:1px solid var(--border); border-radius:2px; padding:20px; display:flex; flex-direction:column; }
   .analysis-label { font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
   .dot-live { width:6px; height:6px; background:var(--accent); border-radius:50%; animation:pulse 2s ease-in-out infinite; }
   .analysis-placeholder { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:20px 0; }
@@ -134,23 +134,18 @@
   .leg-pick { font-size: 12px; color: var(--text); font-weight: 500; }
   .sgp-reasoning { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.03em; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 6px; }
   .sgp-disclaimer { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 2px; line-height: 1.5; }
-  .sgp-table-wrap { overflow-x: auto; margin-bottom: 8px; }
-  .sgp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  .sgp-table thead tr { border-bottom: 1px solid var(--border); }
-  .sgp-table th { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 8px; text-align: left; white-space: nowrap; }
-  .sgp-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-  .sgp-table tbody tr:last-child { border-bottom: none; }
-  .sgp-table tbody tr:hover { background: var(--bg3); }
-  .sgp-table td { padding: 8px 8px; vertical-align: top; }
-  .tcol-sgp { white-space: nowrap; }
-  .sgp-label-sm { font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 500; }
-  .tcol-prob { white-space: nowrap; min-width: 56px; }
-  .tprob { font-family: var(--mono); font-size: 14px; font-weight: 500; display: block; line-height: 1; margin-bottom: 4px; }
-  .tbar { height: 2px; background: var(--border); border-radius: 2px; width: 48px; }
+  /* SGP compact rows */
+  .sgp-row { border-bottom: 1px solid var(--border); padding: 10px 0; }
+  .sgp-row:last-of-type { border-bottom: none; }
+  .sgp-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sgp-label-sm { font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 500; letter-spacing: 0.04em; }
+  .sgp-prob-inline { display: flex; align-items: center; gap: 6px; }
+  .tprob { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+  .tbar { height: 2px; background: var(--border); border-radius: 2px; width: 40px; flex-shrink: 0; }
   .tbar-fill { height: 100%; border-radius: 2px; }
-  .tcol-picks { display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
-  .tleg { font-family: var(--mono); font-size: 9px; background: var(--bg2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 2px; color: var(--text-muted); white-space: nowrap; }
-  .tcol-note { font-family: var(--mono); font-size: 9px; color: var(--text-dim); line-height: 1.5; min-width: 80px; }
+  .sgp-legs-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+  .tleg { font-family: var(--mono); font-size: 9px; background: var(--bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 2px; color: var(--text-muted); white-space: nowrap; }
+  .sgp-note { font-family: var(--mono); font-size: 9px; color: var(--text-dim); line-height: 1.5; }
   @media(max-width:680px){.main-grid{grid-template-columns:1fr}.page{padding:100px 24px 60px}nav{padding:16px 24px}.nav-links{display:none}.divider{margin:0 24px}.stats-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -505,26 +500,24 @@ Fill this JSON template with real values for this specific match. Use markets fr
         const pct=s.probability||0;
         const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
         const picks=(s.legs||[]).map(l=>`<span class="tleg">${l.pick}</span>`).join('');
-        return `<tr>
-          <td class="tcol-sgp"><span class="sgp-label-sm">${s.label||'SGP #'+s.rank}</span></td>
-          <td class="tcol-prob"><span class="tprob" style="color:${barColor}">${pct}%</span><div class="tbar"><div class="tbar-fill" style="width:${pct}%;background:${barColor}"></div></div></td>
-          <td class="tcol-picks">${picks}</td>
-          <td class="tcol-note">${s.reasoning||''}</td>
-        </tr>`;
+        return `<div class="sgp-row">
+          <div class="sgp-row-header">
+            <span class="sgp-label-sm">${s.label||'SGP #'+s.rank}</span>
+            <div class="sgp-prob-inline">
+              <span class="tprob" style="color:${barColor}">${pct}%</span>
+              <div class="tbar"><div class="tbar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            </div>
+          </div>
+          <div class="sgp-legs-wrap">${picks}</div>
+          ${s.reasoning?`<div class="sgp-note">→ ${s.reasoning}</div>`:''}
+        </div>`;
       }).join('');
       sgpHTML=`<div class="sgp-section">
         <div class="sgp-header">
           <span class="sgp-title">// DraftKings SGP Picks</span>
           <span class="sgp-sub">Most → least probable</span>
         </div>
-        <div class="sgp-table-wrap">
-          <table class="sgp-table">
-            <thead><tr>
-              <th>Combo</th><th>Est. Prob.</th><th>Picks</th><th>Note</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
+        ${rows}
         <div class="sgp-disclaimer">⚠️ Entertainment only. Not betting advice. Gamble responsibly.</div>
       </div>`;
     }
