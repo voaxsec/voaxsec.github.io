@@ -499,7 +499,21 @@ Fill this JSON template with real values for this specific match. Use markets fr
       const rows=sgp.map(s=>{
         const pct=s.probability||0;
         const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
-        const picks=(s.legs||[]).map(l=>`<span class="tleg">${l.pick}</span>`).join('');
+        const picks=(s.legs||[]).map(l=>{
+          // Build a human-readable label: "Type · Pick"
+          let t=l.type||'';
+          let p=l.pick||'';
+          // Expand Over/Under with context
+          if(t==='Totals')    p=p.replace(/Over ([\d.]+)/,'Over $1 Goals').replace(/Under ([\d.]+)/,'Under $1 Goals');
+          if(t==='Corners')   p=p.replace(/Over ([\d.]+)/,'Over $1 Corners').replace(/Under ([\d.]+)/,'Under $1 Corners');
+          if(t==='Shots')     p=p.replace(/Over ([\d.]+)/,'Over $1 Shots on Target').replace(/Under ([\d.]+)/,'Under $1 Shots on Target');
+          if(t==='BTTS' && p==='Yes') p='Both Teams to Score — Yes';
+          if(t==='BTTS' && p==='No')  p='Both Teams to Score — No (clean sheet)';
+          if(t==='Double Chance') p=p+' (win or draw)';
+          if(t==='Moneyline' && p.includes('Win')) p=p+' (outright)';
+          if(t==='DNB') p='Draw No Bet — '+p;
+          return `<span class="tleg">${p}</span>`;
+        }).join('');
         return `<div class="sgp-row">
           <div class="sgp-row-header">
             <span class="sgp-label-sm">${s.label||'SGP #'+s.rank}</span>
