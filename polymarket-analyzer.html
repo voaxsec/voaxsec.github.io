@@ -134,6 +134,23 @@
   .leg-pick { font-size: 12px; color: var(--text); font-weight: 500; }
   .sgp-reasoning { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.03em; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 6px; }
   .sgp-disclaimer { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 2px; line-height: 1.5; }
+  .sgp-table-wrap { overflow-x: auto; margin-bottom: 8px; }
+  .sgp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .sgp-table thead tr { border-bottom: 1px solid var(--border); }
+  .sgp-table th { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 8px; text-align: left; white-space: nowrap; }
+  .sgp-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .sgp-table tbody tr:last-child { border-bottom: none; }
+  .sgp-table tbody tr:hover { background: var(--bg3); }
+  .sgp-table td { padding: 8px 8px; vertical-align: top; }
+  .tcol-sgp { white-space: nowrap; }
+  .sgp-label-sm { font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 500; }
+  .tcol-prob { white-space: nowrap; min-width: 56px; }
+  .tprob { font-family: var(--mono); font-size: 14px; font-weight: 500; display: block; line-height: 1; margin-bottom: 4px; }
+  .tbar { height: 2px; background: var(--border); border-radius: 2px; width: 48px; }
+  .tbar-fill { height: 100%; border-radius: 2px; }
+  .tcol-picks { display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
+  .tleg { font-family: var(--mono); font-size: 9px; background: var(--bg2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 2px; color: var(--text-muted); white-space: nowrap; }
+  .tcol-note { font-family: var(--mono); font-size: 9px; color: var(--text-dim); line-height: 1.5; min-width: 80px; }
   @media(max-width:680px){.main-grid{grid-template-columns:1fr}.page{padding:100px 24px 60px}nav{padding:16px 24px}.nav-links{display:none}.divider{margin:0 24px}.stats-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -436,21 +453,18 @@ async function analyzeMatch(){
   document.getElementById('btn-analyze').disabled=true;
   document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is generating analysis + SGP picks...</div></div>`;
 
-  const playedPrompt=`You are an expert football analyst for FIFA World Cup 2026.
-MATCH: ${m.home} ${m.score} ${m.away}
-GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date} | RESULT: ${m.result} | VENUE: ${m.venue}
-Respond ONLY with valid JSON, no markdown, no backticks:
-{"analysis":{"result_summary":"2-3 sentences on what happened","key_moments":"2-3 sentences on what decided it","standings_impact":"1-2 sentences on group effect","whats_next":"1 sentence for each team"},"sgp":[]}`;
+  const playedPrompt=`You are a football analyst. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside JSON.
+{"analysis":{"result_summary":"Max 2 sentences.","key_moments":"Max 2 sentences.","standings_impact":"Max 1 sentence.","whats_next":"Max 1 sentence."},"sgp":[]}
+Now fill it in for: ${m.home} ${m.score} ${m.away}, ${m.stage}, ${m.date}, ${m.venue}. Result: ${m.result}.`;
 
-  const upcomingPrompt=`You are an expert football analyst and DraftKings SGP specialist for FIFA World Cup 2026.
-MATCH: ${m.home} vs ${m.away}
-GROUP: ${m.group} | STAGE: ${m.stage} | DATE: ${m.date} | VENUE: ${m.venue}
-WIN ODDS: ${m.home} ${m.home_pct}% | Draw ${m.draw_pct>0?m.draw_pct+'%':'N/A'} | ${m.away} ${m.away_pct}%
-FAVORITE: ${fav}
+  const upcomingPrompt=`You are a DraftKings SGP football analyst. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside the JSON. Keep all text fields under 20 words each.
 
-Respond ONLY with valid JSON, no markdown, no backticks. Build 5 DraftKings-style SGPs using real markets: Match Result, Double Chance, Total Goals (Over/Under), Both Teams to Score (Yes/No), Total Corners (Over/Under), Shots on Target (Over/Under), Anytime Goalscorer, First Goal Method, Draw No Bet. Order from most probable to least. Use realistic probabilities based on team styles.
+Match: ${m.home} vs ${m.away} | ${m.stage} | ${m.date} | ${m.venue}
+Odds: ${m.home} ${m.home_pct}% | Draw ${m.draw_pct>0?m.draw_pct+'%':'N/A'} | ${m.away} ${m.away_pct}% | Favorite: ${fav}
 
-{"analysis":{"context":"2-3 sentences on both teams form and World Cup history","market_read":"Is the ${fav} favorite probability accurate? Why?","key_factors":"List 2-3 decisive factors","wildcard":"One specific thing that could flip the result"},"sgp":[{"rank":1,"probability":75,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Why this is the safest combo"},{"rank":2,"probability":61,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"Both Teams to Score","pick":"No","type":"BTTS"}],"reasoning":"Why this combo makes sense"},{"rank":3,"probability":47,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"Both Teams to Score","pick":"Yes","type":"BTTS"},{"market":"Total Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Medium risk combo"},{"rank":4,"probability":31,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Total Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Higher risk, better payout"},{"rank":5,"probability":16,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} to Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"Both Teams to Score","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Total Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Long shot but high value if it hits"}]}`;
+Fill this JSON template with real values for this specific match. Use markets from DraftKings: Moneyline, Double Chance, BTTS Yes/No, Total Goals Over/Under, Total Corners Over/Under, Shots on Target Over/Under, Draw No Bet. Adjust probabilities and picks realistically for the teams involved:
+
+{"analysis":{"context":"Max 2 sentences on both teams.","market_read":"Max 1 sentence on the odds.","key_factors":"Max 2 factors, comma separated.","wildcard":"Max 1 sentence."},"sgp":[{"rank":1,"probability":74,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":2,"probability":60,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"No","type":"BTTS"}],"reasoning":"Max 10 words."},{"rank":3,"probability":46,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":4,"probability":30,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":5,"probability":14,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Max 10 words."}]}`;
 
   const prompt=played?playedPrompt:upcomingPrompt;
 
@@ -487,33 +501,31 @@ Respond ONLY with valid JSON, no markdown, no backticks. Build 5 DraftKings-styl
 
     let sgpHTML='';
     if(sgp.length>0 && !played){
+      const rows=sgp.map(s=>{
+        const pct=s.probability||0;
+        const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
+        const picks=(s.legs||[]).map(l=>`<span class="tleg">${l.pick}</span>`).join('');
+        return `<tr>
+          <td class="tcol-sgp"><span class="sgp-label-sm">${s.label||'SGP #'+s.rank}</span></td>
+          <td class="tcol-prob"><span class="tprob" style="color:${barColor}">${pct}%</span><div class="tbar"><div class="tbar-fill" style="width:${pct}%;background:${barColor}"></div></div></td>
+          <td class="tcol-picks">${picks}</td>
+          <td class="tcol-note">${s.reasoning||''}</td>
+        </tr>`;
+      }).join('');
       sgpHTML=`<div class="sgp-section">
         <div class="sgp-header">
           <span class="sgp-title">// DraftKings SGP Picks</span>
           <span class="sgp-sub">Most → least probable</span>
         </div>
-        ${sgp.map(s=>{
-          const pct=s.probability||0;
-          const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
-          const legs=(s.legs||[]).map(l=>`
-            <div class="sgp-leg">
-              <span class="leg-type">${l.type}</span>
-              <span class="leg-pick">${l.pick}</span>
-            </div>`).join('');
-          return `<div class="sgp-card">
-            <div class="sgp-card-header">
-              <span class="sgp-label">${s.label||'SGP #'+s.rank}</span>
-              <div class="sgp-prob-wrap">
-                <span class="sgp-prob" style="color:${barColor}">${pct}%</span>
-                <span class="sgp-prob-lbl">est. prob.</span>
-              </div>
-            </div>
-            <div class="sgp-prob-bar"><div class="sgp-prob-fill" style="width:${pct}%;background:${barColor}"></div></div>
-            <div class="sgp-legs">${legs}</div>
-            ${s.reasoning?`<div class="sgp-reasoning">→ ${s.reasoning}</div>`:''}
-          </div>`;
-        }).join('')}
-        <div class="sgp-disclaimer">⚠️ For entertainment only. Not financial or betting advice. Always gamble responsibly.</div>
+        <div class="sgp-table-wrap">
+          <table class="sgp-table">
+            <thead><tr>
+              <th>Combo</th><th>Est. Prob.</th><th>Picks</th><th>Note</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <div class="sgp-disclaimer">⚠️ Entertainment only. Not betting advice. Gamble responsibly.</div>
       </div>`;
     }
 
