@@ -1,467 +1,706 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Polymarket Analyzer — VoaxSec</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* ── Page layout ── */
-    .pm-hero {
-      text-align: center;
-      padding: 3rem 1rem 2rem;
-    }
-    .pm-hero .badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #00ff88;
-      border: 1px solid #00ff8844;
-      border-radius: 20px;
-      padding: 4px 14px;
-      margin-bottom: 1rem;
-    }
-    .pm-hero h1 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 700;
-      color: #e8eaf6;
-      margin: 0 0 0.75rem;
-      line-height: 1.2;
-    }
-    .pm-hero h1 span { color: #00ff88; }
-    .pm-hero p {
-      color: #9fa8c0;
-      font-size: 1rem;
-      max-width: 560px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026 Analyzer — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Search bar ── */
-    .search-wrapper {
-      max-width: 680px;
-      margin: 2rem auto 0;
-      padding: 0 1rem;
-    }
-    .search-box {
-      display: flex;
-      gap: 10px;
-      background: #0d1117;
-      border: 1px solid #1e2a3a;
-      border-radius: 12px;
-      padding: 10px 10px 10px 16px;
-      align-items: center;
-      transition: border-color 0.2s;
-    }
-    .search-box:focus-within { border-color: #00ff88; }
-    .search-box input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #e8eaf6;
-      font-size: 15px;
-      font-family: inherit;
-    }
-    .search-box input::placeholder { color: #4a5568; }
-    .search-box button {
-      background: #00ff88;
-      color: #0a0f1e;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 18px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .search-box button:hover { opacity: 0.88; }
-    .search-box button:active { transform: scale(0.97); }
-    .search-box button:disabled { opacity: 0.4; cursor: not-allowed; }
+  :root {
+    --bg:          #f5f5f3;
+    --bg2:         #ebebea;
+    --bg3:         #e0e0de;
+    --border:      rgba(0,0,0,0.08);
+    --border-hover:rgba(0,0,0,0.18);
+    --text:        #1a1a1a;
+    --text-muted:  #666;
+    --text-dim:    #999;
+    --accent:      #007a42;
+    --accent-dim:  rgba(0,122,66,0.08);
+    --accent-mid:  rgba(0,122,66,0.15);
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
 
-    /* ── Quick topics ── */
-    .quick-topics {
-      max-width: 680px;
-      margin: 1rem auto 0;
-      padding: 0 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .topic-pill {
-      background: #0d1117;
-      border: 1px solid #1e2a3a;
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 12px;
-      color: #9fa8c0;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .topic-pill:hover { border-color: #00ff88; color: #00ff88; }
+  :root.dark {
+    --bg:          #0a0a0a;
+    --bg2:         #111111;
+    --bg3:         #161616;
+    --border:      rgba(255,255,255,0.07);
+    --border-hover:rgba(255,255,255,0.15);
+    --text:        #e8e8e8;
+    --text-muted:  #666;
+    --text-dim:    #444;
+    --accent:      #00ff88;
+    --accent-dim:  rgba(0,255,136,0.08);
+    --accent-mid:  rgba(0,255,136,0.15);
+  }
 
-    /* ── Main content area ── */
-    .pm-content {
-      max-width: 900px;
-      margin: 2.5rem auto;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 1.5rem;
-      align-items: start;
-    }
-    @media (max-width: 720px) {
-      .pm-content { grid-template-columns: 1fr; }
-    }
+  :root.dark body::before {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  }
 
-    /* ── Markets list ── */
-    .markets-panel { display: flex; flex-direction: column; gap: 12px; }
-    .markets-panel h2 {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #4a5568;
-      margin: 0 0 4px;
-    }
+  html { scroll-behavior: smooth; }
 
-    .market-card {
-      background: #0d1117;
-      border: 1px solid #1e2a3a;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.15s;
-      position: relative;
-    }
-    .market-card:hover { border-color: #00ff8855; background: #101820; }
-    .market-card.active { border-color: #00ff88; background: #071411; }
-    .market-card .mc-question {
-      font-size: 14px;
-      font-weight: 500;
-      color: #c9d1e8;
-      margin: 0 0 10px;
-      line-height: 1.4;
-    }
-    .market-card .mc-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .mc-prob {
-      font-size: 22px;
-      font-weight: 700;
-      color: #00ff88;
-      line-height: 1;
-    }
-    .mc-label {
-      font-size: 11px;
-      color: #4a5568;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .mc-volume {
-      margin-left: auto;
-      font-size: 12px;
-      color: #4a5568;
-    }
-    .mc-bar {
-      height: 4px;
-      background: #1a2332;
-      border-radius: 4px;
-      margin-top: 10px;
-      overflow: hidden;
-    }
-    .mc-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00ff88, #00cc6a);
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-    .mc-tag {
-      display: inline-block;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-    .tag-politics { background: #1a1a3e; color: #7b84f5; }
-    .tag-crypto   { background: #1a2e1e; color: #4ade80; }
-    .tag-sports   { background: #2e1a1a; color: #f87171; }
-    .tag-tech     { background: #1a2a3e; color: #60a5fa; }
-    .tag-economy  { background: #2e2a1a; color: #fbbf24; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
 
-    /* ── Analysis panel ── */
-    .analysis-panel {
-      position: sticky;
-      top: 80px;
-    }
-    .analysis-box {
-      background: #0d1117;
-      border: 1px solid #1e2a3a;
-      border-radius: 12px;
-      padding: 1.25rem;
-      min-height: 340px;
-    }
-    .analysis-box .ab-title {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #00ff88;
-      margin: 0 0 1rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dot-live {
-      width: 6px; height: 6px;
-      background: #00ff88;
-      border-radius: 50%;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-    .analysis-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 260px;
-      gap: 10px;
-      text-align: center;
-    }
-    .analysis-placeholder .icon {
-      font-size: 36px;
-      opacity: 0.2;
-    }
-    .analysis-placeholder p {
-      font-size: 13px;
-      color: #4a5568;
-      max-width: 220px;
-      line-height: 1.5;
-    }
-    #ai-output {
-      font-size: 14px;
-      color: #c9d1e8;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
-    #ai-output strong { color: #00ff88; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-    /* Typing indicator */
-    .typing-dots {
-      display: inline-flex;
-      gap: 4px;
-      align-items: center;
-      padding: 4px 0;
-    }
-    .typing-dots span {
-      width: 6px; height: 6px;
-      background: #00ff88;
-      border-radius: 50%;
-      animation: bounce 1.2s ease-in-out infinite;
-    }
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-      40% { transform: scale(1); opacity: 1; }
-    }
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    background: rgba(245,245,243,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+  :root.dark nav { background: rgba(10,10,10,0.88); }
 
-    /* ── Analyze button ── */
-    .btn-analyze {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 10px;
-      background: transparent;
-      border: 1px solid #00ff8866;
-      border-radius: 8px;
-      color: #00ff88;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-      font-family: inherit;
-    }
-    .btn-analyze:hover:not(:disabled) { background: #00ff8811; border-color: #00ff88; }
-    .btn-analyze:disabled { opacity: 0.35; cursor: not-allowed; }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text-muted); }
 
-    /* ── Stats strip ── */
-    .stats-strip {
-      max-width: 900px;
-      margin: 0 auto 1.5rem;
-      padding: 0 1rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-    }
-    .stat-tile {
-      background: #0d1117;
-      border: 1px solid #1e2a3a;
-      border-radius: 10px;
-      padding: 14px 16px;
-      text-align: center;
-    }
-    .stat-tile .val {
-      font-size: 20px;
-      font-weight: 700;
-      color: #e8eaf6;
-    }
-    .stat-tile .lbl {
-      font-size: 11px;
-      color: #4a5568;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 2px;
-    }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
 
-    /* ── Disclaimer ── */
-    .disclaimer {
-      max-width: 900px;
-      margin: 0 auto 3rem;
-      padding: 0 1rem;
-    }
-    .disclaimer p {
-      font-size: 11px;
-      color: #2e3a4e;
-      text-align: center;
-      line-height: 1.6;
-    }
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px 5px 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
 
-    /* ── Loading skeleton ── */
-    .skeleton {
-      background: #1a2332;
-      border-radius: 6px;
-      animation: shimmer 1.5s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-    .skel-line { height: 12px; margin: 8px 0; }
-    .skel-short { width: 60%; }
-    .skel-long { width: 90%; }
+  .toggle-track {
+    width: 28px; height: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+  :root.dark .toggle-track { background: var(--accent); border-color: var(--accent); }
 
-    /* ── Error state ── */
-    .error-msg {
-      background: #1a0a0a;
-      border: 1px solid #f8717144;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #f87171;
-      margin-top: 8px;
-    }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 10px; height: 10px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.25s, background 0.25s;
+  }
+  :root.dark .toggle-thumb { transform: translateX(12px); background: #0a0a0a; }
 
-    /* Back link */
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #4a5568;
-      text-decoration: none;
-      padding: 1.5rem 1rem 0;
-      transition: color 0.2s;
-    }
-    .back-link:hover { color: #00ff88; }
-  </style>
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* PAGE WRAPPER */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 48px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .hero-title {
+    font-family: var(--sans);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .hero-title em { font-style: normal; color: var(--accent); }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 540px;
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    margin-bottom: 40px;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* TEAM FILTER PILLS */
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .filter-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .filter-pill:hover,
+  .filter-pill.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* MAIN LAYOUT */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2px;
+    align-items: start;
+  }
+  @media (max-width: 680px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .page { padding: 100px 24px 60px; }
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .divider { margin: 0 24px; }
+  }
+
+  /* MATCH CARDS */
+  .matches-col { display: flex; flex-direction: column; gap: 2px; }
+
+  .col-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0 0 12px;
+  }
+
+  .match-card {
+    padding: 20px 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .match-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .match-card:hover { border-color: var(--border-hover); background: var(--bg3); }
+  .match-card:hover::before { opacity: 1; }
+  .match-card.active { border-color: var(--border-hover); background: var(--bg3); }
+  .match-card.active::before { opacity: 1; }
+
+  .match-stage {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .match-teams {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .team-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+  .team-name.right { text-align: right; }
+
+  .vs-divider {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* Probability bar */
+  .prob-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+  .prob-cell {
+    text-align: center;
+    padding: 8px 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+  }
+  .prob-cell.win { background: var(--accent-dim); border: 1px solid rgba(0,122,66,0.15); }
+  :root.dark .prob-cell.win { border-color: rgba(0,255,136,0.15); }
+  .prob-val {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .prob-cell:not(.win) .prob-val { color: var(--text-muted); font-size: 14px; }
+  .prob-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 3px;
+  }
+
+  .match-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .match-vol {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .match-date {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ANALYSIS PANEL */
+  .analysis-col {
+    position: sticky;
+    top: 80px;
+  }
+
+  .analysis-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 24px;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .analysis-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot-live {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .analysis-placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .placeholder-icon {
+    font-size: 28px;
+    opacity: 0.18;
+  }
+  .placeholder-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    max-width: 200px;
+    line-height: 1.6;
+  }
+
+  #ai-output {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    flex: 1;
+  }
+  #ai-output strong { color: var(--accent); font-weight: 500; }
+
+  .typing-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .typing-dots span {
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: tdot 1.2s ease-in-out infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes tdot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  .btn-analyze {
+    width: 100%;
+    margin-top: 16px;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .btn-analyze:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .btn-analyze:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* STATS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 480px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat-tile {
+    padding: 18px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ERROR */
+  .error-msg {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+    padding: 12px 16px;
+    letter-spacing: 0.04em;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+  .footer-text span { color: var(--accent); }
+
+  /* LOADING SKELETON */
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  .skel {
+    background: var(--bg3);
+    border-radius: 2px;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+</style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="nav-logo">VoaxSec</div>
-    <ul class="nav-links">
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="projects.html">Proyectos</a></li>
-      <li><a href="blog.html">Blog</a></li>
-      <li><a href="contact.html">Contacto</a></li>
-    </ul>
-  </nav>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#experience">Experience</a></li>
+    <li><a href="index.html#certifications">Certs</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="support.html">Support</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
 
-  <a href="projects.html" class="back-link">← Volver a Proyectos</a>
+<div class="page">
+
+  <a href="index.html#projects" class="back-link">← Back to Projects</a>
 
   <!-- HERO -->
-  <section class="pm-hero">
-    <div class="badge">⚡ AI + Prediction Markets</div>
-    <h1>Polymarket<br><span>AI Analyzer</span></h1>
-    <p>Analiza mercados de predicción en tiempo real con inteligencia artificial. Entiende el contexto, detecta sesgos y toma decisiones más informadas.</p>
-  </section>
+  <div class="hero-badge">PRJ_04 // Prediction Markets + AI</div>
+  <h1 class="hero-title">FIFA World Cup <em>2026</em><br>Match Analyzer</h1>
+  <p class="hero-sub">Polymarket · Claude AI · Real-time odds</p>
+  <p class="hero-desc">
+    Live prediction market data for every World Cup 2026 match, analyzed by Claude AI.
+    Understand win probabilities, key factors, and market dynamics — all in one place.
+  </p>
 
-  <!-- SEARCH -->
-  <div class="search-wrapper">
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="Busca un mercado: elecciones, crypto, deportes..." />
-      <button id="btn-search" onclick="searchMarkets()">Buscar</button>
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-tile">
+      <div class="stat-val" id="stat-matches">—</div>
+      <div class="stat-lbl">Matches</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-val" id="stat-volume">—</div>
+      <div class="stat-lbl">Total volume</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-val" id="stat-favorites">—</div>
+      <div class="stat-lbl">Avg favorite odds</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-val" id="stat-live">—</div>
+      <div class="stat-lbl">Active markets</div>
     </div>
   </div>
 
-  <div class="quick-topics">
-    <span class="topic-pill" onclick="setSearch('Trump 2024')">Trump 2024</span>
-    <span class="topic-pill" onclick="setSearch('Bitcoin ETF')">Bitcoin ETF</span>
-    <span class="topic-pill" onclick="setSearch('Federal Reserve')">Federal Reserve</span>
-    <span class="topic-pill" onclick="setSearch('NBA Finals')">NBA Finals</span>
-    <span class="topic-pill" onclick="setSearch('AI regulation')">AI Regulation</span>
-    <span class="topic-pill" onclick="setSearch('Recession 2025')">Recession 2025</span>
+  <!-- FILTER PILLS -->
+  <div class="section-label">Filter by group / stage</div>
+  <div class="filter-row" id="filter-row">
+    <span class="filter-pill active" onclick="filterMatches('all', this)">All matches</span>
+    <span class="filter-pill" onclick="filterMatches('Group Stage', this)">Group Stage</span>
+    <span class="filter-pill" onclick="filterMatches('Round of 16', this)">Round of 16</span>
+    <span class="filter-pill" onclick="filterMatches('Quarterfinal', this)">Quarterfinals</span>
+    <span class="filter-pill" onclick="filterMatches('Semifinal', this)">Semifinals</span>
+    <span class="filter-pill" onclick="filterMatches('Final', this)">Final</span>
   </div>
 
-  <!-- STATS STRIP -->
-  <div class="stats-strip" id="stats-strip" style="margin-top: 2rem;">
-    <div class="stat-tile">
-      <div class="val" id="stat-markets">—</div>
-      <div class="lbl">Mercados</div>
-    </div>
-    <div class="stat-tile">
-      <div class="val" id="stat-volume">—</div>
-      <div class="lbl">Volumen total</div>
-    </div>
-    <div class="stat-tile">
-      <div class="val" id="stat-avg">—</div>
-      <div class="lbl">Prob. promedio</div>
-    </div>
-    <div class="stat-tile">
-      <div class="val" id="stat-active">—</div>
-      <div class="lbl">Activos ahora</div>
-    </div>
-  </div>
+  <!-- MAIN GRID -->
+  <div class="main-grid">
 
-  <!-- MAIN CONTENT -->
-  <div class="pm-content">
-
-    <!-- Markets list -->
-    <div class="markets-panel">
-      <h2>Mercados encontrados</h2>
-      <div id="markets-list">
-        <!-- Estado inicial -->
-        <div style="text-align:center; padding: 3rem 1rem; color: #2e3a4e; font-size: 14px;">
-          Busca un tema para ver mercados de predicción relevantes.
-        </div>
+    <!-- LEFT: Match list -->
+    <div class="matches-col">
+      <div class="col-label">Select a match to analyze</div>
+      <div id="matches-list">
+        <div class="empty-state">// Loading World Cup markets...</div>
       </div>
     </div>
 
-    <!-- Analysis panel -->
-    <div class="analysis-panel">
+    <!-- RIGHT: Analysis panel -->
+    <div class="analysis-col">
       <div class="analysis-box">
-        <div class="ab-title">
+        <div class="analysis-label">
           <div class="dot-live"></div>
-          Análisis con Claude AI
+          Claude AI Analysis
         </div>
         <div id="analysis-content">
           <div class="analysis-placeholder">
-            <div class="icon">🔍</div>
-            <p>Selecciona un mercado para que Claude lo analice en profundidad.</p>
+            <div class="placeholder-icon">⚽</div>
+            <p class="placeholder-text">// Select a match to generate an AI analysis</p>
           </div>
         </div>
-        <button class="btn-analyze" id="btn-analyze" disabled onclick="analyzeMarket()">
-          Analizar mercado seleccionado
+        <button class="btn-analyze" id="btn-analyze" disabled onclick="analyzeMatch()">
+          → Analyze with Claude
         </button>
       </div>
     </div>
@@ -470,199 +709,280 @@
 
   <!-- DISCLAIMER -->
   <div class="disclaimer">
-    <p>⚠️ Este proyecto es educativo y de portafolio. No constituye asesoramiento financiero ni de inversión. Los mercados de predicción implican riesgo. Las probabilidades mostradas provienen de la API pública de Polymarket. El análisis de IA puede contener errores.</p>
+    // Educational &amp; portfolio project only. Not financial advice. Odds sourced from Polymarket public API.<br>
+    // AI analysis may contain errors. Prediction markets involve risk. Built by Xavier Olvera · VoaxSec.
   </div>
 
-  <footer class="footer">
-    <p>© 2025 VoaxSec · Xavier · IT Security Portfolio</p>
-  </footer>
+</div>
+
+<hr class="divider">
+
+<footer>
+  <p class="footer-text">© 2025 <span>Xavier Olvera</span> · voaxsec.com · Built with purpose.</p>
+</footer>
 
 <script>
-  // ── Estado global ──
-  let selectedMarket = null;
-  let allMarkets = [];
-
-  // ── Worker URL — cambia esto por tu Worker de Cloudflare ──
+  // ── Config ──
   const WORKER_URL = 'https://voaxsec-proxy.voaxsec.workers.dev';
+  const POLY_API   = 'https://gamma-api.polymarket.com';
 
-  // ── Polymarket API (pública, sin auth) ──
-  const POLY_API = 'https://gamma-api.polymarket.com';
+  let allMatches = [];
+  let filtered   = [];
+  let selected   = null;
 
-  // ── Helpers ──
-  function setSearch(term) {
-    document.getElementById('search-input').value = term;
-    searchMarkets();
+  // ── Theme (same as index.html) ──
+  (function() {
+    const saved = localStorage.getItem('voaxsec-theme');
+    if (saved === 'dark') document.documentElement.classList.add('dark');
+    updateToggleLabel();
+  })();
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('voaxsec-theme', isDark ? 'dark' : 'light');
+    updateToggleLabel();
+  }
+  function updateToggleLabel() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.querySelectorAll('.toggle-label').forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
   }
 
-  function fmtVolume(v) {
+  // ── Helpers ──
+  function fmtVol(v) {
     if (!v) return '$0';
-    if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
-    if (v >= 1_000) return `$${(v / 1_000).toFixed(0)}K`;
+    if (v >= 1e6) return `$${(v/1e6).toFixed(1)}M`;
+    if (v >= 1e3) return `$${(v/1e3).toFixed(0)}K`;
     return `$${Math.round(v)}`;
   }
 
-  function tagClass(category) {
-    const map = {
-      'politics': 'tag-politics',
-      'crypto': 'tag-crypto',
-      'sports': 'tag-sports',
-      'technology': 'tag-tech',
-      'economics': 'tag-economy',
-      'business': 'tag-economy',
-    };
-    return map[(category || '').toLowerCase()] || 'tag-politics';
+  function parseProb(m) {
+    const raw = m.outcomePrices || m.prices || [];
+    if (Array.isArray(raw) && raw.length >= 2) {
+      return {
+        home: Math.round(parseFloat(raw[0]) * 100),
+        away: Math.round(parseFloat(raw[raw.length - 1]) * 100),
+        draw: raw.length >= 3 ? Math.round(parseFloat(raw[1]) * 100) : null,
+      };
+    }
+    return { home: 50, away: 50, draw: null };
   }
 
-  // ── Buscar mercados en Polymarket ──
-  async function searchMarkets() {
-    const query = document.getElementById('search-input').value.trim();
-    if (!query) return;
+  function guessStage(question) {
+    const q = (question || '').toLowerCase();
+    if (q.includes('final') && !q.includes('semi') && !q.includes('quarter')) return 'Final';
+    if (q.includes('semifinal') || q.includes('semi-final')) return 'Semifinal';
+    if (q.includes('quarterfinal') || q.includes('quarter-final')) return 'Quarterfinal';
+    if (q.includes('round of 16') || q.includes('last 16')) return 'Round of 16';
+    return 'Group Stage';
+  }
 
-    const btn = document.getElementById('btn-search');
-    btn.disabled = true;
-    btn.textContent = 'Buscando...';
-
-    const listEl = document.getElementById('markets-list');
+  // ── Load matches from Polymarket ──
+  async function loadMatches() {
+    const listEl = document.getElementById('matches-list');
     listEl.innerHTML = `
-      <div class="skeleton skel-line skel-long"></div>
-      <div class="skeleton skel-line skel-short" style="margin-top:16px"></div>
-      <div class="skeleton skel-line skel-long" style="margin-top:16px"></div>
+      <div class="skel" style="height:88px; margin-bottom:2px;"></div>
+      <div class="skel" style="height:88px; margin-bottom:2px;"></div>
+      <div class="skel" style="height:88px;"></div>
     `;
 
-    try {
-      // Polymarket Gamma API — búsqueda de eventos
-      const url = `${POLY_API}/markets?_c=volume&_s=desc&active=true&closed=false&limit=8&search=${encodeURIComponent(query)}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const data = await res.json();
+    const queries = [
+      'FIFA World Cup 2026',
+      'World Cup 2026 match',
+      'World Cup 2026 winner',
+    ];
 
-      allMarkets = Array.isArray(data) ? data : (data.markets || data.data || []);
-
-      if (allMarkets.length === 0) {
-        listEl.innerHTML = `<div class="error-msg">No se encontraron mercados para "${query}". Prueba con otro término.</div>`;
-        updateStats([]);
-        return;
-      }
-
-      renderMarkets(allMarkets);
-      updateStats(allMarkets);
-
-    } catch (err) {
-      console.error(err);
-      // Fallback: mercados demo para mostrar la UI si la API falla
-      allMarkets = getDemoMarkets(query);
-      renderMarkets(allMarkets);
-      updateStats(allMarkets);
-      listEl.insertAdjacentHTML('afterbegin', `
-        <div class="error-msg" style="margin-bottom:12px">
-          ⚠️ No se pudo conectar a Polymarket. Mostrando datos de ejemplo.
-        </div>
-      `);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Buscar';
+    let results = [];
+    for (const q of queries) {
+      try {
+        const url = `${POLY_API}/markets?active=true&closed=false&limit=12&search=${encodeURIComponent(q)}`;
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.markets || data.data || []);
+        results = results.concat(items);
+      } catch(_) {}
     }
+
+    // Deduplicate by id or question
+    const seen = new Set();
+    results = results.filter(m => {
+      const key = m.id || m.question;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    // If Polymarket returned nothing, use curated demo data
+    if (results.length === 0) {
+      results = getDemoMatches();
+    }
+
+    allMatches = results;
+    filtered = [...allMatches];
+    renderMatches(filtered);
+    updateStats(filtered);
   }
 
-  function renderMarkets(markets) {
-    const listEl = document.getElementById('markets-list');
+  // ── Render match cards ──
+  function renderMatches(matches) {
+    const listEl = document.getElementById('matches-list');
     listEl.innerHTML = '';
 
-    markets.forEach((m, i) => {
-      const prob = parseFloat(m.outcomePrices?.[0] || m.bestAsk || m.bestBid || 0.5) * 100;
-      const volume = parseFloat(m.volume || m.volumeNum || 0);
-      const question = m.question || m.title || 'Mercado sin título';
-      const cat = m.category || '';
+    if (matches.length === 0) {
+      listEl.innerHTML = `<div class="empty-state">// No matches found for this filter.</div>`;
+      return;
+    }
+
+    matches.forEach((m, i) => {
+      const probs = parseProb(m);
+      const vol   = parseFloat(m.volume || m.volumeNum || 0);
+      const stage = m._stage || guessStage(m.question || m.title || '');
+      const q     = m.question || m.title || 'Match';
+
+      // Try to extract team names from question
+      const teams = extractTeams(q);
 
       const card = document.createElement('div');
-      card.className = 'market-card';
-      card.dataset.idx = i;
+      card.className = 'match-card';
       card.innerHTML = `
-        <p class="mc-question">${question}</p>
-        <div class="mc-meta">
-          <div>
-            <div class="mc-prob">${prob.toFixed(0)}%</div>
-            <div class="mc-label">Probabilidad SÍ</div>
-          </div>
-          <span class="mc-tag ${tagClass(cat)}">${cat || 'General'}</span>
-          <span class="mc-volume">Vol: ${fmtVolume(volume)}</span>
+        <div class="match-stage">${stage} // World Cup 2026</div>
+        <div class="match-teams">
+          <span class="team-name">${teams.home}</span>
+          <span class="vs-divider">vs</span>
+          <span class="team-name right">${teams.away}</span>
         </div>
-        <div class="mc-bar">
-          <div class="mc-bar-fill" style="width: ${prob.toFixed(0)}%"></div>
+        <div class="prob-row">
+          <div class="prob-cell ${probs.home >= probs.away ? 'win' : ''}">
+            <div class="prob-val">${probs.home}%</div>
+            <div class="prob-lbl">${teams.home.split(' ')[0]}</div>
+          </div>
+          ${probs.draw !== null ? `
+          <div class="prob-cell">
+            <div class="prob-val">${probs.draw}%</div>
+            <div class="prob-lbl">Draw</div>
+          </div>` : `
+          <div class="prob-cell">
+            <div class="prob-val">—</div>
+            <div class="prob-lbl">Draw</div>
+          </div>`}
+          <div class="prob-cell ${probs.away > probs.home ? 'win' : ''}">
+            <div class="prob-val">${probs.away}%</div>
+            <div class="prob-lbl">${teams.away.split(' ')[0]}</div>
+          </div>
+        </div>
+        <div class="match-meta">
+          <span class="match-vol">Vol: ${fmtVol(vol)}</span>
+          <span class="match-date">${m._date || 'Jun–Jul 2026'}</span>
         </div>
       `;
-      card.addEventListener('click', () => selectMarket(i, card));
+      card.addEventListener('click', () => selectMatch(m, card, teams, probs, vol, stage));
       listEl.appendChild(card);
     });
   }
 
-  function selectMarket(idx, cardEl) {
-    document.querySelectorAll('.market-card').forEach(c => c.classList.remove('active'));
+  // ── Extract team names from question string ──
+  function extractTeams(q) {
+    // Patterns: "Brazil vs Argentina", "Will France win against Spain"
+    const vsMatch = q.match(/([A-Z][a-zA-Z\s]+?)\s+(?:vs\.?|versus)\s+([A-Z][a-zA-Z\s]+?)(?:\?|$|\s+in|\s+at|\s+to|\s+win)/i);
+    if (vsMatch) {
+      return { home: vsMatch[1].trim(), away: vsMatch[2].trim() };
+    }
+    // "Will [Team] win the World Cup"
+    const winMatch = q.match(/Will\s+([A-Z][a-zA-Z\s]+?)\s+win/i);
+    if (winMatch) {
+      return { home: winMatch[1].trim(), away: 'World Cup' };
+    }
+    return { home: 'Home', away: 'Away' };
+  }
+
+  // ── Select a match ──
+  function selectMatch(m, cardEl, teams, probs, vol, stage) {
+    document.querySelectorAll('.match-card').forEach(c => c.classList.remove('active'));
     cardEl.classList.add('active');
-    selectedMarket = allMarkets[idx];
+    selected = { m, teams, probs, vol, stage };
     document.getElementById('btn-analyze').disabled = false;
 
-    // Muestra preview en el panel
-    const m = selectedMarket;
-    const prob = parseFloat(m.outcomePrices?.[0] || m.bestAsk || m.bestBid || 0.5) * 100;
     document.getElementById('analysis-content').innerHTML = `
-      <div style="font-size:13px; color:#9fa8c0; line-height:1.6;">
-        <strong style="color:#e8eaf6; display:block; margin-bottom:8px; font-size:14px;">${m.question || m.title}</strong>
-        <p style="margin:0 0 6px">Probabilidad actual: <strong style="color:#00ff88">${prob.toFixed(1)}%</strong></p>
-        <p style="margin:0; color:#4a5568; font-size:12px;">Haz clic en "Analizar" para que Claude evalúe este mercado con contexto e inteligencia artificial.</p>
+      <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; line-height: 1.8;">
+        <div style="color: var(--text); font-family: var(--sans); font-size: 14px; font-weight: 500; margin-bottom: 12px;">${teams.home} vs ${teams.away}</div>
+        <div>${teams.home} win probability: <span style="color: var(--accent);">${probs.home}%</span></div>
+        ${probs.draw !== null ? `<div>Draw: <span style="color: var(--accent);">${probs.draw}%</span></div>` : ''}
+        <div>${teams.away} win probability: <span style="color: var(--accent);">${probs.away}%</span></div>
+        <div style="margin-top:12px; color: var(--text-dim);">// Click "Analyze with Claude" to get an AI-powered breakdown of this match.</div>
       </div>
     `;
   }
 
-  function updateStats(markets) {
-    const total = markets.length;
-    const totalVol = markets.reduce((s, m) => s + parseFloat(m.volume || m.volumeNum || 0), 0);
-    const avgProb = markets.length > 0
-      ? markets.reduce((s, m) => s + parseFloat(m.outcomePrices?.[0] || m.bestAsk || m.bestBid || 0.5) * 100, 0) / markets.length
-      : 0;
-    const active = markets.filter(m => m.active !== false).length;
-
-    document.getElementById('stat-markets').textContent = total;
-    document.getElementById('stat-volume').textContent = fmtVolume(totalVol);
-    document.getElementById('stat-avg').textContent = avgProb.toFixed(0) + '%';
-    document.getElementById('stat-active').textContent = active;
+  // ── Filter by stage ──
+  function filterMatches(stage, pill) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    filtered = stage === 'all' ? [...allMatches] : allMatches.filter(m => {
+      const s = m._stage || guessStage(m.question || m.title || '');
+      return s === stage;
+    });
+    renderMatches(filtered);
+    updateStats(filtered);
+    // Reset analysis panel
+    selected = null;
+    document.getElementById('btn-analyze').disabled = true;
+    document.getElementById('analysis-content').innerHTML = `
+      <div class="analysis-placeholder">
+        <div class="placeholder-icon">⚽</div>
+        <p class="placeholder-text">// Select a match to generate an AI analysis</p>
+      </div>
+    `;
   }
 
-  // ── Analizar mercado con Claude (vía tu Worker) ──
-  async function analyzeMarket() {
-    if (!selectedMarket) return;
+  // ── Stats ──
+  function updateStats(matches) {
+    const totalVol = matches.reduce((s, m) => s + parseFloat(m.volume || m.volumeNum || 0), 0);
+    const favOdds  = matches.length > 0
+      ? matches.reduce((s, m) => {
+          const p = parseProb(m);
+          return s + Math.max(p.home, p.away);
+        }, 0) / matches.length
+      : 0;
+    const active = matches.filter(m => m.active !== false).length;
 
-    const m = selectedMarket;
-    const prob = parseFloat(m.outcomePrices?.[0] || m.bestAsk || m.bestBid || 0.5) * 100;
-    const volume = parseFloat(m.volume || m.volumeNum || 0);
-    const question = m.question || m.title || 'Mercado desconocido';
+    document.getElementById('stat-matches').textContent   = matches.length;
+    document.getElementById('stat-volume').textContent    = fmtVol(totalVol);
+    document.getElementById('stat-favorites').textContent = favOdds.toFixed(0) + '%';
+    document.getElementById('stat-live').textContent      = active;
+  }
+
+  // ── Analyze with Claude ──
+  async function analyzeMatch() {
+    if (!selected) return;
+    const { m, teams, probs, vol, stage } = selected;
+    const q = m.question || m.title || `${teams.home} vs ${teams.away}`;
 
     document.getElementById('btn-analyze').disabled = true;
     document.getElementById('analysis-content').innerHTML = `
-      <div id="ai-output">
-        <div class="typing-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <p style="color:#4a5568; font-size:13px; margin-top:8px">Claude está analizando el mercado...</p>
+      <div>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <div style="font-family:var(--mono); font-size:11px; color:var(--text-dim); letter-spacing:0.05em; margin-top:8px;">// Claude is analyzing the match...</div>
       </div>
     `;
 
-    const prompt = `Eres un analista experto en mercados de predicción. Analiza este mercado de Polymarket de forma objetiva y educativa.
+    const prompt = `You are an expert analyst specializing in FIFA World Cup prediction markets.
 
-MERCADO: "${question}"
-PROBABILIDAD ACTUAL: ${prob.toFixed(1)}% (probabilidad de que ocurra "Sí")
-VOLUMEN NEGOCIADO: ${fmtVolume(volume)}
-CATEGORÍA: ${m.category || 'General'}
+MATCH: ${teams.home} vs ${teams.away}
+STAGE: ${stage} — FIFA World Cup 2026
+WIN PROBABILITIES (from Polymarket):
+  - ${teams.home}: ${probs.home}%
+  ${probs.draw !== null ? `- Draw: ${probs.draw}%` : ''}
+  - ${teams.away}: ${probs.away}%
+TRADING VOLUME: ${fmtVol(vol)}
+POLYMARKET QUESTION: "${q}"
 
-Proporciona un análisis estructurado que incluya:
+Provide a concise, structured match analysis covering:
 
-1. **Contexto** — ¿De qué trata este mercado? ¿Por qué es relevante ahora?
-2. **Qué dice el mercado** — ¿El ${prob.toFixed(0)}% parece razonable? ¿Por qué?
-3. **Factores clave** — Los 2-3 factores más importantes que podrían mover este mercado
-4. **Sesgos posibles** — ¿Existe algún sesgo conocido del mercado en este tipo de evento?
-5. **Perspectiva educativa** — ¿Qué puede aprender alguien leyendo este mercado sobre cómo funcionan los mercados de predicción?
+**Context** — Brief background on both teams heading into World Cup 2026. Recent form, key players.
+**Market read** — Is the ${Math.max(probs.home, probs.away)}% favorite probability reasonable? What does the market imply?
+**Key factors** — The 2–3 most important factors that could decide this match.
+**What to watch** — One specific thing that could flip the outcome (injury, tactical setup, weather, etc.)
 
-Sé conciso (máximo 250 palabras), informativo, y siempre neutral. No hagas recomendaciones de apuesta. Responde en español.`;
+Keep it under 220 words. Be analytical, neutral, and factual. Do not recommend betting. Respond in English.`;
 
     try {
       const res = await fetch(WORKER_URL, {
@@ -670,28 +990,27 @@ Sé conciso (máximo 250 palabras), informativo, y siempre neutral. No hagas rec
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
-          max_tokens: 600,
+          max_tokens: 500,
           messages: [{ role: 'user', content: prompt }]
         })
       });
 
-      if (!res.ok) throw new Error(`Worker error: ${res.status}`);
+      if (!res.ok) throw new Error(`Worker ${res.status}`);
       const data = await res.json();
-      const text = data.content?.[0]?.text || 'No se pudo obtener el análisis.';
+      const text = data.content?.[0]?.text || 'Analysis unavailable.';
 
-      // Render con formato básico
       const formatted = text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\n/g, '<br>');
 
       document.getElementById('analysis-content').innerHTML = `<div id="ai-output">${formatted}</div>`;
 
-    } catch (err) {
+    } catch(err) {
       console.error(err);
       document.getElementById('analysis-content').innerHTML = `
         <div class="error-msg">
-          ⚠️ No se pudo conectar con el Worker de Claude.<br>
-          Verifica que <code>WORKER_URL</code> esté configurado correctamente en el código.
+          // Could not connect to Claude worker.<br>
+          // Check that WORKER_URL is configured correctly.
         </div>
       `;
     } finally {
@@ -699,37 +1018,22 @@ Sé conciso (máximo 250 palabras), informativo, y siempre neutral. No hagas rec
     }
   }
 
-  // ── Enter key para buscar ──
-  document.getElementById('search-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') searchMarkets();
-  });
-
-  // ── Datos demo si la API de Polymarket no responde ──
-  function getDemoMarkets(query) {
+  // ── Demo data (World Cup 2026 matches) ──
+  function getDemoMatches() {
     return [
-      {
-        question: `¿Ocurrirá algo relacionado con "${query}" antes de fin de 2025?`,
-        outcomePrices: ['0.62'],
-        volume: 1_840_000,
-        category: 'Politics',
-        active: true
-      },
-      {
-        question: `¿Superará el mercado relacionado con "${query}" los $10M en volumen?`,
-        outcomePrices: ['0.38'],
-        volume: 420_000,
-        category: 'Economics',
-        active: true
-      },
-      {
-        question: `¿Habrá una resolución positiva en "${query}" para el Q3 2025?`,
-        outcomePrices: ['0.71'],
-        volume: 3_200_000,
-        category: 'Technology',
-        active: true
-      },
+      { question: 'USA vs Mexico', outcomePrices: ['0.55','0.18','0.27'], volume: 4_200_000, active: true, _stage: 'Group Stage', _date: 'Jun 22, 2026' },
+      { question: 'Brazil vs Argentina', outcomePrices: ['0.48','0.20','0.32'], volume: 8_900_000, active: true, _stage: 'Group Stage', _date: 'Jun 25, 2026' },
+      { question: 'France vs Germany', outcomePrices: ['0.52','0.17','0.31'], volume: 7_300_000, active: true, _stage: 'Group Stage', _date: 'Jun 27, 2026' },
+      { question: 'England vs Spain', outcomePrices: ['0.44','0.21','0.35'], volume: 6_100_000, active: true, _stage: 'Group Stage', _date: 'Jun 29, 2026' },
+      { question: 'Portugal vs Netherlands', outcomePrices: ['0.49','0.19','0.32'], volume: 3_800_000, active: true, _stage: 'Round of 16', _date: 'Jul 4, 2026' },
+      { question: 'Brazil vs France', outcomePrices: ['0.46','0.22','0.32'], volume: 11_200_000, active: true, _stage: 'Quarterfinal', _date: 'Jul 10, 2026' },
+      { question: 'Argentina vs Germany', outcomePrices: ['0.51','0.21','0.28'], volume: 9_400_000, active: true, _stage: 'Semifinal', _date: 'Jul 15, 2026' },
+      { question: 'Brazil vs Argentina', outcomePrices: ['0.53','0.16','0.31'], volume: 22_000_000, active: true, _stage: 'Final', _date: 'Jul 19, 2026' },
     ];
   }
+
+  // ── Init ──
+  loadMatches();
 </script>
 
 </body>
