@@ -10,9 +10,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ═══════════════════════════════
-     LIGHT MODE (default)
-  ═══════════════════════════════ */
   :root {
     --bg:          #f5f5f3;
     --bg2:         #ebebea;
@@ -29,9 +26,6 @@
     --sans: 'DM Sans', sans-serif;
   }
 
-  /* ═══════════════════════════════
-     DARK MODE
-  ═══════════════════════════════ */
   :root.dark {
     --bg:          #0a0a0a;
     --bg2:         #111111;
@@ -46,16 +40,12 @@
     --accent-mid:  rgba(0,255,136,0.15);
   }
 
-  /* Grid adapts to mode */
   :root.dark body::before {
     background-image:
       linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
   }
 
-  /* ═══════════════════════════════
-     THEME TOGGLE BUTTON
-  ═══════════════════════════════ */
   .theme-toggle {
     display: flex;
     align-items: center;
@@ -74,15 +64,10 @@
     flex-shrink: 0;
   }
 
-  .theme-toggle:hover {
-    border-color: var(--border-hover);
-    color: var(--text);
-  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
 
-  /* The pill / switch track */
   .toggle-track {
-    width: 28px;
-    height: 16px;
+    width: 28px; height: 16px;
     background: var(--bg3);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -93,7 +78,6 @@
 
   :root.dark .toggle-track { background: var(--accent); border-color: var(--accent); }
 
-  /* The moving circle */
   .toggle-thumb {
     position: absolute;
     top: 2px; left: 2px;
@@ -116,7 +100,6 @@
     overflow-x: hidden;
   }
 
-  /* Subtle grid background */
   body::before {
     content: '';
     position: fixed;
@@ -129,7 +112,6 @@
     z-index: 0;
   }
 
-  /* NAV */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -156,11 +138,7 @@
 
   .nav-logo span { color: var(--text-muted); }
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
 
   .nav-links a {
     font-family: var(--mono);
@@ -174,7 +152,6 @@
 
   .nav-links a:hover { color: var(--accent); }
 
-  /* SECTIONS */
   section {
     position: relative;
     z-index: 1;
@@ -185,7 +162,6 @@
 
   section:first-of-type { padding-top: 180px; }
 
-  /* SECTION LABEL */
   .section-label {
     font-family: var(--mono);
     font-size: 11px;
@@ -207,7 +183,6 @@
     opacity: 0.4;
   }
 
-  /* HERO */
   .hero-status {
     display: inline-flex;
     align-items: center;
@@ -225,8 +200,7 @@
 
   .hero-status::before {
     content: '';
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     background: var(--accent);
     border-radius: 50%;
     animation: pulse 2s ease-in-out infinite;
@@ -247,10 +221,7 @@
     margin-bottom: 8px;
   }
 
-  h1 em {
-    font-style: normal;
-    color: var(--accent);
-  }
+  h1 em { font-style: normal; color: var(--accent); }
 
   .hero-title-sub {
     font-family: var(--mono);
@@ -286,7 +257,6 @@
 
   .hero-cta:hover { opacity: 0.85; transform: translateY(-1px); }
 
-  /* SUPPORT CTA — secondary button below hero */
   .hero-support-cta {
     display: inline-flex;
     align-items: center;
@@ -316,11 +286,7 @@
     transform: translateY(-1px);
   }
 
-  .hero-support-icon {
-    font-size: 18px;
-    line-height: 1;
-  }
-
+  .hero-support-icon { font-size: 18px; line-height: 1; }
   .hero-support-text { display: flex; flex-direction: column; gap: 2px; }
 
   .hero-support-label {
@@ -331,11 +297,7 @@
     text-transform: uppercase;
   }
 
-  .hero-support-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-  }
+  .hero-support-title { font-size: 14px; font-weight: 500; color: var(--text); }
 
   .hero-support-arrow {
     font-family: var(--mono);
@@ -345,14 +307,10 @@
     transition: transform 0.2s, color 0.2s;
   }
 
-  .hero-support-cta:hover .hero-support-arrow {
-    transform: translateX(4px);
-    color: var(--accent);
-  }
+  .hero-support-cta:hover .hero-support-arrow { transform: translateX(4px); color: var(--accent); }
 
   .hero-ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
 
-  /* DIVIDER */
   .divider {
     border: none;
     border-top: 1px solid var(--border);
@@ -361,28 +319,12 @@
     z-index: 1;
   }
 
-  /* ABOUT */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-  }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 
-  .about-text p {
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    font-size: 15px;
-    line-height: 1.85;
-  }
-
+  .about-text p { color: var(--text-muted); margin-bottom: 20px; font-size: 15px; line-height: 1.85; }
   .about-text p:last-child { margin-bottom: 0; }
 
-  .about-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  .about-stats { display: flex; flex-direction: column; gap: 16px; }
 
   .stat-item {
     padding: 20px;
@@ -392,10 +334,7 @@
     transition: border-color 0.2s, background 0.2s;
   }
 
-  .stat-item:hover {
-    border-color: var(--border-hover);
-    background: var(--bg3);
-  }
+  .stat-item:hover { border-color: var(--border-hover); background: var(--bg3); }
 
   .stat-number {
     font-family: var(--mono);
@@ -406,21 +345,12 @@
     margin-bottom: 4px;
   }
 
-  .stat-label {
-    font-size: 12px;
-    color: var(--text-dim);
-    letter-spacing: 0.05em;
-  }
+  .stat-label { font-size: 12px; color: var(--text-dim); letter-spacing: 0.05em; }
 
-  /* EXPERIENCE */
-  .exp-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+  .exp-list { display: flex; flex-direction: column; gap: 2px; }
 
   .exp-item {
-    padding: 28px 28px;
+    padding: 28px;
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 2px;
@@ -439,55 +369,15 @@
     transition: opacity 0.2s;
   }
 
-  .exp-item:hover {
-    border-color: var(--border-hover);
-    background: var(--bg3);
-  }
-
+  .exp-item:hover { border-color: var(--border-hover); background: var(--bg3); }
   .exp-item:hover::before { opacity: 1; }
 
-  .exp-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
-    gap: 16px;
-  }
-
-  .exp-role {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .exp-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    white-space: nowrap;
-    padding-top: 2px;
-  }
-
-  .exp-company {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 12px;
-    letter-spacing: 0.03em;
-  }
-
-  .exp-desc {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.75;
-  }
-
-  .exp-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
-  }
+  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 16px; }
+  .exp-role { font-size: 15px; font-weight: 500; color: var(--text); }
+  .exp-date { font-family: var(--mono); font-size: 11px; color: var(--text-dim); white-space: nowrap; padding-top: 2px; }
+  .exp-company { font-family: var(--mono); font-size: 12px; color: var(--accent); margin-bottom: 12px; letter-spacing: 0.03em; }
+  .exp-desc { font-size: 14px; color: var(--text-muted); line-height: 1.75; }
+  .exp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
   .tag {
     font-family: var(--mono);
@@ -501,12 +391,7 @@
     text-transform: uppercase;
   }
 
-  /* EDUCATION */
-  .edu-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
+  .edu-list { display: flex; flex-direction: column; gap: 2px; }
 
   .edu-item {
     padding: 28px;
@@ -519,32 +404,10 @@
     transition: border-color 0.2s, background 0.2s;
   }
 
-  .edu-item:hover {
-    border-color: var(--border-hover);
-    background: var(--bg3);
-  }
-
-  .edu-year {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    min-width: 60px;
-    padding-top: 3px;
-  }
-
-  .edu-degree {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .edu-school {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.03em;
-  }
+  .edu-item:hover { border-color: var(--border-hover); background: var(--bg3); }
+  .edu-year { font-family: var(--mono); font-size: 11px; color: var(--text-dim); min-width: 60px; padding-top: 3px; }
+  .edu-degree { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .edu-school { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.03em; }
 
   .edu-badge {
     margin-left: auto;
@@ -559,12 +422,7 @@
     letter-spacing: 0.05em;
   }
 
-  /* CERTS */
-  .cert-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
+  .cert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 
   .cert-item {
     padding: 24px;
@@ -576,31 +434,10 @@
     opacity: 0.5;
   }
 
-  .cert-item:hover {
-    border-color: var(--border-hover);
-    background: var(--bg3);
-    opacity: 0.8;
-  }
-
-  .cert-name {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .cert-org {
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .cert-status {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-top: 10px;
-    letter-spacing: 0.05em;
-  }
+  .cert-item:hover { border-color: var(--border-hover); background: var(--bg3); opacity: 0.8; }
+  .cert-name { font-family: var(--mono); font-size: 13px; color: var(--text); margin-bottom: 6px; }
+  .cert-org { font-size: 11px; color: var(--text-dim); }
+  .cert-status { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-top: 10px; letter-spacing: 0.05em; }
 
   .cert-note {
     font-family: var(--mono);
@@ -613,13 +450,7 @@
     border-radius: 2px;
   }
 
-  /* RESPONSIVE */
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    margin-bottom: 32px;
-  }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 32px; }
 
   .contact-item {
     display: flex;
@@ -633,33 +464,11 @@
     transition: border-color 0.2s, background 0.2s;
   }
 
-  .contact-item:hover {
-    border-color: var(--border-hover);
-    background: var(--bg3);
-  }
+  .contact-item:hover { border-color: var(--border-hover); background: var(--bg3); }
+  .contact-icon { font-family: var(--mono); font-size: 16px; color: var(--accent); min-width: 20px; }
+  .contact-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+  .contact-value { font-size: 14px; color: var(--text); }
 
-  .contact-icon {
-    font-family: var(--mono);
-    font-size: 16px;
-    color: var(--accent);
-    min-width: 20px;
-  }
-
-  .contact-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 2px;
-  }
-
-  .contact-value {
-    font-size: 14px;
-    color: var(--text);
-  }
-
-  /* FOOTER */
   footer {
     position: relative;
     z-index: 1;
@@ -668,21 +477,11 @@
     border-top: 1px solid var(--border);
   }
 
-  .footer-text {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-  }
-
+  .footer-text { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.08em; }
   .footer-text span { color: var(--accent); }
 
-  /* PROJECTS GRID */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
+  /* PROJECTS GRID — 2 cols, auto-rows */
+  .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
 
   .project-card {
     padding: 28px 24px;
@@ -709,28 +508,9 @@
   .project-card:hover { border-color: var(--border-hover); background: var(--bg3); }
   .project-card:hover::before { opacity: 1; }
 
-  .project-code {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 10px;
-  }
-
-  .project-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-
-  .project-desc {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 16px;
-  }
-
+  .project-code { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 10px; }
+  .project-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .project-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
   .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 
   .project-tag {
@@ -749,19 +529,9 @@
   .project-card.coming-soon:hover { border-color: var(--border); background: var(--bg2); }
   .project-card.coming-soon::before { display: none; }
 
-  /* FADE IN ANIMATION */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
+  .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-  .fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* RESPONSIVE */
   @media (max-width: 640px) {
     nav { padding: 16px 24px; }
     .nav-links { display: none; }
@@ -778,7 +548,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="#hero" class="nav-logo">voax<span>sec</span>.com</a>
   <ul class="nav-links">
@@ -789,13 +558,12 @@
     <li><a href="support.html">Support</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
-      <span class="toggle-label">Light</span>
-    </button>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
 </nav>
 
-<!-- HERO -->
 <section id="hero">
   <div class="hero-status">Available for opportunities</div>
   <h1>Xavier<br><em>Olvera</em></h1>
@@ -819,24 +587,13 @@
 
 <hr class="divider">
 
-<!-- ABOUT -->
 <section id="about">
   <p class="section-label">About me</p>
   <div class="about-grid fade-up">
     <div class="about-text">
-      <p>
-        I'm an IT Support Specialist with hands-on experience managing Office 365,
-        Active Directory, and remote technical support at a nonprofit organization.
-      </p>
-      <p>
-        My background in network administration drives my passion for cybersecurity.
-        I'm focused on building expertise in penetration testing, network security,
-        and ethical hacking — starting with my Bachelor's degree this September.
-      </p>
-      <p>
-        I believe in learning by doing. Every system I support, every network I
-        configure, and every problem I solve brings me closer to my goal.
-      </p>
+      <p>I'm an IT Support Specialist with hands-on experience managing Office 365, Active Directory, and remote technical support at a nonprofit organization.</p>
+      <p>My background in network administration drives my passion for cybersecurity. I'm focused on building expertise in penetration testing, network security, and ethical hacking — starting with my Bachelor's degree this September.</p>
+      <p>I believe in learning by doing. Every system I support, every network I configure, and every problem I solve brings me closer to my goal.</p>
     </div>
     <div class="about-stats">
       <div class="stat-item">
@@ -857,7 +614,6 @@
 
 <hr class="divider">
 
-<!-- EXPERIENCE -->
 <section id="experience">
   <p class="section-label">Experience</p>
   <div class="exp-list fade-up">
@@ -867,11 +623,7 @@
         <div class="exp-date">Present</div>
       </div>
       <div class="exp-company">Sinergia Inc. — New York, NY</div>
-      <div class="exp-desc">
-        Managing Office 365 and Active Directory user accounts for a nonprofit
-        serving individuals with developmental needs. Providing remote technical
-        support and software training to staff across multiple programs.
-      </div>
+      <div class="exp-desc">Managing Office 365 and Active Directory user accounts for a nonprofit serving individuals with developmental needs. Providing remote technical support and software training to staff across multiple programs.</div>
       <div class="exp-tags">
         <span class="tag">Office 365</span>
         <span class="tag">Active Directory</span>
@@ -885,7 +637,6 @@
 
 <hr class="divider">
 
-<!-- EDUCATION -->
 <section id="education">
   <p class="section-label">Education</p>
   <div class="edu-list fade-up">
@@ -909,7 +660,6 @@
 
 <hr class="divider">
 
-<!-- CERTIFICATIONS -->
 <section id="certifications">
   <p class="section-label">Certifications</p>
   <div class="cert-grid fade-up">
@@ -957,10 +707,7 @@
     <a href="password-generator.html" class="project-card">
       <div class="project-code">PRJ_01</div>
       <div class="project-name">Password Generator</div>
-      <div class="project-desc">
-        A secure password and passphrase generator. Supports custom length,
-        character types, separators, and uses cryptographically secure randomness.
-      </div>
+      <div class="project-desc">A secure password and passphrase generator. Supports custom length, character types, separators, and uses cryptographically secure randomness.</div>
       <div class="project-tags">
         <span class="project-tag">HTML</span>
         <span class="project-tag">CSS</span>
@@ -972,10 +719,7 @@
     <a href="ip-lookup.html" class="project-card">
       <div class="project-code">PRJ_02</div>
       <div class="project-name">IP Lookup Tool</div>
-      <div class="project-desc">
-        Enter any IP address and get geolocation, ISP info, and blacklist status.
-        Built using public security APIs.
-      </div>
+      <div class="project-desc">Enter any IP address and get geolocation, ISP info, and blacklist status. Built using public security APIs.</div>
       <div class="project-tags">
         <span class="project-tag">JavaScript</span>
         <span class="project-tag">API</span>
@@ -986,14 +730,23 @@
     <a href="chatbot.html" class="project-card">
       <div class="project-code">PRJ_03</div>
       <div class="project-name">VoaxSec AI Assistant</div>
-      <div class="project-desc">
-        AI-powered IT support chatbot. Ask anything about your computer,
-        network, or security — powered by Claude AI.
-      </div>
+      <div class="project-desc">AI-powered IT support chatbot. Ask anything about your computer, network, or security — powered by Claude AI.</div>
       <div class="project-tags">
         <span class="project-tag">Claude AI</span>
         <span class="project-tag">JavaScript</span>
         <span class="project-tag">IT Support</span>
+      </div>
+    </a>
+
+    <a href="polymarket-analyzer.html" class="project-card">
+      <div class="project-code">PRJ_04</div>
+      <div class="project-name">Polymarket AI Analyzer</div>
+      <div class="project-desc">Real-time prediction market dashboard powered by Claude AI. Search any event, view live probabilities, and get intelligent analysis with context, key factors, and market bias detection.</div>
+      <div class="project-tags">
+        <span class="project-tag">Claude AI</span>
+        <span class="project-tag">JavaScript</span>
+        <span class="project-tag">REST API</span>
+        <span class="project-tag">Workers</span>
       </div>
     </a>
 
@@ -1002,7 +755,6 @@
 
 <hr class="divider">
 
-<!-- CONTACT -->
 <section id="contact">
   <p class="section-label">Contact</p>
   <div class="contact-grid fade-up">
@@ -1042,43 +794,28 @@
 </footer>
 
 <script>
-  // Fade in on scroll
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(el => {
-      if (el.isIntersecting) {
-        el.target.classList.add('visible');
-        observer.unobserve(el.target);
-      }
+      if (el.isIntersecting) { el.target.classList.add('visible'); observer.unobserve(el.target); }
     });
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // Nav active state
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
 
   window.addEventListener('scroll', () => {
     let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id');
-    });
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id'); });
     navLinks.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current
-        ? 'var(--accent)' : '';
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
     });
   });
 
-  // ─────────────────────────────────────────────
-  // THEME TOGGLE — Light / Dark
-  // Default: light. Persists via localStorage.
-  // ─────────────────────────────────────────────
   (function() {
-    // Check saved preference; default is light
     const saved = localStorage.getItem('voaxsec-theme');
-    if (saved === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
+    if (saved === 'dark') document.documentElement.classList.add('dark');
     updateToggleLabel();
   })();
 
@@ -1090,10 +827,8 @@
 
   function updateToggleLabel() {
     const isDark = document.documentElement.classList.contains('dark');
-    const labels = document.querySelectorAll('.toggle-label');
-    labels.forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
+    document.querySelectorAll('.toggle-label').forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
   }
-
 </script>
 
 </body>
