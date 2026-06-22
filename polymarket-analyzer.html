@@ -212,8 +212,8 @@
 
   <div class="disclaimer">
     // Educational &amp; portfolio project. Not financial advice.<br>
-    // Match data sourced from official FIFA World Cup 2026 schedule. Results updated through Jun 18, 2026.<br>
-    // Upcoming match odds are estimated from FIFA rankings and bookmaker consensus. Built by Xavier Olvera · VoaxSec.
+    // Match data sourced from official FIFA World Cup 2026 schedule. Results updated through Jun 22, 2026.<br>
+    // Upcoming match odds start from FIFA ranking/bookmaker baselines, then get nudged (⟳) using each team's actual group-stage points, goal difference, and recent form once they've played. AI analysis is grounded in this same real data — not generic guesses. Built by Xavier Olvera · VoaxSec.
   </div>
 </div>
 
@@ -223,94 +223,94 @@
 <script>
 const WORKER_URL = 'https://voaxsec-proxy.voaxsec.workers.dev';
 
-// ─── REAL FIFA WORLD CUP 2026 FIXTURES ───
-// Results as of June 18, 2026. score: null = upcoming
-// home_pct/draw_pct/away_pct = odds for upcoming matches (from rankings/bookmakers)
+// ─── REAL FIFA WORLD CUP 2026 FIXTURES — Updated June 22, 2026 ───
+// Results verified via ESPN, CBS Sports, Yahoo Sports as of June 22, 2026.
+// score: null = not yet played. Group-stage matchday 3 still in progress.
 const FIXTURES = [
-  // ── GROUP STAGE ──
-  // Group A
+  // ── GROUP A ── (Mexico 6pts, S.Korea 3pts, Czechia 1pt, S.Africa 1pt)
   {group:'A', home:'Mexico',     flag_h:'🇲🇽', away:'South Africa', flag_a:'🇿🇦', stage:'Group Stage', date:'Jun 11',  venue:'Estadio Azteca, Mexico City',    score:'2-0', result:'Mexico win'},
   {group:'A', home:'South Korea',flag_h:'🇰🇷', away:'Czechia',      flag_a:'🇨🇿', stage:'Group Stage', date:'Jun 11',  venue:'Estadio Akron, Zapopan',         score:'2-1', result:'South Korea win'},
   {group:'A', home:'Czechia',    flag_h:'🇨🇿', away:'South Africa', flag_a:'🇿🇦', stage:'Group Stage', date:'Jun 18',  venue:'Mercedes-Benz Stadium, Atlanta', score:'1-1', result:'Draw'},
-  {group:'A', home:'Mexico',     flag_h:'🇲🇽', away:'South Korea',  flag_a:'🇰🇷', stage:'Group Stage', date:'Jun 18',  venue:'Estadio Akron, Zapopan',         score:null,  home_pct:48, draw_pct:26, away_pct:26},
-  {group:'A', home:'Czechia',    flag_h:'🇨🇿', away:'Mexico',       flag_a:'🇲🇽', stage:'Group Stage', date:'Jun 24',  venue:'Estadio Azteca, Mexico City',    score:null,  home_pct:32, draw_pct:26, away_pct:42},
-  {group:'A', home:'South Africa',flag_h:'🇿🇦',away:'South Korea',  flag_a:'🇰🇷', stage:'Group Stage', date:'Jun 24',  venue:'Estadio BBVA, Monterrey',        score:null,  home_pct:28, draw_pct:28, away_pct:44},
-  // Group B
+  {group:'A', home:'Mexico',     flag_h:'🇲🇽', away:'South Korea',  flag_a:'🇰🇷', stage:'Group Stage', date:'Jun 18',  venue:'Estadio Akron, Zapopan',         score:'1-0', result:'Mexico win'},
+  {group:'A', home:'Czechia',    flag_h:'🇨🇿', away:'Mexico',       flag_a:'🇲🇽', stage:'Group Stage', date:'Jun 24',  venue:'Estadio Azteca, Mexico City',    score:null,  home_pct:18, draw_pct:24, away_pct:58},
+  {group:'A', home:'South Africa',flag_h:'🇿🇦',away:'South Korea',  flag_a:'🇰🇷', stage:'Group Stage', date:'Jun 24',  venue:'Estadio BBVA, Monterrey',        score:null,  home_pct:24, draw_pct:28, away_pct:48},
+  // ── GROUP B ── (Canada 4pts, Switzerland 4pts, Bosnia 1pt, Qatar 1pt)
   {group:'B', home:'Canada',     flag_h:'🇨🇦', away:'Bosnia & Herz.',flag_a:'🇧🇦',stage:'Group Stage', date:'Jun 12',  venue:'Toronto Stadium, Toronto',       score:'1-1', result:'Draw'},
   {group:'B', home:'Qatar',      flag_h:'🇶🇦', away:'Switzerland',  flag_a:'🇨🇭', stage:'Group Stage', date:'Jun 13',  venue:"Levi's Stadium, Santa Clara",    score:'1-1', result:'Draw'},
-  {group:'B', home:'Switzerland',flag_h:'🇨🇭', away:'Bosnia & Herz.',flag_a:'🇧🇦',stage:'Group Stage', date:'Jun 18',  venue:'SoFi Stadium, Inglewood',        score:null,  home_pct:55, draw_pct:25, away_pct:20},
-  {group:'B', home:'Canada',     flag_h:'🇨🇦', away:'Qatar',        flag_a:'🇶🇦', stage:'Group Stage', date:'Jun 18',  venue:'BC Place, Vancouver',            score:null,  home_pct:62, draw_pct:22, away_pct:16},
-  {group:'B', home:'Switzerland',flag_h:'🇨🇭', away:'Canada',       flag_a:'🇨🇦', stage:'Group Stage', date:'Jun 24',  venue:'BC Place, Vancouver',            score:null,  home_pct:42, draw_pct:26, away_pct:32},
-  {group:'B', home:'Bosnia & Herz.',flag_h:'🇧🇦',away:'Qatar',      flag_a:'🇶🇦', stage:'Group Stage', date:'Jun 24',  venue:'Lumen Field, Seattle',           score:null,  home_pct:44, draw_pct:28, away_pct:28},
-  // Group C
+  {group:'B', home:'Switzerland',flag_h:'🇨🇭', away:'Bosnia & Herz.',flag_a:'🇧🇦',stage:'Group Stage', date:'Jun 18',  venue:'SoFi Stadium, Inglewood',        score:'4-1', result:'Switzerland win'},
+  {group:'B', home:'Canada',     flag_h:'🇨🇦', away:'Qatar',        flag_a:'🇶🇦', stage:'Group Stage', date:'Jun 18',  venue:'BC Place, Vancouver',            score:'6-0', result:'Canada win'},
+  {group:'B', home:'Switzerland',flag_h:'🇨🇭', away:'Canada',       flag_a:'🇨🇦', stage:'Group Stage', date:'Jun 24',  venue:'BC Place, Vancouver',            score:null,  home_pct:36, draw_pct:28, away_pct:36},
+  {group:'B', home:'Bosnia & Herz.',flag_h:'🇧🇦',away:'Qatar',      flag_a:'🇶🇦', stage:'Group Stage', date:'Jun 24',  venue:'Lumen Field, Seattle',           score:null,  home_pct:40, draw_pct:30, away_pct:30},
+  // ── GROUP C ── (Brazil 4pts, Morocco 4pts, Scotland 3pts, Haiti 0pts)
   {group:'C', home:'Brazil',     flag_h:'🇧🇷', away:'Morocco',      flag_a:'🇲🇦', stage:'Group Stage', date:'Jun 13',  venue:'MetLife Stadium, NJ',            score:'1-1', result:'Draw'},
-  {group:'C', home:'Haiti',      flag_h:'🇭🇹', away:'Scotland',     flag_a:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', stage:'Group Stage', date:'Jun 13',  venue:'Gillette Stadium, Foxborough',   score:'0-1', result:'Scotland win'},
-  {group:'C', home:'Scotland',   flag_h:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',away:'Morocco',      flag_a:'🇲🇦', stage:'Group Stage', date:'Jun 19',  venue:'Gillette Stadium, Foxborough',   score:null,  home_pct:30, draw_pct:28, away_pct:42},
-  {group:'C', home:'Brazil',     flag_h:'🇧🇷', away:'Haiti',        flag_a:'🇭🇹', stage:'Group Stage', date:'Jun 19',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:84, draw_pct:11, away_pct:5},
-  {group:'C', home:'Scotland',   flag_h:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',away:'Brazil',       flag_a:'🇧🇷', stage:'Group Stage', date:'Jun 24',  venue:'Hard Rock Stadium, Miami',       score:null,  home_pct:14, draw_pct:22, away_pct:64},
-  {group:'C', home:'Morocco',    flag_h:'🇲🇦', away:'Haiti',        flag_a:'🇭🇹', stage:'Group Stage', date:'Jun 24',  venue:'Mercedes-Benz Stadium, Atlanta', score:null,  home_pct:68, draw_pct:20, away_pct:12},
-  // Group D
+  {group:'C', home:'Haiti',      flag_h:'🇭🇹', away:'Scotland',     flag_a:'🏴', stage:'Group Stage', date:'Jun 13',  venue:'Gillette Stadium, Foxborough',   score:'0-1', result:'Scotland win'},
+  {group:'C', home:'Scotland',   flag_h:'🏴',away:'Morocco',      flag_a:'🇲🇦', stage:'Group Stage', date:'Jun 19',  venue:'Gillette Stadium, Foxborough',   score:'0-1', result:'Morocco win'},
+  {group:'C', home:'Brazil',     flag_h:'🇧🇷', away:'Haiti',        flag_a:'🇭🇹', stage:'Group Stage', date:'Jun 19',  venue:'Lincoln Financial, Philadelphia', score:'3-0', result:'Brazil win'},
+  {group:'C', home:'Scotland',   flag_h:'🏴',away:'Brazil',       flag_a:'🇧🇷', stage:'Group Stage', date:'Jun 24',  venue:'Hard Rock Stadium, Miami',       score:null,  home_pct:14, draw_pct:24, away_pct:62},
+  {group:'C', home:'Morocco',    flag_h:'🇲🇦', away:'Haiti',        flag_a:'🇭🇹', stage:'Group Stage', date:'Jun 24',  venue:'Mercedes-Benz Stadium, Atlanta', score:null,  home_pct:74, draw_pct:18, away_pct:8},
+  // ── GROUP D ── (USA 6pts, Australia 3pts, Paraguay 3pts, Turkiye 0pts)
   {group:'D', home:'USA',        flag_h:'🇺🇸', away:'Paraguay',     flag_a:'🇵🇾', stage:'Group Stage', date:'Jun 12',  venue:'SoFi Stadium, Inglewood',        score:'4-1', result:'USA win'},
   {group:'D', home:'Australia',  flag_h:'🇦🇺', away:'Türkiye',      flag_a:'🇹🇷', stage:'Group Stage', date:'Jun 14',  venue:'BC Place, Vancouver',            score:'2-0', result:'Australia win'},
-  {group:'D', home:'USA',        flag_h:'🇺🇸', away:'Australia',    flag_a:'🇦🇺', stage:'Group Stage', date:'Jun 19',  venue:'Lumen Field, Seattle',           score:null,  home_pct:50, draw_pct:24, away_pct:26},
-  {group:'D', home:'Türkiye',    flag_h:'🇹🇷', away:'Paraguay',     flag_a:'🇵🇾', stage:'Group Stage', date:'Jun 19',  venue:"Levi's Stadium, Santa Clara",    score:null,  home_pct:46, draw_pct:28, away_pct:26},
-  {group:'D', home:'Türkiye',    flag_h:'🇹🇷', away:'USA',          flag_a:'🇺🇸', stage:'Group Stage', date:'Jun 25',  venue:'SoFi Stadium, Inglewood',        score:null,  home_pct:28, draw_pct:26, away_pct:46},
-  {group:'D', home:'Paraguay',   flag_h:'🇵🇾', away:'Australia',    flag_a:'🇦🇺', stage:'Group Stage', date:'Jun 25',  venue:"Levi's Stadium, Santa Clara",    score:null,  home_pct:30, draw_pct:28, away_pct:42},
-  // Group E
+  {group:'D', home:'USA',        flag_h:'🇺🇸', away:'Australia',    flag_a:'🇦🇺', stage:'Group Stage', date:'Jun 19',  venue:'Lumen Field, Seattle',           score:'2-0', result:'USA win'},
+  {group:'D', home:'Paraguay',   flag_h:'🇵🇾', away:'Türkiye',      flag_a:'🇹🇷', stage:'Group Stage', date:'Jun 19',  venue:"Levi's Stadium, Santa Clara",    score:'1-0', result:'Paraguay win'},
+  {group:'D', home:'Türkiye',    flag_h:'🇹🇷', away:'USA',          flag_a:'🇺🇸', stage:'Group Stage', date:'Jun 25',  venue:'SoFi Stadium, Inglewood',        score:null,  home_pct:14, draw_pct:22, away_pct:64},
+  {group:'D', home:'Paraguay',   flag_h:'🇵🇾', away:'Australia',    flag_a:'🇦🇺', stage:'Group Stage', date:'Jun 25',  venue:"Levi's Stadium, Santa Clara",    score:null,  home_pct:34, draw_pct:30, away_pct:36},
+  // ── GROUP E ── (Germany 6pts, Ivory Coast 3pts, Curacao 1pt, Ecuador 1pt)
   {group:'E', home:'Germany',    flag_h:'🇩🇪', away:'Curaçao',      flag_a:'🇨🇼', stage:'Group Stage', date:'Jun 14',  venue:'Houston Stadium, Houston',       score:'7-1', result:'Germany win'},
   {group:'E', home:'Ivory Coast',flag_h:'🇨🇮', away:'Ecuador',      flag_a:'🇪🇨', stage:'Group Stage', date:'Jun 14',  venue:'Philadelphia Stadium',           score:'1-0', result:'Ivory Coast win'},
-  {group:'E', home:'Germany',    flag_h:'🇩🇪', away:'Ivory Coast',  flag_a:'🇨🇮', stage:'Group Stage', date:'Jun 20',  venue:'BMO Field, Toronto',             score:null,  home_pct:54, draw_pct:24, away_pct:22},
-  {group:'E', home:'Ecuador',    flag_h:'🇪🇨', away:'Curaçao',      flag_a:'🇨🇼', stage:'Group Stage', date:'Jun 20',  venue:'Arrowhead Stadium, Kansas City', score:null,  home_pct:72, draw_pct:18, away_pct:10},
-  {group:'E', home:'Ecuador',    flag_h:'🇪🇨', away:'Germany',      flag_a:'🇩🇪', stage:'Group Stage', date:'Jun 25',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:22, draw_pct:24, away_pct:54},
-  {group:'E', home:'Curaçao',    flag_h:'🇨🇼', away:'Ivory Coast',  flag_a:'🇨🇮', stage:'Group Stage', date:'Jun 25',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:12, draw_pct:22, away_pct:66},
-  // Group F
+  {group:'E', home:'Germany',    flag_h:'🇩🇪', away:'Ivory Coast',  flag_a:'🇨🇮', stage:'Group Stage', date:'Jun 20',  venue:'BMO Field, Toronto',             score:'2-1', result:'Germany win'},
+  {group:'E', home:'Ecuador',    flag_h:'🇪🇨', away:'Curaçao',      flag_a:'🇨🇼', stage:'Group Stage', date:'Jun 20',  venue:'Arrowhead Stadium, Kansas City', score:'0-0', result:'Draw'},
+  {group:'E', home:'Ecuador',    flag_h:'🇪🇨', away:'Germany',      flag_a:'🇩🇪', stage:'Group Stage', date:'Jun 25',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:10, draw_pct:22, away_pct:68},
+  {group:'E', home:'Curaçao',    flag_h:'🇨🇼', away:'Ivory Coast',  flag_a:'🇨🇮', stage:'Group Stage', date:'Jun 25',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:18, draw_pct:26, away_pct:56},
+  // ── GROUP F ── (Netherlands 4pts, Japan 4pts, Sweden 3pts, Tunisia 0pts)
   {group:'F', home:'Netherlands',flag_h:'🇳🇱', away:'Japan',        flag_a:'🇯🇵', stage:'Group Stage', date:'Jun 14',  venue:'Dallas Stadium, Arlington',      score:'2-2', result:'Draw'},
   {group:'F', home:'Sweden',     flag_h:'🇸🇪', away:'Tunisia',      flag_a:'🇹🇳', stage:'Group Stage', date:'Jun 14',  venue:'Monterrey Stadium, Monterrey',   score:'5-1', result:'Sweden win'},
-  {group:'F', home:'Netherlands',flag_h:'🇳🇱', away:'Sweden',       flag_a:'🇸🇪', stage:'Group Stage', date:'Jun 20',  venue:'NRG Stadium, Houston',           score:null,  home_pct:52, draw_pct:24, away_pct:24},
-  {group:'F', home:'Tunisia',    flag_h:'🇹🇳', away:'Japan',        flag_a:'🇯🇵', stage:'Group Stage', date:'Jun 21',  venue:'Estadio BBVA, Monterrey',        score:null,  home_pct:26, draw_pct:28, away_pct:46},
-  {group:'F', home:'Japan',      flag_h:'🇯🇵', away:'Sweden',       flag_a:'🇸🇪', stage:'Group Stage', date:'Jun 25',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:34, draw_pct:26, away_pct:40},
-  {group:'F', home:'Tunisia',    flag_h:'🇹🇳', away:'Netherlands',  flag_a:'🇳🇱', stage:'Group Stage', date:'Jun 25',  venue:'Arrowhead Stadium, Kansas City', score:null,  home_pct:14, draw_pct:22, away_pct:64},
-  // Group G
+  {group:'F', home:'Netherlands',flag_h:'🇳🇱', away:'Sweden',       flag_a:'🇸🇪', stage:'Group Stage', date:'Jun 20',  venue:'NRG Stadium, Houston',           score:'5-1', result:'Netherlands win'},
+  {group:'F', home:'Tunisia',    flag_h:'🇹🇳', away:'Japan',        flag_a:'🇯🇵', stage:'Group Stage', date:'Jun 20',  venue:'Estadio BBVA, Monterrey',        score:'0-4', result:'Japan win'},
+  {group:'F', home:'Japan',      flag_h:'🇯🇵', away:'Sweden',       flag_a:'🇸🇪', stage:'Group Stage', date:'Jun 25',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:38, draw_pct:28, away_pct:34},
+  {group:'F', home:'Tunisia',    flag_h:'🇹🇳', away:'Netherlands',  flag_a:'🇳🇱', stage:'Group Stage', date:'Jun 25',  venue:'Arrowhead Stadium, Kansas City', score:null,  home_pct:8,  draw_pct:18, away_pct:74},
+  // ── GROUP G ── (Egypt 4pts, Iran 2pts, Belgium 2pts, New Zealand 1pt)
   {group:'G', home:'Belgium',    flag_h:'🇧🇪', away:'Egypt',        flag_a:'🇪🇬', stage:'Group Stage', date:'Jun 15',  venue:'Lumen Field, Seattle',           score:'1-1', result:'Draw'},
   {group:'G', home:'Iran',       flag_h:'🇮🇷', away:'New Zealand',  flag_a:'🇳🇿', stage:'Group Stage', date:'Jun 15',  venue:'SoFi Stadium, Inglewood',        score:'2-2', result:'Draw'},
-  {group:'G', home:'Belgium',    flag_h:'🇧🇪', away:'Iran',         flag_a:'🇮🇷', stage:'Group Stage', date:'Jun 21',  venue:'SoFi Stadium, Inglewood',        score:null,  home_pct:62, draw_pct:22, away_pct:16},
-  {group:'G', home:'New Zealand',flag_h:'🇳🇿', away:'Egypt',        flag_a:'🇪🇬', stage:'Group Stage', date:'Jun 21',  venue:'BC Place, Vancouver',            score:null,  home_pct:32, draw_pct:30, away_pct:38},
-  {group:'G', home:'Egypt',      flag_h:'🇪🇬', away:'Iran',         flag_a:'🇮🇷', stage:'Group Stage', date:'Jun 26',  venue:'Lumen Field, Seattle',           score:null,  home_pct:40, draw_pct:28, away_pct:32},
-  {group:'G', home:'New Zealand',flag_h:'🇳🇿', away:'Belgium',      flag_a:'🇧🇪', stage:'Group Stage', date:'Jun 26',  venue:'BC Place, Vancouver',            score:null,  home_pct:14, draw_pct:20, away_pct:66},
-  // Group H
+  {group:'G', home:'Belgium',    flag_h:'🇧🇪', away:'Iran',         flag_a:'🇮🇷', stage:'Group Stage', date:'Jun 21',  venue:'SoFi Stadium, Inglewood',        score:'0-0', result:'Draw'},
+  {group:'G', home:'New Zealand',flag_h:'🇳🇿', away:'Egypt',        flag_a:'🇪🇬', stage:'Group Stage', date:'Jun 21',  venue:'BC Place, Vancouver',            score:'1-3', result:'Egypt win'},
+  {group:'G', home:'Egypt',      flag_h:'🇪🇬', away:'Iran',         flag_a:'🇮🇷', stage:'Group Stage', date:'Jun 26',  venue:'Lumen Field, Seattle',           score:null,  home_pct:46, draw_pct:32, away_pct:22},
+  {group:'G', home:'New Zealand',flag_h:'🇳🇿', away:'Belgium',      flag_a:'🇧🇪', stage:'Group Stage', date:'Jun 26',  venue:'BC Place, Vancouver',            score:null,  home_pct:22, draw_pct:28, away_pct:50},
+  // ── GROUP H ── (Spain 4pts, Uruguay 2pts, Cape Verde 2pts, Saudi Arabia 1pt)
   {group:'H', home:'Spain',      flag_h:'🇪🇸', away:'Cape Verde',   flag_a:'🇨🇻', stage:'Group Stage', date:'Jun 15',  venue:'Mercedes-Benz Stadium, Atlanta', score:'0-0', result:'Draw'},
   {group:'H', home:'Saudi Arabia',flag_h:'🇸🇦',away:'Uruguay',      flag_a:'🇺🇾', stage:'Group Stage', date:'Jun 15',  venue:'Hard Rock Stadium, Miami',       score:'1-1', result:'Draw'},
-  {group:'H', home:'Spain',      flag_h:'🇪🇸', away:'Saudi Arabia', flag_a:'🇸🇦', stage:'Group Stage', date:'Jun 21',  venue:'Mercedes-Benz Stadium, Atlanta', score:null,  home_pct:68, draw_pct:20, away_pct:12},
-  {group:'H', home:'Uruguay',    flag_h:'🇺🇾', away:'Cape Verde',   flag_a:'🇨🇻', stage:'Group Stage', date:'Jun 21',  venue:'Hard Rock Stadium, Miami',       score:null,  home_pct:66, draw_pct:20, away_pct:14},
-  {group:'H', home:'Cape Verde', flag_h:'🇨🇻', away:'Saudi Arabia', flag_a:'🇸🇦', stage:'Group Stage', date:'Jun 26',  venue:'NRG Stadium, Houston',           score:null,  home_pct:34, draw_pct:28, away_pct:38},
-  {group:'H', home:'Uruguay',    flag_h:'🇺🇾', away:'Spain',        flag_a:'🇪🇸', stage:'Group Stage', date:'Jun 26',  venue:'Estadio Akron, Zapopan',         score:null,  home_pct:22, draw_pct:24, away_pct:54},
-  // Group I
+  {group:'H', home:'Spain',      flag_h:'🇪🇸', away:'Saudi Arabia', flag_a:'🇸🇦', stage:'Group Stage', date:'Jun 21',  venue:'Mercedes-Benz Stadium, Atlanta', score:'4-0', result:'Spain win'},
+  {group:'H', home:'Uruguay',    flag_h:'🇺🇾', away:'Cape Verde',   flag_a:'🇨🇻', stage:'Group Stage', date:'Jun 21',  venue:'Hard Rock Stadium, Miami',       score:'2-2', result:'Draw'},
+  {group:'H', home:'Cape Verde', flag_h:'🇨🇻', away:'Saudi Arabia', flag_a:'🇸🇦', stage:'Group Stage', date:'Jun 26',  venue:'NRG Stadium, Houston',           score:null,  home_pct:42, draw_pct:32, away_pct:26},
+  {group:'H', home:'Uruguay',    flag_h:'🇺🇾', away:'Spain',        flag_a:'🇪🇸', stage:'Group Stage', date:'Jun 26',  venue:'Estadio Akron, Zapopan',         score:null,  home_pct:16, draw_pct:26, away_pct:58},
+  // ── GROUP I ── (Norway 3pts, France 3pts, Senegal 0pts, Iraq 0pts) — MD3 in progress
   {group:'I', home:'France',     flag_h:'🇫🇷', away:'Senegal',      flag_a:'🇸🇳', stage:'Group Stage', date:'Jun 16',  venue:'MetLife Stadium, NJ',            score:'3-1', result:'France win'},
-  {group:'I', home:'Iraq',       flag_h:'🇮🇶', away:'Norway',       flag_a:'🇳🇴', stage:'Group Stage', date:'Jun 16',  venue:'Gillette Stadium, Foxborough',   score:'1-4', result:'Norway win'},
-  {group:'I', home:'France',     flag_h:'🇫🇷', away:'Iraq',         flag_a:'🇮🇶', stage:'Group Stage', date:'Jun 22',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:84, draw_pct:11, away_pct:5},
-  {group:'I', home:'Norway',     flag_h:'🇳🇴', away:'Senegal',      flag_a:'🇸🇳', stage:'Group Stage', date:'Jun 22',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:48, draw_pct:26, away_pct:26},
-  {group:'I', home:'Norway',     flag_h:'🇳🇴', away:'France',       flag_a:'🇫🇷', stage:'Group Stage', date:'Jun 26',  venue:'Gillette Stadium, Foxborough',   score:null,  home_pct:22, draw_pct:24, away_pct:54},
-  {group:'I', home:'Senegal',    flag_h:'🇸🇳', away:'Iraq',         flag_a:'🇮🇶', stage:'Group Stage', date:'Jun 26',  venue:'BMO Field, Toronto',             score:null,  home_pct:54, draw_pct:24, away_pct:22},
-  // Group J
+  {group:'I', home:'Norway',     flag_h:'🇳🇴', away:'Iraq',         flag_a:'🇮🇶', stage:'Group Stage', date:'Jun 16',  venue:'Gillette Stadium, Foxborough',   score:'4-1', result:'Norway win'},
+  {group:'I', home:'France',     flag_h:'🇫🇷', away:'Iraq',         flag_a:'🇮🇶', stage:'Group Stage', date:'Jun 22',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:80, draw_pct:14, away_pct:6},
+  {group:'I', home:'Norway',     flag_h:'🇳🇴', away:'Senegal',      flag_a:'🇸🇳', stage:'Group Stage', date:'Jun 22',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:54, draw_pct:26, away_pct:20},
+  {group:'I', home:'Norway',     flag_h:'🇳🇴', away:'France',       flag_a:'🇫🇷', stage:'Group Stage', date:'Jun 26',  venue:'Gillette Stadium, Foxborough',   score:null,  home_pct:26, draw_pct:28, away_pct:46},
+  {group:'I', home:'Senegal',    flag_h:'🇸🇳', away:'Iraq',         flag_a:'🇮🇶', stage:'Group Stage', date:'Jun 26',  venue:'BMO Field, Toronto',             score:null,  home_pct:48, draw_pct:28, away_pct:24},
+  // ── GROUP J ── (Argentina 3pts, Austria 3pts, Jordan 0pts, Algeria 0pts) — MD3 in progress
   {group:'J', home:'Argentina',  flag_h:'🇦🇷', away:'Algeria',      flag_a:'🇩🇿', stage:'Group Stage', date:'Jun 16',  venue:'Arrowhead Stadium, Kansas City', score:'3-0', result:'Argentina win'},
   {group:'J', home:'Austria',    flag_h:'🇦🇹', away:'Jordan',       flag_a:'🇯🇴', stage:'Group Stage', date:'Jun 17',  venue:"Levi's Stadium, Santa Clara",    score:'3-1', result:'Austria win'},
-  {group:'J', home:'Argentina',  flag_h:'🇦🇷', away:'Austria',      flag_a:'🇦🇹', stage:'Group Stage', date:'Jun 22',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:60, draw_pct:22, away_pct:18},
-  {group:'J', home:'Jordan',     flag_h:'🇯🇴', away:'Algeria',      flag_a:'🇩🇿', stage:'Group Stage', date:'Jun 22',  venue:"Levi's Stadium, Santa Clara",    score:null,  home_pct:36, draw_pct:28, away_pct:36},
-  {group:'J', home:'Algeria',    flag_h:'🇩🇿', away:'Austria',      flag_a:'🇦🇹', stage:'Group Stage', date:'Jun 27',  venue:'Arrowhead Stadium, Kansas City', score:null,  home_pct:28, draw_pct:26, away_pct:46},
-  {group:'J', home:'Jordan',     flag_h:'🇯🇴', away:'Argentina',    flag_a:'🇦🇷', stage:'Group Stage', date:'Jun 27',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:8,  draw_pct:16, away_pct:76},
-  // Group K
+  {group:'J', home:'Argentina',  flag_h:'🇦🇷', away:'Austria',      flag_a:'🇦🇹', stage:'Group Stage', date:'Jun 22',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:58, draw_pct:24, away_pct:18},
+  {group:'J', home:'Jordan',     flag_h:'🇯🇴', away:'Algeria',      flag_a:'🇩🇿', stage:'Group Stage', date:'Jun 22',  venue:"Levi's Stadium, Santa Clara",    score:null,  home_pct:38, draw_pct:30, away_pct:32},
+  {group:'J', home:'Algeria',    flag_h:'🇩🇿', away:'Austria',      flag_a:'🇦🇹', stage:'Group Stage', date:'Jun 27',  venue:'Arrowhead Stadium, Kansas City', score:null,  home_pct:18, draw_pct:26, away_pct:56},
+  {group:'J', home:'Jordan',     flag_h:'🇯🇴', away:'Argentina',    flag_a:'🇦🇷', stage:'Group Stage', date:'Jun 27',  venue:'AT&T Stadium, Arlington',        score:null,  home_pct:6,  draw_pct:14, away_pct:80},
+  // ── GROUP K ── (Colombia 3pts, DR Congo 1pt, Portugal 1pt, Uzbekistan 0pts)
   {group:'K', home:'Portugal',   flag_h:'🇵🇹', away:'DR Congo',     flag_a:'🇨🇩', stage:'Group Stage', date:'Jun 17',  venue:'NRG Stadium, Houston',           score:'1-1', result:'Draw'},
-  {group:'K', home:'Uzbekistan', flag_h:'🇺🇿', away:'Colombia',     flag_a:'🇨🇴', stage:'Group Stage', date:'Jun 17',  venue:'Estadio Azteca, Mexico City',    score:'1-3', result:'Colombia win'},
-  {group:'K', home:'Portugal',   flag_h:'🇵🇹', away:'Uzbekistan',   flag_a:'🇺🇿', stage:'Group Stage', date:'Jun 23',  venue:'NRG Stadium, Houston',           score:null,  home_pct:78, draw_pct:14, away_pct:8},
-  {group:'K', home:'England',    flag_h:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', away:'Ghana',       flag_a:'🇬🇭', stage:'Group Stage', date:'Jun 23',  venue:'Gillette Stadium, Foxborough',   score:null,  home_pct:64, draw_pct:22, away_pct:14},
-  {group:'K', home:'Colombia',   flag_h:'🇨🇴', away:'Portugal',     flag_a:'🇵🇹', stage:'Group Stage', date:'Jun 27',  venue:'Hard Rock Stadium, Miami',       score:null,  home_pct:24, draw_pct:24, away_pct:52},
-  {group:'K', home:'DR Congo',   flag_h:'🇨🇩', away:'Uzbekistan',   flag_a:'🇺🇿', stage:'Group Stage', date:'Jun 27',  venue:'Mercedes-Benz Stadium, Atlanta', score:null,  home_pct:46, draw_pct:28, away_pct:26},
-  // Group L
-  {group:'L', home:'England',    flag_h:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', away:'Croatia',      flag_a:'🇭🇷', stage:'Group Stage', date:'Jun 17',  venue:'AT&T Stadium, Arlington',        score:'4-2', result:'England win'},
+  {group:'K', home:'Colombia',   flag_h:'🇨🇴', away:'Uzbekistan',   flag_a:'🇺🇿', stage:'Group Stage', date:'Jun 17',  venue:'Estadio Azteca, Mexico City',    score:'3-1', result:'Colombia win'},
+  {group:'K', home:'Portugal',   flag_h:'🇵🇹', away:'Uzbekistan',   flag_a:'🇺🇿', stage:'Group Stage', date:'Jun 23',  venue:'NRG Stadium, Houston',           score:null,  home_pct:74, draw_pct:18, away_pct:8},
+  {group:'K', home:'Colombia',   flag_h:'🇨🇴', away:'DR Congo',     flag_a:'🇨🇩', stage:'Group Stage', date:'Jun 23',  venue:'Estadio Akron, Zapopan',         score:null,  home_pct:56, draw_pct:28, away_pct:16},
+  {group:'K', home:'Colombia',   flag_h:'🇨🇴', away:'Portugal',     flag_a:'🇵🇹', stage:'Group Stage', date:'Jun 27',  venue:'Hard Rock Stadium, Miami',       score:null,  home_pct:30, draw_pct:30, away_pct:40},
+  {group:'K', home:'DR Congo',   flag_h:'🇨🇩', away:'Uzbekistan',   flag_a:'🇺🇿', stage:'Group Stage', date:'Jun 27',  venue:'Mercedes-Benz Stadium, Atlanta', score:null,  home_pct:42, draw_pct:32, away_pct:26},
+  // ── GROUP L ── (England 3pts, Ghana 3pts, Panama 0pts, Croatia 0pts)
+  {group:'L', home:'England',    flag_h:'🏴', away:'Croatia',      flag_a:'🇭🇷', stage:'Group Stage', date:'Jun 17',  venue:'AT&T Stadium, Arlington',        score:'4-2', result:'England win'},
   {group:'L', home:'Ghana',      flag_h:'🇬🇭', away:'Panama',       flag_a:'🇵🇦', stage:'Group Stage', date:'Jun 17',  venue:'BMO Field, Toronto',             score:'1-0', result:'Ghana win'},
+  {group:'L', home:'England',    flag_h:'🏴', away:'Ghana',        flag_a:'🇬🇭', stage:'Group Stage', date:'Jun 23',  venue:'Gillette Stadium, Foxborough',   score:null,  home_pct:46, draw_pct:30, away_pct:24},
   {group:'L', home:'Panama',     flag_h:'🇵🇦', away:'Croatia',      flag_a:'🇭🇷', stage:'Group Stage', date:'Jun 23',  venue:'BMO Field, Toronto',             score:null,  home_pct:26, draw_pct:28, away_pct:46},
-  {group:'L', home:'Panama',     flag_h:'🇵🇦', away:'England',      flag_a:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', stage:'Group Stage', date:'Jun 27',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:8,  draw_pct:16, away_pct:76},
-  {group:'L', home:'Croatia',    flag_h:'🇭🇷', away:'Ghana',        flag_a:'🇬🇭', stage:'Group Stage', date:'Jun 27',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:46, draw_pct:28, away_pct:26},
+  {group:'L', home:'Panama',     flag_h:'🇵🇦', away:'England',      flag_a:'🏴', stage:'Group Stage', date:'Jun 27',  venue:'MetLife Stadium, NJ',            score:null,  home_pct:8,  draw_pct:16, away_pct:76},
+  {group:'L', home:'Croatia',    flag_h:'🇭🇷', away:'Ghana',        flag_a:'🇬🇭', stage:'Group Stage', date:'Jun 27',  venue:'Lincoln Financial, Philadelphia', score:null,  home_pct:34, draw_pct:30, away_pct:36},
   // ── ROUND OF 32 (TBD matchups) ──
   {group:'—', home:'TBD',        flag_h:'🏳', away:'TBD',           flag_a:'🏳', stage:'Round of 32', date:'Jun 28–Jul 3', venue:'Various',                     score:null,  home_pct:50, draw_pct:0,  away_pct:50},
   // ── ROUND OF 16 ──
@@ -326,6 +326,110 @@ const FIXTURES = [
 let allMatches = [...FIXTURES];
 let filtered   = [...FIXTURES];
 let selected   = null;
+
+// ─────────────────────────────────────────────
+// STANDINGS CALCULATOR
+// Computes live group table (P, W, D, L, GF, GA, GD, PTS) from FIXTURES.
+// This replaces static guesses with real, derived data.
+// ─────────────────────────────────────────────
+function computeStandings(group) {
+  const teams = {};
+  const ensure = (name) => {
+    if (!teams[name]) teams[name] = { team:name, mp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0, form:[] };
+    return teams[name];
+  };
+
+  FIXTURES.filter(m => m.group === group && m.score !== null).forEach(m => {
+    const [hs, as] = m.score.split('-').map(Number);
+    const home = ensure(m.home), away = ensure(m.away);
+    home.mp++; away.mp++;
+    home.gf += hs; home.ga += as;
+    away.gf += as; away.ga += hs;
+    if (hs > as) { home.w++; home.pts += 3; away.l++; home.form.push('W'); away.form.push('L'); }
+    else if (hs < as) { away.w++; away.pts += 3; home.l++; away.form.push('W'); home.form.push('L'); }
+    else { home.d++; away.d++; home.pts++; away.pts++; home.form.push('D'); away.form.push('D'); }
+  });
+
+  Object.values(teams).forEach(t => t.gd = t.gf - t.ga);
+
+  return Object.values(teams).sort((a,b) =>
+    b.pts - a.pts || b.gd - a.gd || b.gf - a.gf
+  );
+}
+
+// Get a single team's current stats + form string (e.g. "W-D-W")
+function getTeamContext(teamName, group) {
+  const table = computeStandings(group);
+  const idx = table.findIndex(t => t.team === teamName);
+  if (idx === -1) return null;
+  const t = table[idx];
+  return {
+    position: idx + 1,
+    totalTeams: table.length,
+    points: t.pts,
+    played: t.mp,
+    won: t.w, drawn: t.d, lost: t.l,
+    goalsFor: t.gf, goalsAgainst: t.ga, goalDiff: t.gd,
+    form: t.form.slice(-3).join('-') || 'No matches yet'
+  };
+}
+
+// Build a compact, human-readable context string for the AI prompt
+function buildMatchContext(m) {
+  const homeCtx = getTeamContext(m.home, m.group);
+  const awayCtx = getTeamContext(m.away, m.group);
+
+  const fmt = (name, ctx) => {
+    if (!ctx) return `${name}: no group data (knockout stage / TBD)`;
+    return `${name}: Group ${m.group} position #${ctx.position}/${ctx.totalTeams}, ${ctx.points} pts (${ctx.played}P ${ctx.won}W ${ctx.drawn}D ${ctx.lost}L), GF ${ctx.goalsFor}-GA ${ctx.goalsAgainst} (GD ${ctx.goalDiff >= 0 ? '+' : ''}${ctx.goalDiff}), recent form: ${ctx.form}`;
+  };
+
+  return `${fmt(m.home, homeCtx)}\n${fmt(m.away, awayCtx)}`;
+}
+
+// ─────────────────────────────────────────────
+// DYNAMIC PROBABILITY ADJUSTMENT
+// Takes the static home_pct/draw_pct/away_pct (rankings-based baseline)
+// and nudges them using real in-tournament form + goal difference.
+// This makes upcoming-match odds reflect what has ACTUALLY happened,
+// not just pre-tournament expectations.
+// ─────────────────────────────────────────────
+function getAdjustedOdds(m) {
+  if (m.score !== null || m.home === 'TBD') {
+    return { home_pct: m.home_pct, draw_pct: m.draw_pct, away_pct: m.away_pct, adjusted: false };
+  }
+
+  const homeCtx = getTeamContext(m.home, m.group);
+  const awayCtx = getTeamContext(m.away, m.group);
+
+  // If either team has no match history yet (e.g. matchday 1), use baseline as-is
+  if (!homeCtx || !awayCtx || homeCtx.played === 0 || awayCtx.played === 0) {
+    return { home_pct: m.home_pct, draw_pct: m.draw_pct, away_pct: m.away_pct, adjusted: false };
+  }
+
+  // Form score: GD per game + points per game, blended
+  const homeForm = (homeCtx.goalDiff / homeCtx.played) * 6 + (homeCtx.points / homeCtx.played) * 4;
+  const awayForm = (awayCtx.goalDiff / awayCtx.played) * 6 + (awayCtx.points / awayCtx.played) * 4;
+  const formDelta = homeForm - awayForm; // positive = home in better form
+
+  // Shift up to ±12 percentage points between home/away based on form delta, capped
+  const shift = Math.max(-12, Math.min(12, formDelta * 1.5));
+
+  let home_pct = m.home_pct + shift;
+  let away_pct = m.away_pct - shift;
+  let draw_pct = m.draw_pct;
+
+  // Clamp and renormalize to sum to 100
+  home_pct = Math.max(3, home_pct);
+  away_pct = Math.max(3, away_pct);
+  const total = home_pct + draw_pct + away_pct;
+  home_pct = Math.round((home_pct / total) * 100);
+  away_pct = Math.round((away_pct / total) * 100);
+  draw_pct = 100 - home_pct - away_pct;
+
+  return { home_pct, draw_pct, away_pct, adjusted: true };
+}
+
 
 // ─── Theme ───
 (function(){
@@ -356,21 +460,24 @@ function renderMatches(matches){
 
     let probHTML='';
     if(!played){
-      const lead=m.home_pct>=m.away_pct?'home':'away';
+      const odds=getAdjustedOdds(m);
+      const lead=odds.home_pct>=odds.away_pct?'home':'away';
+      const adjBadge=odds.adjusted?'<span style="font-family:var(--mono);font-size:8px;color:var(--accent);margin-left:6px;letter-spacing:0.05em;">⟳ form-adjusted</span>':'';
       probHTML=`<div class="prob-row">
         <div class="prob-cell ${lead==='home'?'lead':''}">
-          <div class="prob-val">${m.home_pct}%</div>
+          <div class="prob-val">${odds.home_pct}%</div>
           <div class="prob-lbl">${m.home.split(' ')[0]} win</div>
         </div>
         <div class="prob-cell">
-          <div class="prob-val">${m.draw_pct>0?m.draw_pct+'%':'—'}</div>
+          <div class="prob-val">${odds.draw_pct>0?odds.draw_pct+'%':'—'}</div>
           <div class="prob-lbl">Draw</div>
         </div>
         <div class="prob-cell ${lead==='away'?'lead':''}">
-          <div class="prob-val">${m.away_pct}%</div>
+          <div class="prob-val">${odds.away_pct}%</div>
           <div class="prob-lbl">${m.away.split(' ')[0]} win</div>
         </div>
-      </div>`;
+      </div>
+      ${odds.adjusted?`<div style="text-align:center;margin-bottom:8px;">${adjBadge}</div>`:''}`;
     } else {
       const [hs,as]=m.score.split('-');
       probHTML=`<div class="score-row">
@@ -407,17 +514,34 @@ function selectMatch(m,cardEl){
   selected=m;
   document.getElementById('btn-analyze').disabled=false;
   const played=m.score!==null;
+  const odds=played?null:getAdjustedOdds(m);
   const probInfo=played
     ?`<div>Final score: <span style="color:var(--accent)">${m.score}</span></div><div>Result: <span style="color:var(--accent)">${m.result}</span></div>`
-    :`<div>${m.home} win: <span style="color:var(--accent)">${m.home_pct}%</span></div>
-     ${m.draw_pct>0?`<div>Draw: <span style="color:var(--accent)">${m.draw_pct}%</span></div>`:''}
-     <div>${m.away} win: <span style="color:var(--accent)">${m.away_pct}%</span></div>`;
+    :`<div>${m.home} win: <span style="color:var(--accent)">${odds.home_pct}%</span></div>
+     ${odds.draw_pct>0?`<div>Draw: <span style="color:var(--accent)">${odds.draw_pct}%</span></div>`:''}
+     <div>${m.away} win: <span style="color:var(--accent)">${odds.away_pct}%</span></div>
+     ${odds.adjusted?`<div style="color:var(--accent);font-size:9px;margin-top:4px;">⟳ Adjusted from baseline using live group-stage form</div>`:''}`;
+
+  // Build a small standings context block if both teams have group data
+  let contextHTML='';
+  if(!played && m.group!=='—'){
+    const hc=getTeamContext(m.home,m.group);
+    const ac=getTeamContext(m.away,m.group);
+    if(hc && ac && hc.played>0){
+      contextHTML=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+        <div style="color:var(--text-dim);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">// Group ${m.group} table</div>
+        <div>${m.home}: #${hc.position}/${hc.totalTeams} · ${hc.points}pts · GD ${hc.goalDiff>=0?'+':''}${hc.goalDiff} · form ${hc.form}</div>
+        <div>${m.away}: #${ac.position}/${ac.totalTeams} · ${ac.points}pts · GD ${ac.goalDiff>=0?'+':''}${ac.goalDiff} · form ${ac.form}</div>
+      </div>`;
+    }
+  }
 
   document.getElementById('analysis-content').innerHTML=`
     <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;line-height:1.8;">
       <div style="color:var(--text);font-family:var(--sans);font-size:14px;font-weight:500;margin-bottom:12px;">${m.flag_h} ${m.home} vs ${m.away} ${m.flag_a}</div>
       <div style="margin-bottom:4px;color:var(--text-dim);font-size:10px;">${m.stage} · ${m.date} · ${m.venue}</div>
       <div style="margin:12px 0;">${probInfo}</div>
+      ${contextHTML}
       <div style="color:var(--text-dim);margin-top:8px;">// Click "Analyze with Claude" for an AI breakdown.</div>
     </div>`;
 }
@@ -444,27 +568,51 @@ async function analyzeMatch(){
   if(!selected) return;
   const m=selected;
   const played=m.score!==null;
-  const fav=m.home_pct>=m.away_pct?m.home:m.away;
+  const odds=played?null:getAdjustedOdds(m);
+  const fav=played?null:(odds.home_pct>=odds.away_pct?m.home:m.away);
   document.getElementById('btn-analyze').disabled=true;
-  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is generating analysis + SGP picks...</div></div>`;
+  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is analyzing real group-stage data...</div></div>`;
 
-  const playedPrompt=`You are a football analyst. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside JSON.
-{"analysis":{"result_summary":"Max 2 sentences.","key_moments":"Max 2 sentences.","standings_impact":"Max 1 sentence.","whats_next":"Max 1 sentence."},"sgp":[]}
-Now fill it in for: ${m.home} ${m.score} ${m.away}, ${m.stage}, ${m.date}, ${m.venue}. Result: ${m.result}.`;
+  // Real, derived match context — group table positions, points, goal diff, recent form.
+  // This replaces guesswork with verifiable in-tournament facts.
+  const matchContext = m.group!=='—' ? buildMatchContext(m) : 'Knockout stage — no group table context available.';
 
-  const upcomingPrompt=`You are a DraftKings SGP football analyst. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside the JSON. Keep all text fields under 20 words each.
+  const playedPrompt=`You are an objective football analyst. Base your analysis ONLY on the facts given below — do not invent details not provided. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside JSON.
 
-Match: ${m.home} vs ${m.away} | ${m.stage} | ${m.date} | ${m.venue}
-Odds: ${m.home} ${m.home_pct}% | Draw ${m.draw_pct>0?m.draw_pct+'%':'N/A'} | ${m.away} ${m.away_pct}% | Favorite: ${fav}
+MATCH FACTS:
+${m.home} ${m.score} ${m.away} | ${m.stage} | ${m.date} | ${m.venue} | Result: ${m.result}
 
-Fill this JSON template with real values for this specific match. Use markets from DraftKings: Moneyline, Double Chance, BTTS Yes/No, Total Goals Over/Under, Total Corners Over/Under, Shots on Target Over/Under, Draw No Bet. Adjust probabilities and picks realistically for the teams involved:
+GROUP CONTEXT (entering this match):
+${matchContext}
 
-{"analysis":{"context":"Max 2 sentences on both teams.","market_read":"Max 1 sentence on the odds.","key_factors":"Max 2 factors, comma separated.","wildcard":"Max 1 sentence."},"sgp":[{"rank":1,"probability":74,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":2,"probability":60,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"No","type":"BTTS"}],"reasoning":"Max 10 words."},{"rank":3,"probability":46,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":4,"probability":30,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Max 10 words."},{"rank":5,"probability":14,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Max 10 words."}]}`;
+Using these facts, fill in:
+{"analysis":{"result_summary":"Max 2 sentences, state the actual score and what it means.","key_moments":"Max 2 sentences grounded in the goal difference and result — do not invent specific plays you don't know.","standings_impact":"Max 1 sentence on how this result affects their group position based on the GROUP CONTEXT given.","whats_next":"Max 1 sentence on what each team needs in their remaining fixture(s)."},"sgp":[]}`;
+
+  const upcomingPrompt=`You are an objective football analyst and odds modeler. Your job is to reason from REAL in-tournament data, not assumptions. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside the JSON. Keep all text fields under 22 words each.
+
+MATCH: ${m.home} vs ${m.away} | ${m.stage} | ${m.date} | ${m.venue}
+
+CURRENT GROUP-STAGE DATA (use this as your primary evidence — points, goal difference, and recent form are real results from this tournament, not rankings or pre-tournament hype):
+${matchContext}
+
+WIN PROBABILITY MODEL (baseline adjusted for live form — already accounts for points/GD/form above):
+${m.home} win: ${odds.home_pct}% | Draw: ${odds.draw_pct>0?odds.draw_pct+'%':'N/A (knockout)'} | ${m.away} win: ${odds.away_pct}% | Favorite: ${fav}
+
+INSTRUCTIONS:
+- Your "context" and "key_factors" fields MUST reference the actual points, goal difference, or form shown above — not generic statements.
+- If one team is undefeated and the other has lost, say so explicitly.
+- If goal difference is lopsided (e.g. +7 vs -2), call that out as a key factor.
+- Do not contradict the win probability model — your reasoning should explain WHY those numbers make sense given the data.
+- Be honest about uncertainty: if the two teams are closely matched (probabilities within ~10pts of each other), say the match is genuinely close rather than forcing a confident pick.
+
+Fill this JSON template with grounded, data-driven values for this specific match. Use DraftKings markets: Moneyline, Double Chance, BTTS Yes/No, Total Goals Over/Under, Total Corners Over/Under, Shots on Target Over/Under, Draw No Bet. SGP probabilities should be consistent with the win probability model above — do not default to generic numbers:
+
+{"analysis":{"context":"Max 2 sentences citing real points/GD/form for both teams.","market_read":"Max 1 sentence explaining why the odds favor who they do, citing data.","key_factors":"2 factors grounded in the group data, comma separated.","wildcard":"Max 1 sentence on what could realistically flip the result."},"sgp":[{"rank":1,"probability":74,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":2,"probability":60,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"No","type":"BTTS"}],"reasoning":"Max 10 words, reference data."},{"rank":3,"probability":46,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":4,"probability":30,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":5,"probability":14,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."}]}`;
 
   const prompt=played?playedPrompt:upcomingPrompt;
 
   try{
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1300,messages:[{role:'user',content:prompt}]})});
     if(!res.ok) throw new Error(res.status);
     const data=await res.json();
     const raw=data.content?.[0]?.text||'{}';
