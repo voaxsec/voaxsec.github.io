@@ -114,39 +114,31 @@
   .footer-text { font-family:var(--mono); font-size:11px; color:var(--text-dim); letter-spacing:0.08em; }
   .footer-text span { color:var(--accent); }
 
-  /* ── SGP CARDS ── */
-  .sgp-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
-  .sgp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
-  .sgp-title { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
+  /* ── PLAYERS TO WATCH ── */
+  .players-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .player-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 10px 12px; }
+  .player-team { font-family: var(--mono); font-size: 8px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .player-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .player-why { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+
+  /* ── SGP BONUS (compact, secondary) ── */
+  .sgp-section { margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 14px; opacity: 0.92; }
+  .sgp-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .sgp-title { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; }
   .sgp-sub { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.06em; }
-  .sgp-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 2px; padding: 12px 14px; margin-bottom: 6px; transition: border-color 0.2s; }
-  .sgp-card:hover { border-color: var(--border-hover); }
-  .sgp-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .sgp-label { font-family: var(--mono); font-size: 10px; font-weight: 500; color: var(--text); letter-spacing: 0.06em; }
-  .sgp-prob-wrap { display: flex; flex-direction: column; align-items: flex-end; }
-  .sgp-prob { font-family: var(--mono); font-size: 16px; font-weight: 500; line-height: 1; }
-  .sgp-prob-lbl { font-family: var(--mono); font-size: 8px; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
-  .sgp-prob-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
-  .sgp-prob-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-  .sgp-legs { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-  .sgp-leg { display: flex; align-items: center; gap: 8px; }
-  .leg-type { font-family: var(--mono); font-size: 8px; color: var(--text-dim); background: var(--bg2); border: 1px solid var(--border); padding: 2px 6px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
-  .leg-pick { font-size: 12px; color: var(--text); font-weight: 500; }
-  .sgp-reasoning { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.03em; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 6px; }
-  .sgp-disclaimer { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 2px; line-height: 1.5; }
-  /* SGP compact rows */
-  .sgp-row { border-bottom: 1px solid var(--border); padding: 10px 0; }
+  .sgp-row { border-bottom: 1px solid var(--border); padding: 8px 0; }
   .sgp-row:last-of-type { border-bottom: none; }
-  .sgp-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .sgp-label-sm { font-family: var(--mono); font-size: 10px; color: var(--text); font-weight: 500; letter-spacing: 0.04em; }
+  .sgp-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .sgp-label-sm { font-family: var(--mono); font-size: 9px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.04em; }
   .sgp-prob-inline { display: flex; align-items: center; gap: 6px; }
-  .tprob { font-family: var(--mono); font-size: 13px; font-weight: 500; }
-  .tbar { height: 2px; background: var(--border); border-radius: 2px; width: 40px; flex-shrink: 0; }
+  .tprob { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+  .tbar { height: 2px; background: var(--border); border-radius: 2px; width: 32px; flex-shrink: 0; }
   .tbar-fill { height: 100%; border-radius: 2px; }
   .sgp-legs-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
-  .tleg { font-family: var(--mono); font-size: 9px; background: var(--bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 2px; color: var(--text-muted); white-space: nowrap; }
-  .sgp-note { font-family: var(--mono); font-size: 9px; color: var(--text-dim); line-height: 1.5; }
-  @media(max-width:680px){.main-grid{grid-template-columns:1fr}.page{padding:100px 24px 60px}nav{padding:16px 24px}.nav-links{display:none}.divider{margin:0 24px}.stats-row{grid-template-columns:repeat(2,1fr)}}
+  .tleg { font-family: var(--mono); font-size: 9px; background: var(--bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 2px; color: var(--text-dim); white-space: nowrap; }
+  .sgp-disclaimer { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: 2px; line-height: 1.5; }
+  @media(max-width:680px){.main-grid{grid-template-columns:1fr}.page{padding:100px 24px 60px}nav{padding:16px 24px}.nav-links{display:none}.divider{margin:0 24px}.stats-row{grid-template-columns:repeat(2,1fr)}.players-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -571,13 +563,12 @@ async function analyzeMatch(){
   const odds=played?null:getAdjustedOdds(m);
   const fav=played?null:(odds.home_pct>=odds.away_pct?m.home:m.away);
   document.getElementById('btn-analyze').disabled=true;
-  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is analyzing real group-stage data...</div></div>`;
+  document.getElementById('analysis-content').innerHTML=`<div><div class="typing-dots"><span></span><span></span><span></span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.05em;margin-top:8px;">// Claude is analyzing the match...</div></div>`;
 
   // Real, derived match context — group table positions, points, goal diff, recent form.
-  // This replaces guesswork with verifiable in-tournament facts.
   const matchContext = m.group!=='—' ? buildMatchContext(m) : 'Knockout stage — no group table context available.';
 
-  const playedPrompt=`You are an objective football analyst. Base your analysis ONLY on the facts given below — do not invent details not provided. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside JSON.
+  const playedPrompt=`You are a football analyst providing a rich, readable recap — like something from a quality sports site, not a stats sheet. Base everything on the facts given; do not invent specific plays, goals, or minute-by-minute details you don't know. You CAN reasonably mention well-known star players for these national teams if relevant to context (e.g. "with Mbappe leading the attack"). Respond ONLY with a raw JSON object. No markdown, no backticks, no text outside JSON.
 
 MATCH FACTS:
 ${m.home} ${m.score} ${m.away} | ${m.stage} | ${m.date} | ${m.venue} | Result: ${m.result}
@@ -585,34 +576,40 @@ ${m.home} ${m.score} ${m.away} | ${m.stage} | ${m.date} | ${m.venue} | Result: $
 GROUP CONTEXT (entering this match):
 ${matchContext}
 
-Using these facts, fill in:
-{"analysis":{"result_summary":"Max 2 sentences, state the actual score and what it means.","key_moments":"Max 2 sentences grounded in the goal difference and result — do not invent specific plays you don't know.","standings_impact":"Max 1 sentence on how this result affects their group position based on the GROUP CONTEXT given.","whats_next":"Max 1 sentence on what each team needs in their remaining fixture(s)."},"sgp":[]}`;
+Fill in:
+{"analysis":{"result_summary":"2-3 sentences on the actual score and what it means for both sides.","key_storyline":"2 sentences on the most interesting angle of this result, a standout performer if relevant, a tactical shift, or a surprise.","standings_impact":"1-2 sentences on how this affects their group position using the GROUP CONTEXT given.","whats_next":"1-2 sentences on what each team needs in their remaining fixture(s) to advance."},"sgp":[]}`;
 
-  const upcomingPrompt=`You are an objective football analyst and odds modeler. Your job is to reason from REAL in-tournament data, not assumptions. Respond ONLY with a raw JSON object. No markdown. No backticks. No explanation outside the JSON. Keep all text fields under 22 words each.
+  const upcomingPrompt=`You are a sharp, well-rounded football analyst previewing a match, think a proper preview column, not a betting slip. Reason from the REAL in-tournament data given below. You can and should bring in football knowledge: each team's typical playing style, key players who are likely to influence the game (known starters, top scorers, creative players), injuries or suspensions if widely known, and tactical matchup angles. Do not force every sentence to cite a stat, be a well-rounded analyst, not a spreadsheet. Respond ONLY with a raw JSON object. No markdown, no backticks, no text outside JSON. Each field should read naturally, like real sports writing.
 
 MATCH: ${m.home} vs ${m.away} | ${m.stage} | ${m.date} | ${m.venue}
 
-CURRENT GROUP-STAGE DATA (use this as your primary evidence — points, goal difference, and recent form are real results from this tournament, not rankings or pre-tournament hype):
+CURRENT GROUP-STAGE DATA (real results from this tournament so far):
 ${matchContext}
 
-WIN PROBABILITY MODEL (baseline adjusted for live form — already accounts for points/GD/form above):
+WIN PROBABILITY MODEL (baseline adjusted for live form):
 ${m.home} win: ${odds.home_pct}% | Draw: ${odds.draw_pct>0?odds.draw_pct+'%':'N/A (knockout)'} | ${m.away} win: ${odds.away_pct}% | Favorite: ${fav}
 
-INSTRUCTIONS:
-- Your "context" and "key_factors" fields MUST reference the actual points, goal difference, or form shown above — not generic statements.
-- If one team is undefeated and the other has lost, say so explicitly.
-- If goal difference is lopsided (e.g. +7 vs -2), call that out as a key factor.
-- Do not contradict the win probability model — your reasoning should explain WHY those numbers make sense given the data.
-- Be honest about uncertainty: if the two teams are closely matched (probabilities within ~10pts of each other), say the match is genuinely close rather than forcing a confident pick.
+Fill in this JSON. Vary sentence length and style naturally, this should read like a real preview, not a template:
 
-Fill this JSON template with grounded, data-driven values for this specific match. Use DraftKings markets: Moneyline, Double Chance, BTTS Yes/No, Total Goals Over/Under, Total Corners Over/Under, Shots on Target Over/Under, Draw No Bet. SGP probabilities should be consistent with the win probability model above — do not default to generic numbers:
+{"analysis":{
+  "preview":"3-4 sentences setting up the match: how each team has looked so far, their attacking/defensive identity, and what's at stake.",
+  "key_factor":"2-3 sentences on the single biggest factor likely to decide this match, could be form, a tactical mismatch, fatigue/rotation, home advantage, or a head-to-head trend.",
+  "players_to_watch":[{"team":"${m.home}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 15 words on why they matter for this match"},{"team":"${m.away}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 15 words on why they matter for this match"}],
+  "prediction":"2 sentences giving your actual read on how this plays out, final outcome lean and why, in plain football language, not odds-speak.",
+  "wildcard":"1-2 sentences on what could realistically flip the expected result."
+},
+"sgp":[
+  {"label":"Safe pick","pick":"${fav} Win or Draw (Double Chance)","probability":${Math.max(odds.home_pct,odds.away_pct)+Math.min(odds.draw_pct,15)}},
+  {"label":"Balanced pick","pick":"${fav} to Win","probability":${Math.max(odds.home_pct,odds.away_pct)}},
+  {"label":"Long shot","pick":"Upset: ${fav===m.home?m.away:m.home} to Win","probability":${Math.min(odds.home_pct,odds.away_pct)}}
+]}
 
-{"analysis":{"context":"Max 2 sentences citing real points/GD/form for both teams.","market_read":"Max 1 sentence explaining why the odds favor who they do, citing data.","key_factors":"2 factors grounded in the group data, comma separated.","wildcard":"Max 1 sentence on what could realistically flip the result."},"sgp":[{"rank":1,"probability":74,"label":"SGP #1 — Safest","legs":[{"market":"Double Chance","pick":"${fav} or Draw","type":"Double Chance"},{"market":"Total Goals","pick":"Over 1.5","type":"Totals"},{"market":"Total Corners","pick":"Over 7.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":2,"probability":60,"label":"SGP #2","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"No","type":"BTTS"}],"reasoning":"Max 10 words, reference data."},{"rank":3,"probability":46,"label":"SGP #3","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 2.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Corners","pick":"Over 9.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":4,"probability":30,"label":"SGP #4","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 3.5","type":"Totals"},{"market":"Shots on Target","pick":"${m.home} Over 4.5","type":"Shots"},{"market":"Corners","pick":"Over 10.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."},{"rank":5,"probability":14,"label":"SGP #5 — Long Shot","legs":[{"market":"Match Result","pick":"${fav} Win","type":"Moneyline"},{"market":"Total Goals","pick":"Over 4.5","type":"Totals"},{"market":"BTTS","pick":"Yes","type":"BTTS"},{"market":"Shots on Target","pick":"${m.home} Over 5.5","type":"Shots"},{"market":"Corners","pick":"Over 11.5","type":"Corners"}],"reasoning":"Max 10 words, reference data."}]}`;
+IMPORTANT for players_to_watch: only name real players who actually play for that national team in the current squad. If you are not confident of a specific player's current squad status, name a well-established veteran or known star for that country instead of guessing an obscure name.`;
 
   const prompt=played?playedPrompt:upcomingPrompt;
 
   try{
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1300,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1400,messages:[{role:'user',content:prompt}]})});
     if(!res.ok) throw new Error(res.status);
     const data=await res.json();
     const raw=data.content?.[0]?.text||'{}';
@@ -622,62 +619,61 @@ Fill this JSON template with grounded, data-driven values for this specific matc
     catch(e){
       const m2=raw.match(/\{[\s\S]*\}/);
       try{ parsed=m2?JSON.parse(m2[0]):{analysis:{},sgp:[]}; }
-      catch(e2){ parsed={analysis:{context:raw},sgp:[]}; }
+      catch(e2){ parsed={analysis:{preview:raw},sgp:[]}; }
     }
 
     const a=parsed.analysis||{};
     const sgp=parsed.sgp||[];
 
+    let playersHTML='';
+    if(a.players_to_watch && a.players_to_watch.length>0){
+      const cards=a.players_to_watch.map(p=>`
+        <div class="player-card">
+          <div class="player-team">${p.team||''}</div>
+          <div class="player-name">${p.name||'—'}</div>
+          <div class="player-why">${p.why||''}</div>
+        </div>`).join('');
+      playersHTML=`<div class="players-section">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">// Players to watch</p>
+        <div class="players-grid">${cards}</div>
+      </div>`;
+    }
+
     const analysisHTML=played
       ?`<div id="ai-output" style="font-size:13px;color:var(--text-muted);line-height:1.75;">
           ${a.result_summary?`<p><strong style="color:var(--accent)">Result</strong><br>${a.result_summary}</p>`:''}
-          ${a.key_moments?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key moments</strong><br>${a.key_moments}</p>`:''}
+          ${a.key_storyline?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key storyline</strong><br>${a.key_storyline}</p>`:''}
           ${a.standings_impact?`<p style="margin-top:10px"><strong style="color:var(--accent)">Standings</strong><br>${a.standings_impact}</p>`:''}
           ${a.whats_next?`<p style="margin-top:10px"><strong style="color:var(--accent)">What's next</strong><br>${a.whats_next}</p>`:''}
         </div>`
       :`<div id="ai-output" style="font-size:13px;color:var(--text-muted);line-height:1.75;">
-          ${a.context?`<p><strong style="color:var(--accent)">Context</strong><br>${a.context}</p>`:''}
-          ${a.market_read?`<p style="margin-top:10px"><strong style="color:var(--accent)">Market read</strong><br>${a.market_read}</p>`:''}
-          ${a.key_factors?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key factors</strong><br>${a.key_factors}</p>`:''}
+          ${a.preview?`<p><strong style="color:var(--accent)">Preview</strong><br>${a.preview}</p>`:''}
+          ${a.key_factor?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key factor</strong><br>${a.key_factor}</p>`:''}
+          ${playersHTML}
+          ${a.prediction?`<p style="margin-top:14px"><strong style="color:var(--accent)">Prediction</strong><br>${a.prediction}</p>`:''}
           ${a.wildcard?`<p style="margin-top:10px"><strong style="color:var(--accent)">Wildcard</strong><br>${a.wildcard}</p>`:''}
         </div>`;
 
     let sgpHTML='';
     if(sgp.length>0 && !played){
       const rows=sgp.map(s=>{
-        const pct=s.probability||0;
+        const pct=Math.min(95,Math.max(5,Math.round(s.probability||0)));
         const barColor=pct>=60?'var(--accent)':pct>=35?'#f59e0b':'#ef4444';
-        const picks=(s.legs||[]).map(l=>{
-          // Build a human-readable label: "Type · Pick"
-          let t=l.type||'';
-          let p=l.pick||'';
-          // Expand Over/Under with context
-          if(t==='Totals')    p=p.replace(/Over ([\d.]+)/,'Over $1 Goals').replace(/Under ([\d.]+)/,'Under $1 Goals');
-          if(t==='Corners')   p=p.replace(/Over ([\d.]+)/,'Over $1 Corners').replace(/Under ([\d.]+)/,'Under $1 Corners');
-          if(t==='Shots')     p=p.replace(/Over ([\d.]+)/,'Over $1 Shots on Target').replace(/Under ([\d.]+)/,'Under $1 Shots on Target');
-          if(t==='BTTS' && p==='Yes') p='Both Teams to Score — Yes';
-          if(t==='BTTS' && p==='No')  p='Both Teams to Score — No (clean sheet)';
-          if(t==='Double Chance') p=p+' (win or draw)';
-          if(t==='Moneyline' && p.includes('Win')) p=p+' (outright)';
-          if(t==='DNB') p='Draw No Bet — '+p;
-          return `<span class="tleg">${p}</span>`;
-        }).join('');
         return `<div class="sgp-row">
           <div class="sgp-row-header">
-            <span class="sgp-label-sm">${s.label||'SGP #'+s.rank}</span>
+            <span class="sgp-label-sm">${s.label||'Pick'}</span>
             <div class="sgp-prob-inline">
               <span class="tprob" style="color:${barColor}">${pct}%</span>
               <div class="tbar"><div class="tbar-fill" style="width:${pct}%;background:${barColor}"></div></div>
             </div>
           </div>
-          <div class="sgp-legs-wrap">${picks}</div>
-          ${s.reasoning?`<div class="sgp-note">→ ${s.reasoning}</div>`:''}
+          <div class="sgp-legs-wrap"><span class="tleg">${s.pick||''}</span></div>
         </div>`;
       }).join('');
       sgpHTML=`<div class="sgp-section">
         <div class="sgp-header">
-          <span class="sgp-title">// DraftKings SGP Picks</span>
-          <span class="sgp-sub">Most → least probable</span>
+          <span class="sgp-title">// Quick picks (bonus)</span>
+          <span class="sgp-sub">Not the main event</span>
         </div>
         ${rows}
         <div class="sgp-disclaimer">⚠️ Entertainment only. Not betting advice. Gamble responsibly.</div>
