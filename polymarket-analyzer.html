@@ -579,7 +579,7 @@ ${matchContext}
 Fill in:
 {"analysis":{"result_summary":"2-3 sentences on the actual score and what it means for both sides.","key_storyline":"2 sentences on the most interesting angle of this result, a standout performer if relevant, a tactical shift, or a surprise.","standings_impact":"1-2 sentences on how this affects their group position using the GROUP CONTEXT given.","whats_next":"1-2 sentences on what each team needs in their remaining fixture(s) to advance."},"sgp":[]}`;
 
-  const upcomingPrompt=`You are a sharp, well-rounded football analyst previewing a match, think a proper preview column, not a betting slip. Reason from the REAL in-tournament data given below. You can and should bring in football knowledge: each team's typical playing style, key players who are likely to influence the game (known starters, top scorers, creative players), injuries or suspensions if widely known, and tactical matchup angles. Do not force every sentence to cite a stat, be a well-rounded analyst, not a spreadsheet. Respond ONLY with a raw JSON object. No markdown, no backticks, no text outside JSON. Each field should read naturally, like real sports writing.
+  const upcomingPrompt=`You are a sharp football analyst previewing a match for serious fans, think a detailed scouting preview, not a generic recap. Reason from the REAL in-tournament data given below, but the heart of your analysis should be about PLAYERS: who is in form, who is struggling, individual duels that will matter, and specific reasons a particular player could decide the game. Avoid vague team-level platitudes like "they have more quality" — ground every claim in a player, a tendency, or a specific matchup. Respond ONLY with a raw JSON object. No markdown, no backticks, no text outside JSON. Write like a real football journalist, varied sentence rhythm, specific details, not templated.
 
 MATCH: ${m.home} vs ${m.away} | ${m.stage} | ${m.date} | ${m.venue}
 
@@ -589,22 +589,24 @@ ${matchContext}
 WIN PROBABILITY MODEL (baseline adjusted for live form):
 ${m.home} win: ${odds.home_pct}% | Draw: ${odds.draw_pct>0?odds.draw_pct+'%':'N/A (knockout)'} | ${m.away} win: ${odds.away_pct}% | Favorite: ${fav}
 
-Fill in this JSON. Vary sentence length and style naturally, this should read like a real preview, not a template:
+Fill in this JSON with player-centric, specific analysis:
 
 {"analysis":{
-  "preview":"3-4 sentences setting up the match: how each team has looked so far, their attacking/defensive identity, and what's at stake.",
-  "key_factor":"2-3 sentences on the single biggest factor likely to decide this match, could be form, a tactical mismatch, fatigue/rotation, home advantage, or a head-to-head trend.",
-  "players_to_watch":[{"team":"${m.home}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 15 words on why they matter for this match"},{"team":"${m.away}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 15 words on why they matter for this match"}],
-  "prediction":"2 sentences giving your actual read on how this plays out, final outcome lean and why, in plain football language, not odds-speak.",
-  "wildcard":"1-2 sentences on what could realistically flip the expected result."
+  "preview":"3-4 sentences setting up the match. Lead with how the teams have actually performed (results so far), then connect that to 1-2 specific players whose form has driven those results.",
+  "player_duel":"2-3 sentences on ONE specific individual matchup that will define the game, e.g. an attacking player against the opposing fullback or defensive midfielder, or two strikers competing to be the difference-maker. Name both players involved.",
+  "key_factor":"2 sentences on a tactical or form-based factor — can reference a specific player's recent performance (e.g. goals/assists in the tournament so far) rather than generic team strength.",
+  "players_to_watch":[{"team":"${m.home}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 18 words citing recent form, a stat from this tournament, or a specific skill relevant to this matchup"},{"team":"${m.away}","name":"A specific, real, well-known player from this team's actual current squad","why":"Max 18 words citing recent form, a stat from this tournament, or a specific skill relevant to this matchup"}],
+  "prediction":"2 sentences giving your actual read on how this plays out, mention which player you expect to have the biggest impact and why.",
+  "wildcard":"1-2 sentences on what could realistically flip the expected result, ideally tied to a substitution, suspension risk, or an in-form bench player."
 },
 "sgp":[
-  {"label":"Safe pick","pick":"${fav} Win or Draw (Double Chance)","probability":${Math.max(odds.home_pct,odds.away_pct)+Math.min(odds.draw_pct,15)}},
-  {"label":"Balanced pick","pick":"${fav} to Win","probability":${Math.max(odds.home_pct,odds.away_pct)}},
-  {"label":"Long shot","pick":"Upset: ${fav===m.home?m.away:m.home} to Win","probability":${Math.min(odds.home_pct,odds.away_pct)}}
+  {"label":"Match Result","pick":"${fav} to Win","type":"Moneyline","probability":${Math.max(odds.home_pct,odds.away_pct)}},
+  {"label":"Both Teams to Score","pick":"BTTS - Yes or No (pick the more likely one for this matchup)","type":"BTTS","probability":55},
+  {"label":"Anytime Goalscorer","pick":"Name a specific real player likely to score, from either squad","type":"Player Prop","probability":38},
+  {"label":"Total Goals","pick":"Over or Under 2.5 goals (pick based on both teams' attacking/defensive tendencies this tournament)","type":"Totals","probability":50}
 ]}
 
-IMPORTANT for players_to_watch: only name real players who actually play for that national team in the current squad. If you are not confident of a specific player's current squad status, name a well-established veteran or known star for that country instead of guessing an obscure name.`;
+IMPORTANT: For players_to_watch, the anytime goalscorer pick, and the player_duel, only name real players who actually play for that national team in the current squad. If you are not confident of a specific player's current squad status, name a well-established veteran or known star for that country instead of guessing an obscure name. For the SGP probability fields, give YOUR OWN realistic estimate for each specific market based on the matchup, do not just copy the win probability model number.`;
 
   const prompt=played?playedPrompt:upcomingPrompt;
 
@@ -648,6 +650,7 @@ IMPORTANT for players_to_watch: only name real players who actually play for tha
         </div>`
       :`<div id="ai-output" style="font-size:13px;color:var(--text-muted);line-height:1.75;">
           ${a.preview?`<p><strong style="color:var(--accent)">Preview</strong><br>${a.preview}</p>`:''}
+          ${a.player_duel?`<p style="margin-top:10px"><strong style="color:var(--accent)">Player duel to watch</strong><br>${a.player_duel}</p>`:''}
           ${a.key_factor?`<p style="margin-top:10px"><strong style="color:var(--accent)">Key factor</strong><br>${a.key_factor}</p>`:''}
           ${playersHTML}
           ${a.prediction?`<p style="margin-top:14px"><strong style="color:var(--accent)">Prediction</strong><br>${a.prediction}</p>`:''}
@@ -667,7 +670,10 @@ IMPORTANT for players_to_watch: only name real players who actually play for tha
               <div class="tbar"><div class="tbar-fill" style="width:${pct}%;background:${barColor}"></div></div>
             </div>
           </div>
-          <div class="sgp-legs-wrap"><span class="tleg">${s.pick||''}</span></div>
+          <div class="sgp-legs-wrap">
+            ${s.type?`<span class="tleg" style="color:var(--accent);border-color:var(--accent-mid);">${s.type}</span>`:''}
+            <span class="tleg">${s.pick||''}</span>
+          </div>
         </div>`;
       }).join('');
       sgpHTML=`<div class="sgp-section">
