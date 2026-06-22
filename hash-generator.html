@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hash Generator — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #f5f5f3;
+    --bg2:         #ebebea;
+    --bg3:         #e0e0de;
+    --border:      rgba(0,0,0,0.08);
+    --border-hover:rgba(0,0,0,0.18);
+    --text:        #1a1a1a;
+    --text-muted:  #666;
+    --text-dim:    #999;
+    --accent:      #007a42;
+    --accent-dim:  rgba(0,122,66,0.08);
+    --accent-mid:  rgba(0,122,66,0.15);
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --red: #cc2200;
+    --green: #007a42;
+  }
+
+  :root.dark {
+    --bg:          #0a0a0a;
+    --bg2:         #111111;
+    --bg3:         #161616;
+    --border:      rgba(255,255,255,0.07);
+    --border-hover:rgba(255,255,255,0.15);
+    --text:        #e8e8e8;
+    --text-muted:  #666;
+    --text-dim:    #444;
+    --accent:      #00ff88;
+    --accent-dim:  rgba(0,255,136,0.08);
+    --accent-mid:  rgba(0,255,136,0.15);
+    --red: #ff4444;
+    --green: #00ff88;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px 5px 8px;
+    cursor: pointer; font-family: var(--mono); font-size: 11px;
+    color: var(--text-muted); letter-spacing: 0.06em;
+    white-space: nowrap; flex-shrink: 0; transition: border-color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+  .toggle-track {
+    width: 28px; height: 16px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 8px;
+    position: relative; transition: background 0.25s; flex-shrink: 0;
+  }
+  :root.dark .toggle-track { background: var(--accent); border-color: var(--accent); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 10px; height: 10px; background: var(--text-muted);
+    border-radius: 50%; transition: transform 0.25s, background 0.25s;
+  }
+  :root.dark .toggle-thumb { transform: translateX(12px); background: #0a0a0a; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 48px;
+    background: rgba(245,245,243,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+  :root.dark nav { background: rgba(10,10,10,0.88); }
+
+  .nav-logo {
+    font-family: var(--mono); font-size: 13px; color: var(--accent);
+    letter-spacing: 0.05em; text-decoration: none;
+  }
+  .nav-logo span { color: var(--text-muted); }
+
+  .nav-back {
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    text-decoration: none; letter-spacing: 0.08em;
+    transition: color 0.2s; text-transform: uppercase;
+  }
+  .nav-back:hover { color: var(--accent); }
+
+  /* BODY */
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 100px 24px 60px; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px; pointer-events: none; z-index: 0;
+  }
+  :root.dark body::before {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 640px;
+  }
+
+  /* HEADER */
+  .page-label {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-size: clamp(28px, 5vw, 40px); font-weight: 300;
+    letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.1;
+  }
+
+  .page-title em { font-style: normal; color: var(--accent); }
+
+  .page-desc {
+    font-size: 14px; color: var(--text-muted);
+    line-height: 1.8; margin-bottom: 28px; max-width: 520px;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 16px; background: var(--accent-dim);
+    border: 1px solid var(--accent-mid); border-left: 3px solid var(--accent);
+    border-radius: 2px; margin-bottom: 28px;
+    font-size: 12px; color: var(--text-muted); line-height: 1.6;
+  }
+  .disclaimer-icon { font-size: 14px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+  /* CARD */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 36px; margin-bottom: 24px;
+  }
+
+  /* TABS — Text vs File mode */
+  .mode-tabs {
+    display: flex; gap: 2px; margin-bottom: 24px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 2px; padding: 4px;
+  }
+  .mode-tab {
+    flex: 1; padding: 10px; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+    cursor: pointer; border-radius: 2px; color: var(--text-muted);
+    transition: all 0.2s; user-select: none; border: 1px solid transparent;
+  }
+  .mode-tab.active {
+    color: var(--accent); background: var(--accent-dim);
+    border-color: var(--accent-mid);
+  }
+
+  /* INPUT */
+  .input-label {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+    display: block;
+  }
+
+  textarea#text-input {
+    width: 100%; min-height: 110px; padding: 14px 16px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 2px; color: var(--text); font-family: var(--mono);
+    font-size: 13px; line-height: 1.6; outline: none; resize: vertical;
+    transition: border-color 0.2s; margin-bottom: 20px;
+  }
+  textarea#text-input:focus { border-color: var(--accent); }
+  textarea#text-input::placeholder { color: var(--text-dim); }
+
+  /* FILE DROPZONE */
+  .dropzone {
+    display: none;
+    border: 1px dashed var(--border); border-radius: 2px;
+    padding: 36px 20px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s; margin-bottom: 20px;
+  }
+  .dropzone.active-mode { display: block; }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--accent); background: var(--accent-dim);
+  }
+  .dropzone-icon { font-size: 24px; margin-bottom: 10px; opacity: 0.5; }
+  .dropzone-text {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    letter-spacing: 0.04em; line-height: 1.6;
+  }
+  .dropzone-filename {
+    margin-top: 10px; font-family: var(--mono); font-size: 12px;
+    color: var(--accent); word-break: break-all;
+  }
+  #file-input { display: none; }
+
+  textarea#text-input.hidden-mode { display: none; }
+
+  /* HASH RESULTS */
+  .hash-results { display: flex; flex-direction: column; gap: 2px; }
+
+  .hash-row {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 2px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color 0.2s;
+  }
+  .hash-row:hover { border-color: var(--border-hover); }
+
+  .hash-row-header {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .hash-algo {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+  }
+
+  .copy-btn-sm {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    background: var(--bg3); border: 1px solid var(--border);
+    padding: 5px 10px; cursor: pointer; border-radius: 2px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .copy-btn-sm:hover { color: var(--accent); border-color: var(--accent); }
+  .copy-btn-sm.copied { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
+  .hash-value {
+    font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+    word-break: break-all; line-height: 1.5;
+  }
+  .hash-value.placeholder { color: var(--text-dim); }
+
+  /* COMPARE SECTION */
+  .compare-toggle {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  .compare-toggle-icon {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    transition: transform 0.2s;
+  }
+  .compare-toggle-icon.open { transform: rotate(90deg); }
+  .compare-toggle-text {
+    font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  .compare-section { display: none; margin-top: 16px; }
+  .compare-section.open { display: block; }
+
+  input#compare-input {
+    width: 100%; padding: 12px 14px; margin-bottom: 10px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 2px; color: var(--text); font-family: var(--mono);
+    font-size: 12px; outline: none; transition: border-color 0.2s;
+  }
+  input#compare-input:focus { border-color: var(--accent); }
+  input#compare-input::placeholder { color: var(--text-dim); }
+
+  .compare-result {
+    display: none; padding: 12px 14px; border-radius: 2px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+    align-items: center; gap: 8px;
+  }
+  .compare-result.show { display: flex; }
+  .compare-result.match {
+    background: var(--accent-dim); border: 1px solid var(--accent-mid); color: var(--green);
+  }
+  .compare-result.no-match {
+    background: rgba(204,34,0,0.06); border: 1px solid rgba(204,34,0,0.2); color: var(--red);
+  }
+  :root.dark .compare-result.no-match { background: rgba(255,68,68,0.08); border-color: rgba(255,68,68,0.2); }
+
+  /* FOOTER */
+  .page-footer {
+    margin-top: 8px; text-align: center;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-dim); letter-spacing: 0.06em;
+  }
+  .page-footer a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .page-footer a:hover { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    body { padding: 90px 16px 40px; }
+    .card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <a href="index.html" class="nav-back">← Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <p class="page-label">// Tool_04</p>
+  <h1 class="page-title">Hash <em>Generator</em></h1>
+  <p class="page-desc">
+    Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from text or a file.
+    Useful for checking file integrity or understanding how checksums work.
+  </p>
+
+  <div class="disclaimer">
+    <span class="disclaimer-icon">ⓘ</span>
+    <span>Everything runs locally in your browser. Nothing you type or upload is sent anywhere. Note: MD5 and SHA-1 are considered cryptographically broken for security purposes — use SHA-256 or SHA-512 for anything security-sensitive.</span>
+  </div>
+
+  <div class="card">
+
+    <!-- MODE TABS -->
+    <div class="mode-tabs">
+      <div class="mode-tab active" id="tab-text" onclick="switchMode('text')">Text Input</div>
+      <div class="mode-tab" id="tab-file" onclick="switchMode('file')">File Upload</div>
+    </div>
+
+    <!-- TEXT INPUT -->
+    <label class="input-label">Enter text</label>
+    <textarea id="text-input" placeholder="Type or paste any text here..." oninput="onTextInput()"></textarea>
+
+    <!-- FILE DROPZONE -->
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+      <div class="dropzone-icon">📄</div>
+      <div class="dropzone-text">Click to choose a file, or drag and drop it here</div>
+      <div class="dropzone-filename" id="dropzone-filename"></div>
+      <input type="file" id="file-input" onchange="onFileSelected(this.files)">
+    </div>
+
+    <!-- HASH RESULTS -->
+    <div class="hash-results">
+      <div class="hash-row">
+        <div class="hash-row-header">
+          <span class="hash-algo">MD5</span>
+          <button class="copy-btn-sm" onclick="copyHash('md5', this)">Copy</button>
+        </div>
+        <div class="hash-value placeholder" id="hash-md5">—</div>
+      </div>
+      <div class="hash-row">
+        <div class="hash-row-header">
+          <span class="hash-algo">SHA-1</span>
+          <button class="copy-btn-sm" onclick="copyHash('sha1', this)">Copy</button>
+        </div>
+        <div class="hash-value placeholder" id="hash-sha1">—</div>
+      </div>
+      <div class="hash-row">
+        <div class="hash-row-header">
+          <span class="hash-algo">SHA-256</span>
+          <button class="copy-btn-sm" onclick="copyHash('sha256', this)">Copy</button>
+        </div>
+        <div class="hash-value placeholder" id="hash-sha256">—</div>
+      </div>
+      <div class="hash-row">
+        <div class="hash-row-header">
+          <span class="hash-algo">SHA-512</span>
+          <button class="copy-btn-sm" onclick="copyHash('sha512', this)">Copy</button>
+        </div>
+        <div class="hash-value placeholder" id="hash-sha512">—</div>
+      </div>
+    </div>
+
+    <!-- COMPARE / VERIFY SECTION -->
+    <div class="compare-toggle" onclick="toggleCompare()">
+      <span class="compare-toggle-icon" id="compare-icon">›</span>
+      <span class="compare-toggle-text">Verify against a known hash</span>
+    </div>
+    <div class="compare-section" id="compare-section">
+      <input type="text" id="compare-input" placeholder="Paste a hash to compare against your result..." oninput="checkMatch()">
+      <div class="compare-result" id="compare-result"></div>
+    </div>
+
+  </div>
+
+  <p class="page-footer">
+    Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com
+  </p>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  // THEME
+  // ─────────────────────────────────────────────
+  (function() {
+    if (localStorage.getItem('voaxsec-theme') === 'dark') document.documentElement.classList.add('dark');
+    updateToggleLabel();
+  })();
+
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('voaxsec-theme', isDark ? 'dark' : 'light');
+    updateToggleLabel();
+  }
+
+  function updateToggleLabel() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.querySelectorAll('.toggle-label').forEach(l => l.textContent = isDark ? 'Dark' : 'Light');
+  }
+
+  // ─────────────────────────────────────────────
+  // STATE
+  // ─────────────────────────────────────────────
+  let currentMode = 'text'; // 'text' or 'file'
+  let currentHashes = { md5: '', sha1: '', sha256: '', sha512: '' };
+
+  // ─────────────────────────────────────────────
+  // SWITCH MODE — text vs file
+  // ─────────────────────────────────────────────
+  function switchMode(mode) {
+    currentMode = mode;
+    document.getElementById('tab-text').classList.toggle('active', mode === 'text');
+    document.getElementById('tab-file').classList.toggle('active', mode === 'file');
+
+    const textarea = document.getElementById('text-input');
+    const dropzone = document.getElementById('dropzone');
+
+    if (mode === 'text') {
+      textarea.classList.remove('hidden-mode');
+      dropzone.classList.remove('active-mode');
+    } else {
+      textarea.classList.add('hidden-mode');
+      dropzone.classList.add('active-mode');
+    }
+
+    clearHashes();
+  }
+
+  // ─────────────────────────────────────────────
+  // MD5 IMPLEMENTATION
+  // Web Crypto API does not support MD5 (it's deprecated for security),
+  // so we implement it manually here — pure JS, no external libraries.
+  // ─────────────────────────────────────────────
+  function md5(input) {
+    function rotl(x, c) { return (x << c) | (x >>> (32 - c)); }
+    function toHex(num) {
+      let s = '', n = num;
+      for (let i = 0; i < 4; i++) {
+        s += ('0' + ((n >> (i * 8)) & 255).toString(16)).slice(-2);
+      }
+      return s;
+    }
+
+    const K = [
+      0xd76aa478,0xe8c7b756,0x242070db,0xc1bdceee,0xf57c0faf,0x4787c62a,0xa8304613,0xfd469501,
+      0x698098d8,0x8b44f7af,0xffff5bb1,0x895cd7be,0x6b901122,0xfd987193,0xa679438e,0x49b40821,
+      0xf61e2562,0xc040b340,0x265e5a51,0xe9b6c7aa,0xd62f105d,0x02441453,0xd8a1e681,0xe7d3fbc8,
+      0x21e1cde6,0xc33707d6,0xf4d50d87,0x455a14ed,0xa9e3e905,0xfcefa3f8,0x676f02d9,0x8d2a4c8a,
+      0xfffa3942,0x8771f681,0x6d9d6122,0xfde5380c,0xa4beea44,0x4bdecfa9,0xf6bb4b60,0xbebfbc70,
+      0x289b7ec6,0xeaa127fa,0xd4ef3085,0x04881d05,0xd9d4d039,0xe6db99e5,0x1fa27cf8,0xc4ac5665,
+      0xf4292244,0x432aff97,0xab9423a7,0xfc93a039,0x655b59c3,0x8f0ccc92,0xffeff47d,0x85845dd1,
+      0x6fa87e4f,0xfe2ce6e0,0xa3014314,0x4e0811a1,0xf7537e82,0xbd3af235,0x2ad7d2bb,0xeb86d391
+    ];
+    const S = [7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+               5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+               4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+               6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+
+    let bytes = Array.from(input);
+    const origLenBits = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    for (let i = 0; i < 8; i++) bytes.push((origLenBits / Math.pow(2, i * 8)) & 0xff);
+
+    let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+
+    for (let chunkStart = 0; chunkStart < bytes.length; chunkStart += 64) {
+      const M = [];
+      for (let i = 0; i < 16; i++) {
+        M[i] = bytes[chunkStart + i*4] | (bytes[chunkStart + i*4+1] << 8) |
+               (bytes[chunkStart + i*4+2] << 16) | (bytes[chunkStart + i*4+3] << 24);
+      }
+      let A = a0, B = b0, C = c0, D = d0;
+      for (let i = 0; i < 64; i++) {
+        let F, g;
+        if (i < 16) { F = (B & C) | (~B & D); g = i; }
+        else if (i < 32) { F = (D & B) | (~D & C); g = (5*i + 1) % 16; }
+        else if (i < 48) { F = B ^ C ^ D; g = (3*i + 5) % 16; }
+        else { F = C ^ (B | ~D); g = (7*i) % 16; }
+        F = (F + A + K[i] + M[g]) | 0;
+        A = D; D = C; C = B;
+        B = (B + rotl(F, S[i])) | 0;
+      }
+      a0 = (a0 + A) | 0; b0 = (b0 + B) | 0; c0 = (c0 + C) | 0; d0 = (d0 + D) | 0;
+    }
+
+    return toHex(a0) + toHex(b0) + toHex(c0) + toHex(d0);
+  }
+
+  // ─────────────────────────────────────────────
+  // SHA HASHES — via Web Crypto API (native, fast, secure)
+  // ─────────────────────────────────────────────
+  async function sha(algorithm, data) {
+    const buffer = await crypto.subtle.digest(algorithm, data);
+    return Array.from(new Uint8Array(buffer))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  // ─────────────────────────────────────────────
+  // MAIN HASH COMPUTATION
+  // Takes raw bytes (Uint8Array) and computes all 4 hashes
+  // ─────────────────────────────────────────────
+  async function computeHashes(bytes) {
+    const md5Hash    = md5(bytes);
+    const sha1Hash    = await sha('SHA-1', bytes);
+    const sha256Hash  = await sha('SHA-256', bytes);
+    const sha512Hash  = await sha('SHA-512', bytes);
+
+    currentHashes = { md5: md5Hash, sha1: sha1Hash, sha256: sha256Hash, sha512: sha512Hash };
+
+    document.getElementById('hash-md5').textContent = md5Hash;
+    document.getElementById('hash-sha1').textContent = sha1Hash;
+    document.getElementById('hash-sha256').textContent = sha256Hash;
+    document.getElementById('hash-sha512').textContent = sha512Hash;
+
+    document.querySelectorAll('.hash-value').forEach(el => el.classList.remove('placeholder'));
+
+    // Re-check comparison if user already typed something to verify
+    checkMatch();
+  }
+
+  function clearHashes() {
+    currentHashes = { md5: '', sha1: '', sha256: '', sha512: '' };
+    ['md5','sha1','sha256','sha512'].forEach(algo => {
+      const el = document.getElementById('hash-' + algo);
+      el.textContent = '—';
+      el.classList.add('placeholder');
+    });
+    document.getElementById('dropzone-filename').textContent = '';
+    checkMatch();
+  }
+
+  // ─────────────────────────────────────────────
+  // TEXT INPUT HANDLER
+  // ─────────────────────────────────────────────
+  let textDebounce;
+  function onTextInput() {
+    clearTimeout(textDebounce);
+    textDebounce = setTimeout(async () => {
+      const text = document.getElementById('text-input').value;
+      if (!text) { clearHashes(); return; }
+      const bytes = new TextEncoder().encode(text);
+      await computeHashes(bytes);
+    }, 200); // Small debounce so it doesn't recompute on every keystroke
+  }
+
+  // ─────────────────────────────────────────────
+  // FILE INPUT HANDLER
+  // ─────────────────────────────────────────────
+  async function onFileSelected(files) {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    document.getElementById('dropzone-filename').textContent = `📎 ${file.name} (${formatBytes(file.size)})`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    await computeHashes(bytes);
+  }
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  // ─────────────────────────────────────────────
+  // DRAG AND DROP
+  // ─────────────────────────────────────────────
+  const dropzone = document.getElementById('dropzone');
+  dropzone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+  });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) onFileSelected(e.dataTransfer.files);
+  });
+
+  // ─────────────────────────────────────────────
+  // COPY TO CLIPBOARD
+  // ─────────────────────────────────────────────
+  function copyHash(algo, btn) {
+    const value = currentHashes[algo];
+    if (!value) return;
+    navigator.clipboard.writeText(value).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // VERIFY / COMPARE SECTION
+  // ─────────────────────────────────────────────
+  function toggleCompare() {
+    const section = document.getElementById('compare-section');
+    const icon = document.getElementById('compare-icon');
+    section.classList.toggle('open');
+    icon.classList.toggle('open');
+  }
+
+  function checkMatch() {
+    const input = document.getElementById('compare-input').value.trim().toLowerCase();
+    const resultEl = document.getElementById('compare-result');
+
+    if (!input) {
+      resultEl.classList.remove('show', 'match', 'no-match');
+      return;
+    }
+
+    const allHashes = Object.values(currentHashes).filter(Boolean);
+    const isMatch = allHashes.some(h => h.toLowerCase() === input);
+
+    resultEl.classList.add('show');
+    if (isMatch) {
+      resultEl.classList.add('match');
+      resultEl.classList.remove('no-match');
+      resultEl.innerHTML = '✓ Match — this hash corresponds to your input.';
+    } else {
+      resultEl.classList.add('no-match');
+      resultEl.classList.remove('match');
+      resultEl.innerHTML = allHashes.length
+        ? '✗ No match — this hash does not correspond to your input.'
+        : 'Enter text or a file above first.';
+    }
+  }
+</script>
+
+</body>
+</html>
