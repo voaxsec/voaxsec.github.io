@@ -657,6 +657,55 @@ Format:
   }
 
   // ─────────────────────────────────────────────
+  // TOPIC CLASSIFIER — runs BEFORE the main response
+  // Asks Claude a focused yes/no question: is this IT-related?
+  // This is more reliable than hoping the main prompt self-polices.
+  // ─────────────────────────────────────────────
+  async function isOnTopic(userMessage) {
+    const classifierPrompt = `You are a strict topic classifier. Reply with ONLY one word: "YES" or "NO".
+
+Is the following user message about IT support, computers, networking, cybersecurity, software/hardware troubleshooting, or VoaxSec services?
+
+Answer "NO" for ANY of the following, even if phrased as a question: sports, sports results/scores (World Cup, Olympics, any league, any year), entertainment, celebrities, movies, music, politics, news, history, geography, trivia, math, homework unrelated to IT, cooking, relationships, health, finance, travel, jokes, or creative writing.
+
+Answer "YES" only if it is clearly about computers, networks, cybersecurity, software, hardware, or VoaxSec's services.
+
+User message: "${userMessage}"
+
+Reply with exactly one word: YES or NO.`;
+
+    try {
+      const res = await fetch('https://voaxsec-proxy.voaxsec.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-opus-4-5',
+          max_tokens: 10,
+          messages: [{ role: 'user', content: classifierPrompt }]
+        })
+      });
+      const data = await res.json();
+      const answer = data.content?.find(b => b.type === 'text')?.text?.trim().toUpperCase() || 'YES';
+      return answer.startsWith('YES');
+    } catch {
+      // If the classifier fails for any reason, default to allowing the message through
+      // (fail-open keeps the chatbot usable even if classification breaks)
+      return true;
+    }
+  }
+
+  // Friendly, varied refusal messages — picked at random for natural feel
+  const REFUSAL_MESSAGES = [
+    "That's outside my lane — I'm Voax, focused only on IT support and cybersecurity. Got a tech question I can help with?",
+    "I'm built specifically for IT and cybersecurity topics, so I'll have to pass on that one. Anything tech-related I can help with instead?",
+    "That one's outside what I cover — I stick to IT support, networking, and cybersecurity. What tech issue can I help you with?",
+  ];
+
+  function getRandomRefusal() {
+    return REFUSAL_MESSAGES[Math.floor(Math.random() * REFUSAL_MESSAGES.length)];
+  }
+
+  // ─────────────────────────────────────────────
   // MAIN SEND MESSAGE
   // ─────────────────────────────────────────────
   async function sendMessage() {
@@ -685,6 +734,21 @@ Format:
     // Show typing
     showTyping();
 
+    // ── STEP 1: Classify the topic BEFORE calling the main model ──
+    const onTopic = await isOnTopic(text);
+
+    if (!onTopic) {
+      hideTyping();
+      const refusal = getRandomRefusal();
+      conversationHistory.push({ role: 'assistant', content: refusal });
+      renderMessage('ai', refusal);
+      isLoading = false;
+      document.getElementById('send-btn').disabled = false;
+      input.focus();
+      return; // Stop here — never calls the main model for off-topic messages
+    }
+
+    // ── STEP 2: On-topic — proceed with the real response ──
     try {
       const response = await fetch('https://voaxsec-proxy.voaxsec.workers.dev/', {
         method: 'POST',
