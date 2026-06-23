@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Port Reference Guide — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:#f5f5f3; --bg2:#ebebea; --bg3:#e0e0de;
+    --border:rgba(0,0,0,0.08); --border-hover:rgba(0,0,0,0.18);
+    --text:#1a1a1a; --text-muted:#666; --text-dim:#999;
+    --accent:#007a42; --accent-dim:rgba(0,122,66,0.08); --accent-mid:rgba(0,122,66,0.15);
+    --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
+    --red:#cc2200; --yellow:#996600; --green:#007a42;
+  }
+  :root.dark {
+    --bg:#0a0a0a; --bg2:#111111; --bg3:#161616;
+    --border:rgba(255,255,255,0.07); --border-hover:rgba(255,255,255,0.15);
+    --text:#e8e8e8; --text-muted:#666; --text-dim:#444;
+    --accent:#00ff88; --accent-dim:rgba(0,255,136,0.08); --accent-mid:rgba(0,255,136,0.15);
+    --red:#ff4444; --yellow:#ffcc00; --green:#00ff88;
+  }
+
+  .theme-toggle{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 8px;cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--text-muted);letter-spacing:0.06em;white-space:nowrap;flex-shrink:0;transition:border-color 0.2s;}
+  .theme-toggle:hover{border-color:var(--border-hover);color:var(--text);}
+  .toggle-track{width:28px;height:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;position:relative;transition:background 0.25s;flex-shrink:0;}
+  :root.dark .toggle-track{background:var(--accent);border-color:var(--accent);}
+  .toggle-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;background:var(--text-muted);border-radius:50%;transition:transform 0.25s,background 0.25s;}
+  :root.dark .toggle-thumb{transform:translateX(12px);background:#0a0a0a;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 48px;background:rgba(245,245,243,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:background 0.3s;}
+  :root.dark nav{background:rgba(10,10,10,0.88);}
+  .nav-logo{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:0.05em;text-decoration:none;}
+  .nav-logo span{color:var(--text-muted);}
+  .nav-back{font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;transition:color 0.2s;text-transform:uppercase;}
+  .nav-back:hover{color:var(--accent);}
+
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:100px 24px 60px;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+  :root.dark body::before{background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);}
+
+  .container{position:relative;z-index:1;width:100%;max-width:860px;}
+
+  .page-label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+  .page-title{font-size:clamp(28px,5vw,40px);font-weight:300;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.1;}
+  .page-title em{font-style:normal;color:var(--accent);}
+  .page-desc{font-size:14px;color:var(--text-muted);line-height:1.8;margin-bottom:24px;max-width:580px;}
+
+  /* SEARCH + FILTERS */
+  .controls{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .search-box{flex:1;min-width:200px;display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:2px;overflow:hidden;transition:border-color 0.2s;}
+  .search-box:focus-within{border-color:var(--accent);}
+  .search-icon{display:flex;align-items:center;padding:0 12px;color:var(--text-dim);font-size:13px;}
+  .search-input{flex:1;padding:12px 12px 12px 0;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--mono);font-size:13px;}
+  .search-input::placeholder{color:var(--text-dim);}
+
+  .filter-pills{display:flex;gap:6px;flex-wrap:wrap;}
+  .pill{font-family:var(--mono);font-size:11px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--text-muted);transition:all 0.2s;white-space:nowrap;user-select:none;}
+  .pill:hover{border-color:var(--border-hover);}
+  .pill.active{border-color:var(--accent-mid);background:var(--accent-dim);color:var(--accent);}
+
+  /* RESULTS COUNT */
+  .results-count{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:0.06em;margin-bottom:14px;}
+
+  /* TABLE */
+  .table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{text-align:left;padding:12px 16px;font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;cursor:pointer;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--bg3);}
+  tbody td{padding:12px 16px;font-size:13px;color:var(--text-muted);vertical-align:middle;}
+
+  .port-num{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:500;}
+  .proto-tag{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:0.04em;background:var(--bg3);color:var(--text-dim);border:1px solid var(--border);white-space:nowrap;}
+  .service-name{color:var(--text);font-weight:500;font-size:13px;}
+  .service-desc{color:var(--text-dim);font-size:11px;margin-top:2px;}
+
+  .risk-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;padding:4px 9px;border-radius:2px;letter-spacing:0.04em;white-space:nowrap;}
+  .risk-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .risk-low{color:var(--green);background:rgba(0,122,66,0.08);}
+  .risk-medium{color:var(--yellow);background:rgba(153,102,0,0.08);}
+  .risk-high{color:var(--red);background:rgba(204,34,0,0.08);}
+  :root.dark .risk-low{background:rgba(0,255,136,0.08);}
+  :root.dark .risk-medium{background:rgba(255,204,0,0.08);}
+  :root.dark .risk-high{background:rgba(255,68,68,0.08);}
+
+  .no-results{padding:48px 24px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+
+  /* EXPANDED ROW DETAIL */
+  .detail-row{display:none;}
+  .detail-row.show{display:table-row;}
+  .detail-row td{background:var(--bg);padding:16px 20px;font-size:12px;color:var(--text-muted);line-height:1.7;border-bottom:1px solid var(--border);}
+  .detail-row strong{color:var(--text);}
+
+  .legend{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--text-dim);}
+  .legend-item{display:flex;align-items:center;gap:6px;}
+  .legend-dot{width:6px;height:6px;border-radius:50%;}
+
+  .page-footer{margin-top:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.06em;}
+  .page-footer a{color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+  .page-footer a:hover{color:var(--accent);}
+
+  @media(max-width:680px){
+    nav{padding:16px 20px;}body{padding:90px 16px 40px;}
+    .controls{flex-direction:column;}
+    thead th:nth-child(2),tbody td:nth-child(2){display:none;}
+    .service-desc{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <a href="index.html" class="nav-back">← Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <p class="page-label">// Tool_07</p>
+  <h1 class="page-title">Port <em>Reference Guide</em></h1>
+  <p class="page-desc">
+    A searchable reference of common network ports — their protocol, the service
+    that typically uses them, and a general risk level if left exposed to the internet.
+  </p>
+
+  <div class="controls">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="search-input" type="text" placeholder="Search by port number, service, or protocol..." oninput="render()">
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="filter-pills" id="risk-pills">
+      <div class="pill active" data-risk="all" onclick="setRiskFilter('all',this)">All Risk Levels</div>
+      <div class="pill" data-risk="low" onclick="setRiskFilter('low',this)">Low Risk</div>
+      <div class="pill" data-risk="medium" onclick="setRiskFilter('medium',this)">Medium Risk</div>
+      <div class="pill" data-risk="high" onclick="setRiskFilter('high',this)">High Risk</div>
+    </div>
+  </div>
+
+  <p class="results-count" id="results-count">— ports</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Port</th>
+          <th>Protocol</th>
+          <th>Service</th>
+          <th>Risk Level</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span> Low — standard, generally safe when properly configured</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--yellow)"></span> Medium — should be firewalled/restricted, common attack target</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span> High — frequently exploited, should rarely face the public internet</div>
+  </div>
+
+  <p class="page-footer">
+    Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com
+  </p>
+
+</div>
+
+<script>
+  (function(){if(localStorage.getItem('voaxsec-theme')==='dark')document.documentElement.classList.add('dark');updateToggleLabel();})();
+  function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('voaxsec-theme',d?'dark':'light');updateToggleLabel();}
+  function updateToggleLabel(){const d=document.documentElement.classList.contains('dark');document.querySelectorAll('.toggle-label').forEach(l=>l.textContent=d?'Dark':'Light');}
+
+  // ─────────────────────────────────────────────
+  // PORT DATABASE
+  // risk: low / medium / high
+  // ─────────────────────────────────────────────
+  const PORTS = [
+    {port:20, proto:'TCP', service:'FTP (Data)', desc:'File Transfer Protocol data channel. Transfers actual file content.', risk:'high', detail:'FTP transmits credentials and data in plain text. Easily intercepted. Use SFTP or FTPS instead for anything sensitive.'},
+    {port:21, proto:'TCP', service:'FTP (Control)', desc:'File Transfer Protocol command channel — login and commands.', risk:'high', detail:'Sends usernames and passwords unencrypted. A classic target for credential sniffing on unsecured networks.'},
+    {port:22, proto:'TCP', service:'SSH', desc:'Secure Shell — encrypted remote login and command execution.', risk:'medium', detail:'Encrypted by design, but constantly targeted by brute-force bots when exposed. Use key-based auth, disable root login, and consider changing the default port for internet-facing servers.'},
+    {port:23, proto:'TCP', service:'Telnet', desc:'Unencrypted remote terminal access.', risk:'high', detail:'Sends everything, including passwords, in plain text. Considered obsolete and dangerous — SSH replaced it decades ago.'},
+    {port:25, proto:'TCP', service:'SMTP', desc:'Simple Mail Transfer Protocol — sending email between servers.', risk:'medium', detail:'Often abused for spam relay if misconfigured. Should require authentication and ideally run over TLS (port 587).'},
+    {port:53, proto:'TCP/UDP', service:'DNS', desc:'Domain Name System — resolves domain names to IP addresses.', risk:'medium', detail:'Can be abused for DNS amplification DDoS attacks and cache poisoning if the resolver is misconfigured or open to the public.'},
+    {port:67, proto:'UDP', service:'DHCP (Server)', desc:'Dynamic Host Configuration Protocol — assigns IPs to devices on a network.', risk:'low', detail:'Generally internal-network only. Risk comes from rogue DHCP servers on a LAN, not internet exposure.'},
+    {port:68, proto:'UDP', service:'DHCP (Client)', desc:'DHCP client-side port for receiving IP configuration.', risk:'low', detail:'Local network protocol, not typically internet-facing.'},
+    {port:69, proto:'UDP', service:'TFTP', desc:'Trivial File Transfer Protocol — simple file transfer, no authentication.', risk:'high', detail:'No authentication or encryption at all. Used mainly for booting devices on trusted internal networks — never expose to the internet.'},
+    {port:80, proto:'TCP', service:'HTTP', desc:'Hypertext Transfer Protocol — unencrypted web traffic.', risk:'medium', detail:'Traffic is unencrypted and can be intercepted or modified in transit. Should redirect to HTTPS (443) for anything beyond static, non-sensitive content.'},
+    {port:110, proto:'TCP', service:'POP3', desc:'Post Office Protocol v3 — retrieves email from a mail server.', risk:'medium', detail:'Unencrypted by default. Use POP3S (995) instead to protect login credentials and email content.'},
+    {port:123, proto:'UDP', service:'NTP', desc:'Network Time Protocol — synchronizes system clocks.', risk:'medium', detail:'Has been used in DDoS amplification attacks (NTP monlist exploit). Keep servers patched and rate-limited.'},
+    {port:135, proto:'TCP', service:'MS RPC', desc:'Microsoft Remote Procedure Call — used by various Windows services.', risk:'high', detail:'Historically exploited by major worms (e.g. Blaster). Should never be exposed directly to the internet.'},
+    {port:137, proto:'TCP/UDP', service:'NetBIOS Name', desc:'NetBIOS Name Service — legacy Windows network naming.', risk:'high', detail:'Legacy protocol with known information disclosure issues. Should be disabled on internet-facing interfaces.'},
+    {port:139, proto:'TCP', service:'NetBIOS Session', desc:'NetBIOS Session Service — legacy Windows file/printer sharing transport.', risk:'high', detail:'Associated with SMB-based attacks and worms. Block at the firewall for any internet-facing host.'},
+    {port:143, proto:'TCP', service:'IMAP', desc:'Internet Message Access Protocol — retrieves and manages email on a server.', risk:'medium', detail:'Unencrypted by default. Use IMAPS (993) to protect credentials and email content in transit.'},
+    {port:161, proto:'UDP', service:'SNMP', desc:'Simple Network Management Protocol — monitors and manages network devices.', risk:'high', detail:'Default community strings ("public"/"private") are widely known. Can leak detailed device info or allow configuration changes if not secured with SNMPv3.'},
+    {port:389, proto:'TCP', service:'LDAP', desc:'Lightweight Directory Access Protocol — directory services (e.g. Active Directory).', risk:'medium', detail:'Unencrypted by default, exposing directory queries and potentially credentials. Use LDAPS (636) for anything beyond a fully trusted internal network.'},
+    {port:443, proto:'TCP', service:'HTTPS', desc:'HTTP over TLS/SSL — encrypted web traffic.', risk:'low', detail:'The standard for secure web traffic. Risk depends entirely on the application behind it and certificate/TLS configuration, not the port itself.'},
+    {port:445, proto:'TCP', service:'SMB', desc:'Server Message Block — Windows file and printer sharing.', risk:'high', detail:'The port behind WannaCry and other major ransomware outbreaks (via EternalBlue exploit). Should never be exposed to the public internet.'},
+    {port:465, proto:'TCP', service:'SMTPS', desc:'SMTP over SSL/TLS — encrypted outgoing mail submission.', risk:'low', detail:'Encrypted alternative to plain SMTP. Safe when paired with proper authentication.'},
+    {port:514, proto:'UDP', service:'Syslog', desc:'System logging protocol — sends log messages to a central server.', risk:'medium', detail:'Typically sent unencrypted and unauthenticated over UDP. Should be restricted to trusted internal network segments.'},
+    {port:587, proto:'TCP', service:'SMTP (Submission)', desc:'SMTP mail submission with mandatory authentication, usually over TLS.', risk:'low', detail:'The modern, recommended way for mail clients to send outgoing email securely.'},
+    {port:631, proto:'TCP/UDP', service:'IPP / CUPS', desc:'Internet Printing Protocol — network printer management.', risk:'medium', detail:'Has had remote code execution vulnerabilities in CUPS implementations. Keep printer servers patched and off the public internet.'},
+    {port:636, proto:'TCP', service:'LDAPS', desc:'LDAP over SSL/TLS — encrypted directory service queries.', risk:'low', detail:'The secure version of LDAP. Recommended over plain LDAP whenever possible.'},
+    {port:993, proto:'TCP', service:'IMAPS', desc:'IMAP over SSL/TLS — encrypted email retrieval.', risk:'low', detail:'Secure alternative to plain IMAP. The standard for modern email clients.'},
+    {port:995, proto:'TCP', service:'POP3S', desc:'POP3 over SSL/TLS — encrypted email retrieval.', risk:'low', detail:'Secure alternative to plain POP3.'},
+    {port:1433, proto:'TCP', service:'MS SQL Server', desc:'Microsoft SQL Server database connections.', risk:'high', detail:'A top target for credential brute-forcing and SQL injection pivot attacks when exposed. Should sit behind a firewall, never directly on the internet.'},
+    {port:1521, proto:'TCP', service:'Oracle DB', desc:'Oracle database default listener port.', risk:'high', detail:'Database ports should never be internet-facing. Restrict to application servers only via firewall rules.'},
+    {port:1723, proto:'TCP', service:'PPTP (VPN)', desc:'Point-to-Point Tunneling Protocol — legacy VPN protocol.', risk:'high', detail:'PPTP encryption has been broken for years. Use WireGuard, OpenVPN, or IPsec instead for any new VPN deployment.'},
+    {port:3306, proto:'TCP', service:'MySQL', desc:'MySQL/MariaDB database connections.', risk:'high', detail:'Frequently scanned and brute-forced when exposed. Bind to localhost or internal network only; never expose directly to the internet.'},
+    {port:3389, proto:'TCP', service:'RDP', desc:'Remote Desktop Protocol — Windows remote desktop access.', risk:'high', detail:'One of the most attacked ports on the internet — constant brute-force and exploit attempts (e.g. BlueKeep). Always put behind a VPN, never expose directly.'},
+    {port:5060, proto:'TCP/UDP', service:'SIP', desc:'Session Initiation Protocol — VoIP call signaling.', risk:'medium', detail:"Commonly targeted for toll fraud (attackers hijacking VoIP systems to make expensive calls at the victim's expense)."},
+    {port:5432, proto:'TCP', service:'PostgreSQL', desc:'PostgreSQL database connections.', risk:'high', detail:'Like other database ports, should never be directly internet-facing. Restrict access via firewall to known application servers.'},
+    {port:5900, proto:'TCP', service:'VNC', desc:'Virtual Network Computing — remote desktop sharing.', risk:'high', detail:'Many VNC implementations historically had weak or no authentication by default. Tunnel through SSH or VPN rather than exposing directly.'},
+    {port:6379, proto:'TCP', service:'Redis', desc:'Redis in-memory database/cache.', risk:'high', detail:'Has no authentication by default in many setups, leading to widespread exploitation of exposed Redis instances for cryptomining and ransomware.'},
+    {port:8080, proto:'TCP', service:'HTTP (Alt)', desc:'Common alternate HTTP port, often used for proxies or dev servers.', risk:'medium', detail:'Frequently used for admin panels, proxies, or development servers that may not be hardened for production exposure.'},
+    {port:8443, proto:'TCP', service:'HTTPS (Alt)', desc:'Common alternate HTTPS port, often used for admin panels or APIs.', risk:'low', detail:'Encrypted, but often fronts admin interfaces — make sure strong authentication is in place regardless of the encryption.'},
+    {port:27017, proto:'TCP', service:'MongoDB', desc:'MongoDB database connections.', risk:'high', detail:'Notorious for being left exposed with no authentication, leading to mass data breaches and ransomware. Always restrict to internal networks.'},
+  ];
+
+  let activeRiskFilter = 'all';
+  let expandedPort = null;
+
+  function setRiskFilter(risk, el){
+    activeRiskFilter = risk;
+    document.querySelectorAll('#risk-pills .pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    render();
+  }
+
+  function toggleDetail(port){
+    expandedPort = expandedPort === port ? null : port;
+    render();
+  }
+
+  function riskLabel(risk){
+    return risk === 'low' ? 'Low' : risk === 'medium' ? 'Medium' : 'High';
+  }
+
+  function render(){
+    const query = document.getElementById('search-input').value.trim().toLowerCase();
+
+    let filtered = PORTS.filter(p => {
+      const matchesRisk = activeRiskFilter === 'all' || p.risk === activeRiskFilter;
+      const matchesQuery = !query ||
+        String(p.port).includes(query) ||
+        p.service.toLowerCase().includes(query) ||
+        p.proto.toLowerCase().includes(query) ||
+        p.desc.toLowerCase().includes(query);
+      return matchesRisk && matchesQuery;
+    });
+
+    document.getElementById('results-count').textContent = `${filtered.length} port${filtered.length!==1?'s':''} found`;
+
+    const tbody = document.getElementById('table-body');
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="no-results">No ports match your search.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => {
+      const isExpanded = expandedPort === p.port;
+      return `
+        <tr onclick="toggleDetail(${p.port})">
+          <td><span class="port-num">${p.port}</span></td>
+          <td><span class="proto-tag">${p.proto}</span></td>
+          <td>
+            <div class="service-name">${p.service}</div>
+            <div class="service-desc">${p.desc}</div>
+          </td>
+          <td><span class="risk-badge risk-${p.risk}">${riskLabel(p.risk)}</span></td>
+        </tr>
+        <tr class="detail-row ${isExpanded?'show':''}">
+          <td colspan="4"><strong>${p.service} (port ${p.port}/${p.proto})</strong> — ${p.detail}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  render();
+</script>
+
+</body>
+</html>

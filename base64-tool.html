@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 Encoder/Decoder — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:#f5f5f3; --bg2:#ebebea; --bg3:#e0e0de;
+    --border:rgba(0,0,0,0.08); --border-hover:rgba(0,0,0,0.18);
+    --text:#1a1a1a; --text-muted:#666; --text-dim:#999;
+    --accent:#007a42; --accent-dim:rgba(0,122,66,0.08); --accent-mid:rgba(0,122,66,0.15);
+    --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
+    --red:#cc2200;
+  }
+  :root.dark {
+    --bg:#0a0a0a; --bg2:#111111; --bg3:#161616;
+    --border:rgba(255,255,255,0.07); --border-hover:rgba(255,255,255,0.15);
+    --text:#e8e8e8; --text-muted:#666; --text-dim:#444;
+    --accent:#00ff88; --accent-dim:rgba(0,255,136,0.08); --accent-mid:rgba(0,255,136,0.15);
+    --red:#ff4444;
+  }
+
+  .theme-toggle{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 8px;cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--text-muted);letter-spacing:0.06em;white-space:nowrap;flex-shrink:0;transition:border-color 0.2s;}
+  .theme-toggle:hover{border-color:var(--border-hover);color:var(--text);}
+  .toggle-track{width:28px;height:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;position:relative;transition:background 0.25s;flex-shrink:0;}
+  :root.dark .toggle-track{background:var(--accent);border-color:var(--accent);}
+  .toggle-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;background:var(--text-muted);border-radius:50%;transition:transform 0.25s,background 0.25s;}
+  :root.dark .toggle-thumb{transform:translateX(12px);background:#0a0a0a;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 48px;background:rgba(245,245,243,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:background 0.3s;}
+  :root.dark nav{background:rgba(10,10,10,0.88);}
+  .nav-logo{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:0.05em;text-decoration:none;}
+  .nav-logo span{color:var(--text-muted);}
+  .nav-back{font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;transition:color 0.2s;text-transform:uppercase;}
+  .nav-back:hover{color:var(--accent);}
+
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:100px 24px 60px;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+  :root.dark body::before{background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);}
+
+  .container{position:relative;z-index:1;width:100%;max-width:680px;}
+
+  .page-label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+  .page-title{font-size:clamp(28px,5vw,40px);font-weight:300;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.1;}
+  .page-title em{font-style:normal;color:var(--accent);}
+  .page-desc{font-size:14px;color:var(--text-muted);line-height:1.8;margin-bottom:28px;max-width:520px;}
+
+  .disclaimer{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:var(--accent-dim);border:1px solid var(--accent-mid);border-left:3px solid var(--accent);border-radius:2px;margin-bottom:28px;font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .disclaimer-icon{font-size:14px;color:var(--accent);flex-shrink:0;margin-top:1px;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:36px;margin-bottom:24px;}
+
+  .mode-tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:4px;}
+  .mode-tab{flex:1;padding:10px;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;text-align:center;cursor:pointer;border-radius:2px;color:var(--text-muted);transition:all 0.2s;user-select:none;border:1px solid transparent;}
+  .mode-tab.active{color:var(--accent);background:var(--accent-dim);border-color:var(--accent-mid);}
+
+  .input-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+  .char-count{color:var(--text-dim);font-size:9px;}
+
+  textarea{width:100%;min-height:130px;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6;outline:none;resize:vertical;transition:border-color 0.2s;}
+  textarea:focus{border-color:var(--accent);}
+  textarea::placeholder{color:var(--text-dim);}
+  textarea.error-border{border-color:var(--red);}
+
+  .swap-row{display:flex;justify-content:center;margin:14px 0;}
+  .swap-btn{font-family:var(--mono);font-size:11px;color:var(--text-muted);background:var(--bg3);border:1px solid var(--border);padding:8px 18px;border-radius:20px;cursor:pointer;letter-spacing:0.06em;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+  .swap-btn:hover{color:var(--accent);border-color:var(--accent);}
+
+  .output-wrap{position:relative;}
+  .copy-btn-sm{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--bg3);border:1px solid var(--border);padding:5px 10px;cursor:pointer;border-radius:2px;letter-spacing:0.06em;text-transform:uppercase;transition:all 0.2s;}
+  .copy-btn-sm:hover{color:var(--accent);border-color:var(--accent);}
+  .copy-btn-sm.copied{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);}
+
+  .error-msg{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:8px;letter-spacing:0.04em;}
+
+  /* URL-safe toggle */
+  .options-row{display:flex;align-items:center;gap:10px;margin-top:14px;}
+  .checkbox-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:all 0.2s;user-select:none;}
+  .checkbox-item:hover{border-color:var(--border-hover);}
+  .checkbox-item.active{border-color:var(--accent-mid);background:var(--accent-dim);}
+  .checkbox-box{width:14px;height:14px;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;}
+  .checkbox-item.active .checkbox-box{background:var(--accent);border-color:var(--accent);}
+  .checkbox-box::after{content:'✓';font-size:9px;color:var(--bg);opacity:0;transition:opacity 0.15s;}
+  .checkbox-item.active .checkbox-box::after{opacity:1;}
+  .checkbox-text{font-size:12px;color:var(--text-muted);}
+  .checkbox-item.active .checkbox-text{color:var(--text);}
+  .checkbox-item input{display:none;}
+
+  .info-box{margin-top:24px;padding:16px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:2px;font-size:12px;color:var(--text-dim);line-height:1.7;}
+  .info-box strong{color:var(--text-muted);}
+
+  .page-footer{margin-top:8px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.06em;}
+  .page-footer a{color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+  .page-footer a:hover{color:var(--accent);}
+
+  @media(max-width:600px){nav{padding:16px 20px;}body{padding:90px 16px 40px;}.card{padding:24px 20px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <a href="index.html" class="nav-back">← Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <p class="page-label">// Tool_05</p>
+  <h1 class="page-title">Base64 <em>Encoder / Decoder</em></h1>
+  <p class="page-desc">
+    Encode text to Base64 or decode Base64 back to readable text.
+    Used everywhere from email attachments to API authentication and data URIs.
+  </p>
+
+  <div class="disclaimer">
+    <span class="disclaimer-icon">ⓘ</span>
+    <span>Base64 is encoding, not encryption — anyone can decode it instantly. Never use it to "hide" passwords or sensitive data; use it only for safely transmitting binary data as text.</span>
+  </div>
+
+  <div class="card">
+
+    <div class="mode-tabs">
+      <div class="mode-tab active" id="tab-encode" onclick="switchMode('encode')">Encode (Text → Base64)</div>
+      <div class="mode-tab" id="tab-decode" onclick="switchMode('decode')">Decode (Base64 → Text)</div>
+    </div>
+
+    <label class="input-label">
+      <span id="input-label-text">Plain text</span>
+      <span class="char-count" id="input-count">0 characters</span>
+    </label>
+    <textarea id="input-text" placeholder="Type or paste text to encode..." oninput="process()"></textarea>
+
+    <div class="swap-row">
+      <button class="swap-btn" onclick="swapMode()">⇄ Swap input/output</button>
+    </div>
+
+    <label class="input-label">
+      <span id="output-label-text">Base64 output</span>
+      <span class="char-count" id="output-count">0 characters</span>
+    </label>
+    <div class="output-wrap">
+      <textarea id="output-text" placeholder="Result will appear here..." readonly></textarea>
+      <button class="copy-btn-sm" id="copy-btn" onclick="copyOutput()">Copy</button>
+    </div>
+    <div class="error-msg" id="error-msg" style="display:none;"></div>
+
+    <div class="options-row">
+      <label class="checkbox-item" id="url-safe-item" onclick="toggleUrlSafe(this)">
+        <input type="checkbox" id="url-safe-check">
+        <div class="checkbox-box"></div>
+        <span class="checkbox-text">URL-safe Base64 (replaces +/ with -_)</span>
+      </label>
+    </div>
+
+  </div>
+
+  <div class="info-box">
+    <strong>Where Base64 shows up in real life:</strong> embedding images directly in HTML/CSS (data URIs), encoding email attachments (MIME), Basic Auth headers in HTTP requests, JWT tokens (the header and payload are Base64-encoded), and storing binary data in JSON or XML.
+  </div>
+
+  <p class="page-footer">
+    Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com
+  </p>
+
+</div>
+
+<script>
+  (function(){if(localStorage.getItem('voaxsec-theme')==='dark')document.documentElement.classList.add('dark');updateToggleLabel();})();
+  function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('voaxsec-theme',d?'dark':'light');updateToggleLabel();}
+  function updateToggleLabel(){const d=document.documentElement.classList.contains('dark');document.querySelectorAll('.toggle-label').forEach(l=>l.textContent=d?'Dark':'Light');}
+
+  let currentMode = 'encode'; // 'encode' or 'decode'
+  let urlSafe = false;
+
+  function switchMode(mode){
+    currentMode = mode;
+    document.getElementById('tab-encode').classList.toggle('active', mode==='encode');
+    document.getElementById('tab-decode').classList.toggle('active', mode==='decode');
+    document.getElementById('input-label-text').textContent = mode==='encode' ? 'Plain text' : 'Base64 input';
+    document.getElementById('output-label-text').textContent = mode==='encode' ? 'Base64 output' : 'Decoded text';
+    document.getElementById('input-text').placeholder = mode==='encode' ? 'Type or paste text to encode...' : 'Paste Base64 string to decode...';
+    process();
+  }
+
+  function toggleUrlSafe(el){
+    const cb = el.querySelector('input');
+    cb.checked = !cb.checked;
+    urlSafe = cb.checked;
+    el.classList.toggle('active', urlSafe);
+    process();
+  }
+
+  // ─────────────────────────────────────────────
+  // SWAP — takes current output and makes it the new input,
+  // flipping the mode (encode↔decode) so the round-trip makes sense
+  // ─────────────────────────────────────────────
+  function swapMode(){
+    const output = document.getElementById('output-text').value;
+    currentMode = currentMode === 'encode' ? 'decode' : 'encode';
+    document.getElementById('tab-encode').classList.toggle('active', currentMode==='encode');
+    document.getElementById('tab-decode').classList.toggle('active', currentMode==='decode');
+    document.getElementById('input-label-text').textContent = currentMode==='encode' ? 'Plain text' : 'Base64 input';
+    document.getElementById('output-label-text').textContent = currentMode==='encode' ? 'Base64 output' : 'Decoded text';
+    document.getElementById('input-text').value = output;
+    process();
+  }
+
+  // ─────────────────────────────────────────────
+  // CORE ENCODE/DECODE LOGIC
+  // btoa/atob only handle Latin1, so we go through TextEncoder/Decoder
+  // first to correctly support UTF-8 (emojis, accents, non-English text)
+  // ─────────────────────────────────────────────
+  function utf8ToBase64(str){
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    let b64 = btoa(binary);
+    if (urlSafe) b64 = b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    return b64;
+  }
+
+  function base64ToUtf8(b64){
+    let normalized = b64.trim();
+    if (urlSafe || normalized.includes('-') || normalized.includes('_')) {
+      normalized = normalized.replace(/-/g,'+').replace(/_/g,'/');
+    }
+    // Re-pad if needed (URL-safe strips padding)
+    while (normalized.length % 4 !== 0) normalized += '=';
+    const binary = atob(normalized);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function process(){
+    const input = document.getElementById('input-text').value;
+    const output = document.getElementById('output-text');
+    const errorEl = document.getElementById('error-msg');
+
+    document.getElementById('input-count').textContent = input.length + ' characters';
+    document.getElementById('input-text').classList.remove('error-border');
+    errorEl.style.display = 'none';
+
+    if (!input) {
+      output.value = '';
+      document.getElementById('output-count').textContent = '0 characters';
+      return;
+    }
+
+    try {
+      let result;
+      if (currentMode === 'encode') {
+        result = utf8ToBase64(input);
+      } else {
+        result = base64ToUtf8(input);
+      }
+      output.value = result;
+      document.getElementById('output-count').textContent = result.length + ' characters';
+    } catch (e) {
+      output.value = '';
+      document.getElementById('output-count').textContent = '0 characters';
+      document.getElementById('input-text').classList.add('error-border');
+      errorEl.style.display = 'block';
+      errorEl.textContent = currentMode === 'decode'
+        ? '✗ Invalid Base64 string — check for typos or missing characters.'
+        : '✗ Could not encode this input.';
+    }
+  }
+
+  function copyOutput(){
+    const value = document.getElementById('output-text').value;
+    if (!value) return;
+    navigator.clipboard.writeText(value).then(()=>{
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

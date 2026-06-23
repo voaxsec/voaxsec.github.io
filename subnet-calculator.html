@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subnet Calculator — VoaxSec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:#f5f5f3; --bg2:#ebebea; --bg3:#e0e0de;
+    --border:rgba(0,0,0,0.08); --border-hover:rgba(0,0,0,0.18);
+    --text:#1a1a1a; --text-muted:#666; --text-dim:#999;
+    --accent:#007a42; --accent-dim:rgba(0,122,66,0.08); --accent-mid:rgba(0,122,66,0.15);
+    --mono:'DM Mono',monospace; --sans:'DM Sans',sans-serif;
+    --red:#cc2200;
+  }
+  :root.dark {
+    --bg:#0a0a0a; --bg2:#111111; --bg3:#161616;
+    --border:rgba(255,255,255,0.07); --border-hover:rgba(255,255,255,0.15);
+    --text:#e8e8e8; --text-muted:#666; --text-dim:#444;
+    --accent:#00ff88; --accent-dim:rgba(0,255,136,0.08); --accent-mid:rgba(0,255,136,0.15);
+    --red:#ff4444;
+  }
+
+  .theme-toggle{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 8px;cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--text-muted);letter-spacing:0.06em;white-space:nowrap;flex-shrink:0;transition:border-color 0.2s;}
+  .theme-toggle:hover{border-color:var(--border-hover);color:var(--text);}
+  .toggle-track{width:28px;height:16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;position:relative;transition:background 0.25s;flex-shrink:0;}
+  :root.dark .toggle-track{background:var(--accent);border-color:var(--accent);}
+  .toggle-thumb{position:absolute;top:2px;left:2px;width:10px;height:10px;background:var(--text-muted);border-radius:50%;transition:transform 0.25s,background 0.25s;}
+  :root.dark .toggle-thumb{transform:translateX(12px);background:#0a0a0a;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 48px;background:rgba(245,245,243,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:background 0.3s;}
+  :root.dark nav{background:rgba(10,10,10,0.88);}
+  .nav-logo{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:0.05em;text-decoration:none;}
+  .nav-logo span{color:var(--text-muted);}
+  .nav-back{font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;transition:color 0.2s;text-transform:uppercase;}
+  .nav-back:hover{color:var(--accent);}
+
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:100px 24px 60px;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+  :root.dark body::before{background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);}
+
+  .container{position:relative;z-index:1;width:100%;max-width:720px;}
+
+  .page-label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+  .page-title{font-size:clamp(28px,5vw,40px);font-weight:300;letter-spacing:-0.02em;margin-bottom:8px;line-height:1.1;}
+  .page-title em{font-style:normal;color:var(--accent);}
+  .page-desc{font-size:14px;color:var(--text-muted);line-height:1.8;margin-bottom:28px;max-width:560px;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:36px;margin-bottom:24px;}
+
+  .input-row{display:flex;gap:12px;margin-bottom:8px;}
+  .input-group{flex:1;}
+  .input-group.cidr-group{flex:0 0 140px;}
+
+  .input-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;display:block;}
+
+  input[type="text"]{width:100%;padding:13px 16px;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color 0.2s;}
+  input[type="text"]:focus{border-color:var(--accent);}
+  input[type="text"]::placeholder{color:var(--text-dim);}
+  input.error-border{border-color:var(--red);}
+
+  select{width:100%;padding:13px 16px;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;transition:border-color 0.2s;}
+  select:focus{border-color:var(--accent);}
+  select option{background:var(--bg2);color:var(--text);}
+
+  .error-msg{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:8px;letter-spacing:0.04em;display:none;}
+
+  /* RESULTS */
+  .results{margin-top:28px;padding-top:24px;border-top:1px solid var(--border);display:none;}
+  .results.show{display:block;}
+
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
+  .result-cell{padding:14px 16px;background:var(--bg);}
+  .result-cell:hover{background:var(--bg3);}
+  .result-label{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;}
+  .result-value{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:500;word-break:break-all;}
+  .result-value.dim{color:var(--text);font-weight:400;}
+
+  .binary-section{margin-top:20px;padding:16px 18px;background:var(--bg);border:1px solid var(--border);border-radius:2px;}
+  .binary-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;font-family:var(--mono);font-size:11px;}
+  .binary-row:last-child{margin-bottom:0;}
+  .binary-label{color:var(--text-dim);min-width:90px;font-size:10px;letter-spacing:0.04em;}
+  .binary-octets{display:flex;gap:4px;flex:1;}
+  .octet{flex:1;text-align:center;padding:4px 2px;border-radius:2px;letter-spacing:0.05em;}
+  .octet.network-bit{background:var(--accent-dim);color:var(--accent);}
+  .octet.host-bit{background:var(--bg3);color:var(--text-dim);}
+
+  .usable-range{margin-top:16px;padding:14px 16px;background:var(--accent-dim);border:1px solid var(--accent-mid);border-radius:2px;}
+  .usable-label{font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+  .usable-value{font-family:var(--mono);font-size:14px;color:var(--text);}
+
+  .quick-ref{margin-top:24px;}
+  .quick-ref-title{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;}
+  .cidr-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;}
+  .cidr-table th{text-align:left;padding:8px 10px;color:var(--text-dim);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .cidr-table td{padding:7px 10px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+  .cidr-table tr:hover td{background:var(--bg3);color:var(--text);cursor:pointer;}
+  .cidr-table tr.highlight td{background:var(--accent-dim);color:var(--accent);}
+
+  .page-footer{margin-top:8px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:0.06em;}
+  .page-footer a{color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+  .page-footer a:hover{color:var(--accent);}
+
+  @media(max-width:600px){
+    nav{padding:16px 20px;}body{padding:90px 16px 40px;}.card{padding:24px 20px;}
+    .result-grid{grid-template-columns:1fr;}
+    .input-row{flex-direction:column;}
+    .input-group.cidr-group{flex:1;}
+    .binary-octets{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">voax<span>sec</span>.com</a>
+  <a href="index.html" class="nav-back">← Back</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<div class="container">
+
+  <p class="page-label">// Tool_06</p>
+  <h1 class="page-title">Subnet <em>Calculator</em></h1>
+  <p class="page-desc">
+    Enter an IP address and subnet mask (or CIDR) to calculate the network address,
+    broadcast address, usable host range, and total host count.
+  </p>
+
+  <div class="card">
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label">IP Address</label>
+        <input type="text" id="ip-input" placeholder="e.g. 192.168.1.10" value="192.168.1.10" oninput="calculate()">
+      </div>
+      <div class="input-group cidr-group">
+        <label class="input-label">CIDR / Mask</label>
+        <select id="cidr-select" onchange="calculate()"></select>
+      </div>
+    </div>
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+
+      <div class="result-grid">
+        <div class="result-cell">
+          <div class="result-label">Network Address</div>
+          <div class="result-value" id="res-network">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">Broadcast Address</div>
+          <div class="result-value" id="res-broadcast">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">Subnet Mask</div>
+          <div class="result-value dim" id="res-mask">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">Wildcard Mask</div>
+          <div class="result-value dim" id="res-wildcard">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">CIDR Notation</div>
+          <div class="result-value dim" id="res-cidr">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">Total Hosts</div>
+          <div class="result-value dim" id="res-total">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">Usable Hosts</div>
+          <div class="result-value dim" id="res-usable">—</div>
+        </div>
+        <div class="result-cell">
+          <div class="result-label">IP Class</div>
+          <div class="result-value dim" id="res-class">—</div>
+        </div>
+      </div>
+
+      <div class="usable-range">
+        <div class="usable-label">Usable Host Range</div>
+        <div class="usable-value" id="res-range">—</div>
+      </div>
+
+      <div class="binary-section">
+        <div class="binary-row">
+          <span class="binary-label">IP Address</span>
+          <div class="binary-octets" id="bin-ip"></div>
+        </div>
+        <div class="binary-row">
+          <span class="binary-label">Subnet Mask</span>
+          <div class="binary-octets" id="bin-mask"></div>
+        </div>
+        <div class="binary-row">
+          <span class="binary-label">Network</span>
+          <div class="binary-octets" id="bin-network"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="quick-ref">
+    <div class="quick-ref-title">// Common CIDR quick reference — click to use</div>
+    <table class="cidr-table">
+      <thead><tr><th>CIDR</th><th>Subnet Mask</th><th>Total Hosts</th><th>Usable Hosts</th><th>Typical use</th></tr></thead>
+      <tbody id="cidr-ref-body"></tbody>
+    </table>
+  </div>
+
+  <p class="page-footer">
+    Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com
+  </p>
+
+</div>
+
+<script>
+  (function(){if(localStorage.getItem('voaxsec-theme')==='dark')document.documentElement.classList.add('dark');updateToggleLabel();})();
+  function toggleTheme(){const d=document.documentElement.classList.toggle('dark');localStorage.setItem('voaxsec-theme',d?'dark':'light');updateToggleLabel();}
+  function updateToggleLabel(){const d=document.documentElement.classList.contains('dark');document.querySelectorAll('.toggle-label').forEach(l=>l.textContent=d?'Dark':'Light');}
+
+  // ─────────────────────────────────────────────
+  // CIDR REFERENCE DATA — used for both the dropdown and the table
+  // ─────────────────────────────────────────────
+  const CIDR_DATA = [
+    {cidr:8,  use:'Class A network'},
+    {cidr:16, use:'Class B network'},
+    {cidr:24, use:'Class C network — most common LAN'},
+    {cidr:25, use:'Split a /24 in half'},
+    {cidr:26, use:'Small office subnet'},
+    {cidr:27, use:'Small department'},
+    {cidr:28, use:'Point-to-point links group'},
+    {cidr:29, use:'Tiny subnet — few devices'},
+    {cidr:30, use:'Point-to-point link (router-to-router)'},
+    {cidr:32, use:'Single host route'},
+  ];
+
+  // ─────────────────────────────────────────────
+  // IP <-> INTEGER CONVERSION
+  // We convert IPs to a single 32-bit integer to do bitwise math easily
+  // ─────────────────────────────────────────────
+  function ipToInt(ip){
+    const parts = ip.split('.').map(Number);
+    return ((parts[0]<<24) | (parts[1]<<16) | (parts[2]<<8) | parts[3]) >>> 0;
+  }
+
+  function intToIp(int){
+    return [(int>>>24)&255, (int>>>16)&255, (int>>>8)&255, int&255].join('.');
+  }
+
+  function isValidIp(ip){
+    const parts = ip.trim().split('.');
+    if (parts.length !== 4) return false;
+    return parts.every(p => /^\d+$/.test(p) && Number(p) <= 255 && Number(p) >= 0);
+  }
+
+  // ─────────────────────────────────────────────
+  // CIDR -> SUBNET MASK INTEGER
+  // A /24 means the first 24 bits are 1s, rest are 0s
+  // ─────────────────────────────────────────────
+  function cidrToMaskInt(cidr){
+    if (cidr === 0) return 0;
+    return (0xFFFFFFFF << (32 - cidr)) >>> 0;
+  }
+
+  function intToBinary(int){
+    return int.toString(2).padStart(32,'0');
+  }
+
+  // ─────────────────────────────────────────────
+  // IP CLASS (legacy classification, still commonly taught)
+  // ─────────────────────────────────────────────
+  function getIpClass(firstOctet){
+    if (firstOctet < 128) return 'A';
+    if (firstOctet < 192) return 'B';
+    if (firstOctet < 224) return 'C';
+    if (firstOctet < 240) return 'D (Multicast)';
+    return 'E (Reserved)';
+  }
+
+  // ─────────────────────────────────────────────
+  // POPULATE CIDR DROPDOWN
+  // ─────────────────────────────────────────────
+  function populateCidrSelect(){
+    const select = document.getElementById('cidr-select');
+    select.innerHTML = '';
+    for (let c = 0; c <= 32; c++) {
+      const maskInt = cidrToMaskInt(c);
+      const maskStr = intToIp(maskInt);
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = `/${c} — ${maskStr}`;
+      if (c === 24) opt.selected = true;
+      select.appendChild(opt);
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // POPULATE QUICK REFERENCE TABLE
+  // ─────────────────────────────────────────────
+  function populateCidrTable(){
+    const tbody = document.getElementById('cidr-ref-body');
+    tbody.innerHTML = CIDR_DATA.map(row => {
+      const maskInt = cidrToMaskInt(row.cidr);
+      const maskStr = intToIp(maskInt);
+      const total = Math.pow(2, 32 - row.cidr);
+      const usable = row.cidr >= 31 ? (row.cidr===32?1:2) : total - 2;
+      return `<tr onclick="useCidr(${row.cidr})">
+        <td>/${row.cidr}</td>
+        <td>${maskStr}</td>
+        <td>${total.toLocaleString()}</td>
+        <td>${usable.toLocaleString()}</td>
+        <td>${row.use}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function useCidr(cidr){
+    document.getElementById('cidr-select').value = cidr;
+    calculate();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // ─────────────────────────────────────────────
+  // RENDER BINARY OCTETS WITH NETWORK/HOST BIT HIGHLIGHTING
+  // ─────────────────────────────────────────────
+  function renderBinaryRow(elementId, binaryStr, cidr){
+    const el = document.getElementById(elementId);
+    const octets = [binaryStr.slice(0,8), binaryStr.slice(8,16), binaryStr.slice(16,24), binaryStr.slice(24,32)];
+    el.innerHTML = octets.map((octet, i) => {
+      const bitStart = i * 8;
+      // Determine if this whole octet is network bits, host bits, or mixed
+      let html = '';
+      for (let b = 0; b < 8; b++) {
+        const globalBit = bitStart + b;
+        const isNetworkBit = globalBit < cidr;
+        html += `<span style="${isNetworkBit ? 'color:var(--accent)' : 'color:var(--text-dim)'}">${octet[b]}</span>`;
+      }
+      return `<div class="octet" style="background:var(--bg3)">${html}</div>`;
+    }).join('');
+  }
+
+  // ─────────────────────────────────────────────
+  // MAIN CALCULATION
+  // ─────────────────────────────────────────────
+  function calculate(){
+    const ipInput = document.getElementById('ip-input').value.trim();
+    const cidr = parseInt(document.getElementById('cidr-select').value);
+    const errorEl = document.getElementById('error-msg');
+    const results = document.getElementById('results');
+
+    document.getElementById('ip-input').classList.remove('error-border');
+    errorEl.style.display = 'none';
+
+    if (!ipInput) { results.classList.remove('show'); return; }
+
+    if (!isValidIp(ipInput)) {
+      document.getElementById('ip-input').classList.add('error-border');
+      errorEl.style.display = 'block';
+      errorEl.textContent = '✗ Invalid IP address. Use format like 192.168.1.1';
+      results.classList.remove('show');
+      return;
+    }
+
+    const ipInt = ipToInt(ipInput);
+    const maskInt = cidrToMaskInt(cidr);
+    const networkInt = (ipInt & maskInt) >>> 0;
+    const wildcardInt = (~maskInt) >>> 0;
+    const broadcastInt = (networkInt | wildcardInt) >>> 0;
+
+    const totalHosts = Math.pow(2, 32 - cidr);
+    const usableHosts = cidr >= 31 ? (cidr===32?1:2) : totalHosts - 2;
+
+    const firstUsable = cidr >= 31 ? networkInt : networkInt + 1;
+    const lastUsable = cidr >= 31 ? broadcastInt : broadcastInt - 1;
+
+    // Populate results
+    document.getElementById('res-network').textContent = intToIp(networkInt) + `/${cidr}`;
+    document.getElementById('res-broadcast').textContent = intToIp(broadcastInt);
+    document.getElementById('res-mask').textContent = intToIp(maskInt);
+    document.getElementById('res-wildcard').textContent = intToIp(wildcardInt);
+    document.getElementById('res-cidr').textContent = `/${cidr}`;
+    document.getElementById('res-total').textContent = totalHosts.toLocaleString();
+    document.getElementById('res-usable').textContent = usableHosts.toLocaleString();
+    document.getElementById('res-class').textContent = 'Class ' + getIpClass(parseInt(ipInput.split('.')[0]));
+    document.getElementById('res-range').textContent =
+      cidr >= 31 ? `${intToIp(networkInt)} – ${intToIp(broadcastInt)} (no separate usable range)` : `${intToIp(firstUsable)} – ${intToIp(lastUsable)}`;
+
+    // Binary visualization
+    renderBinaryRow('bin-ip', intToBinary(ipInt), cidr);
+    renderBinaryRow('bin-mask', intToBinary(maskInt), cidr);
+    renderBinaryRow('bin-network', intToBinary(networkInt), cidr);
+
+    results.classList.add('show');
+  }
+
+  populateCidrSelect();
+  populateCidrTable();
+  calculate();
+</script>
+
+</body>
+</html>
