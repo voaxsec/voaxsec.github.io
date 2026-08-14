@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VoaxSec AI Assistant</title>
+<meta name="description" content="VoaxSec AI Assistant is an AI-powered support interface for common IT, networking and cybersecurity questions.">
+<meta name="author" content="Xavier Olvera">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voaxsec.com/chatbot.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VoaxSec AI Assistant | IT Support &amp; Cybersecurity Help">
+<meta property="og:description" content="VoaxSec AI Assistant is an AI-powered support interface for common IT, networking and cybersecurity questions.">
+<meta property="og:url" content="https://voaxsec.com/chatbot.html">
+<meta property="og:site_name" content="VoaxSec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VoaxSec AI Assistant | IT Support &amp; Cybersecurity Help">
+<meta name="twitter:description" content="VoaxSec AI Assistant is an AI-powered support interface for common IT, networking and cybersecurity questions.">
+<title>VoaxSec AI Assistant | IT Support & Cybersecurity Help</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
@@ -373,6 +385,82 @@
     .suggestions { gap: 6px; }
     .chip { font-size: 10px; padding: 8px 12px; }
   }
+
+  /* PROJECT CONTEXT / CASE STUDY */
+  .project-context {
+    width: 100%;
+    max-width: 760px;
+    margin: 28px auto 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .context-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 2px;
+  }
+
+  .context-kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .context-card p,
+  .context-note p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .context-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    border-radius: 2px;
+  }
+
+  .context-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .context-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    border-radius: 2px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .context-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  @media (max-width: 700px) {
+    .context-grid { grid-template-columns: 1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -397,8 +485,8 @@
     <p class="welcome-label">// VoaxSec Assistant</p>
     <h1 class="welcome-title">Hi, I'm <em>Voax</em></h1>
     <p class="welcome-sub">
-      Your IT support and cybersecurity assistant. Ask me anything about
-      your computer, network, security — or VoaxSec services.
+      An AI-powered IT support and cybersecurity assistant for common computer,
+      networking, security and VoaxSec service questions.
     </p>
     <div class="suggestions">
       <div class="chip" onclick="sendSuggestion(this)">🐢 My PC is running slow</div>
@@ -788,6 +876,24 @@ Reply with exactly one word: YES or NO.`;
     input.focus();
   }
 </script>
+
+
+<div class="project-context" style="display:none" id="project-context-ai" aria-hidden="true">
+  <div class="context-grid">
+    <div class="context-card">
+      <div class="context-kicker">// Purpose</div>
+      <p>Provide a focused conversational interface for common IT support and security questions.</p>
+    </div>
+    <div class="context-card">
+      <div class="context-kicker">// Architecture</div>
+      <p>Browser interface → application backend → AI service, with the API credential kept outside client-side code.</p>
+    </div>
+    <div class="context-card">
+      <div class="context-kicker">// Security focus</div>
+      <p>Input handling, API-key protection, rate limiting, privacy awareness and safe user guidance.</p>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

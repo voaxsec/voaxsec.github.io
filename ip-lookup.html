@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IP Lookup Tool — VoaxSec</title>
+<meta name="description" content="Look up IP geolocation, ISP, ASN, hostname and network context with the VoaxSec IP Lookup Tool. Built for networking and security analysis.">
+<meta name="author" content="Xavier Olvera">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://voaxsec.com/ip-lookup.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="IP Lookup &amp; Network Intelligence Tool | VoaxSec">
+<meta property="og:description" content="Look up IP geolocation, ISP, ASN, hostname and network context with the VoaxSec IP Lookup Tool. Built for networking and security analysis.">
+<meta property="og:url" content="https://voaxsec.com/ip-lookup.html">
+<meta property="og:site_name" content="VoaxSec">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IP Lookup &amp; Network Intelligence Tool | VoaxSec">
+<meta name="twitter:description" content="Look up IP geolocation, ISP, ASN, hostname and network context with the VoaxSec IP Lookup Tool. Built for networking and security analysis.">
+<title>IP Lookup & Network Intelligence Tool | VoaxSec</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -425,6 +437,82 @@
     .info-grid { grid-template-columns: 1fr; }
     .search-prefix { display: none; }
   }
+
+  /* PROJECT CONTEXT / CASE STUDY */
+  .project-context {
+    width: 100%;
+    max-width: 760px;
+    margin: 28px auto 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .context-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 2px;
+  }
+
+  .context-kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .context-card p,
+  .context-note p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .context-note {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 18px 20px;
+    border-radius: 2px;
+  }
+
+  .context-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .context-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    border-radius: 2px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .context-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  @media (max-width: 700px) {
+    .context-grid { grid-template-columns: 1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -444,10 +532,7 @@
   <!-- HEADER -->
   <p class="page-label">// Tool_02</p>
   <h1 class="page-title">IP <em>Lookup</em></h1>
-  <p class="page-desc">
-    Analyze any IP address — geolocation, ISP, organization, timezone,
-    and blacklist status. Use your own IP as a starting point.
-  </p>
+  <p class="page-desc">Inspect public IP information including geolocation, ISP, hostname and network context for troubleshooting and basic security analysis.</p>
 
   <!-- DISCLAIMER -->
   <div class="disclaimer">
@@ -528,7 +613,7 @@
 
     <div class="map-section">
       <div class="map-coords" id="res-coords">Lat: — / Lon: —</div>
-      <a class="map-link" id="map-link" href="#" target="_blank" rel="noopener">
+      <a class="map-link" id="map-link" href="#" target="_blank" rel="noopener noreferrer" rel="noopener">
         View on map →
       </a>
     </div>
@@ -554,7 +639,7 @@
 
   <p class="page-footer">
     Built by <a href="index.html">Xavier Olvera</a> · voaxsec.com ·
-    Data via <a href="https://ip-api.com" target="_blank">ip-api.com</a>
+    Data via <a href="https://ip-api.com" target="_blank" rel="noopener noreferrer">ip-api.com</a>
   </p>
 
 </div>
@@ -880,6 +965,32 @@
     document.getElementById('search-btn').disabled = false;
   }
 </script>
+
+
+<div class="project-context">
+  <div class="context-grid">
+    <div class="context-card">
+      <div class="context-kicker">// Purpose</div>
+      <p>Turn a raw public IP address into useful networking context for troubleshooting and investigation.</p>
+    </div>
+    <div class="context-card">
+      <div class="context-kicker">// Stack</div>
+      <p>JavaScript, public IP intelligence APIs, browser storage and dynamic UI rendering.</p>
+    </div>
+    <div class="context-card">
+      <div class="context-kicker">// Security focus</div>
+      <p>IP reputation awareness, network ownership context, ASN/ISP data and careful interpretation of geolocation.</p>
+    </div>
+  </div>
+  <div class="context-note">
+    <div class="context-kicker">// What this project demonstrates</div>
+    <p>This project demonstrates API integration, asynchronous requests, validation, error handling, stateful lookup history and presenting network intelligence in a way that is useful to IT and security workflows.</p>
+    <div class="context-links">
+      <a class="context-link" href="index.html#projects">More projects</a>
+      <a class="context-link" href="https://github.com/voaxsec" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
