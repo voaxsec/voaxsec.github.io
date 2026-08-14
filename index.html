@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xavier Olvera — VoaxSec</title>
+<title>VoaxSec | Xavier Olvera — IT Support, Networking & Cybersecurity</title>
+<meta name="description" content="VoaxSec is Xavier Olvera's IT and cybersecurity portfolio featuring hands-on projects, security tools, networking utilities, technical experience, and a growing cybersecurity lab.">
+<meta name="author" content="Xavier Olvera">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://voaxsec.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://voaxsec.com/">
+<meta property="og:title" content="VoaxSec | IT Support, Networking & Cybersecurity">
+<meta property="og:description" content="Hands-on IT, networking and cybersecurity projects by Xavier Olvera.">
+<meta property="og:site_name" content="VoaxSec">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VoaxSec | IT Support, Networking & Cybersecurity">
+<meta name="twitter:description" content="Hands-on IT, networking and cybersecurity projects by Xavier Olvera.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
@@ -562,7 +578,7 @@
   /* CERTS */
   .cert-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 2px;
   }
 
@@ -761,13 +777,176 @@
     transform: translateY(0);
   }
 
+
+  /* PROFESSIONAL CTA GROUP */
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .hero-cta.secondary {
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border-hover);
+  }
+
+  .hero-cta.secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    opacity: 1;
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .skill-card {
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+  }
+
+  .skill-title {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* LABS */
+  .labs-intro {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.85;
+    max-width: 620px;
+    margin-bottom: 28px;
+  }
+
+  .labs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .lab-card {
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  }
+
+  .lab-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg3);
+    transform: translateY(-2px);
+  }
+
+  .lab-status {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .lab-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .lab-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .lab-meta {
+    margin-top: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* MOBILE NAV */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 860px) {
+    nav { padding: 16px 24px; }
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px 18px;
+    }
+
+    .nav-links.open { display: flex; }
+
+    .nav-links li a {
+      display: block;
+      padding: 10px 0;
+    }
+
+    .menu-toggle { display: inline-flex; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 640px) {
     nav { padding: 16px 24px; }
-    .nav-links { display: none; }
     section { padding: 80px 24px; }
     section:first-of-type { padding-top: 140px; }
     .about-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .labs-grid { grid-template-columns: 1fr; }
     .cert-grid { grid-template-columns: repeat(2, 1fr); }
     .contact-grid { grid-template-columns: 1fr; }
     .projects-grid { grid-template-columns: 1fr; }
@@ -780,37 +959,48 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#hero" class="nav-logo">voax<span>sec</span>.com</a>
-  <ul class="nav-links">
+  <a href="#hero" class="nav-logo" aria-label="VoaxSec home">voax<span>sec</span>.com</a>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
     <li><a href="#experience">Experience</a></li>
-    <li><a href="#certifications">Certs</a></li>
+    <li><a href="#labs">Labs</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li><a href="#certifications">Certs</a></li>
     <li><a href="support.html">Support</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+  <div class="nav-right">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation" aria-expanded="false">Menu</button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle color theme">
       <div class="toggle-track"><div class="toggle-thumb"></div></div>
       <span class="toggle-label">Light</span>
     </button>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-status">Available for opportunities</div>
+  <div class="hero-status">Open to IT &amp; cybersecurity opportunities</div>
   <h1>Xavier<br><em>Olvera</em></h1>
-  <p class="hero-title-sub">IT Support Specialist &amp; Aspiring Cybersecurity Professional</p>
+  <p class="hero-title-sub">IT Support Specialist · Networking · Cybersecurity</p>
   <p class="hero-desc">
-    Based in New York. I keep systems running, users unblocked, and networks secure.
-    Currently building toward a career in cybersecurity and penetration testing.
+    New York-based IT professional with hands-on experience supporting users,
+    administering Microsoft 365 and Active Directory, troubleshooting systems,
+    and building practical networking and security tools.
   </p>
+
   <div class="hero-ctas">
-    <a href="#contact" class="hero-cta">Get in touch →</a>
+    <div class="hero-actions">
+      <a href="#labs" class="hero-cta">View security labs →</a>
+      <a href="#projects" class="hero-cta secondary">Explore projects</a>
+    </div>
+
     <a href="support.html" class="hero-support-cta">
       <span class="hero-support-icon">🛠️</span>
       <span class="hero-support-text">
-        <span class="hero-support-label">// Available now</span>
-        <span class="hero-support-title">Need IT Support? Request a quote</span>
+        <span class="hero-support-label">// IT support services</span>
+        <span class="hero-support-title">Need technical support? Request a quote</span>
       </span>
       <span class="hero-support-arrow">→</span>
     </a>
@@ -825,31 +1015,88 @@
   <div class="about-grid fade-up">
     <div class="about-text">
       <p>
-        I'm an IT Support Specialist with hands-on experience managing Office 365,
-        Active Directory, and remote technical support at a nonprofit organization.
+        I'm an IT Support Specialist with hands-on experience supporting end users,
+        managing Microsoft 365 and Active Directory accounts, troubleshooting Windows
+        environments, and providing remote technical assistance across multiple programs.
       </p>
       <p>
-        My background in network administration drives my passion for cybersecurity.
-        I'm focused on building expertise in penetration testing, network security,
-        and ethical hacking — starting with my Bachelor's degree this September.
+        My foundation in network administration and security shapes the way I approach
+        IT: understand the system, reduce risk, document the solution, and make technology
+        easier for people to use.
       </p>
       <p>
-        I believe in learning by doing. Every system I support, every network I
-        configure, and every problem I solve brings me closer to my goal.
+        VoaxSec is where I document that work through practical tools, networking projects,
+        and a growing cybersecurity lab focused on defensive security, analysis, and automation.
       </p>
     </div>
+
     <div class="about-stats">
       <div class="stat-item">
         <div class="stat-number">3+</div>
-        <div class="stat-label">Years in IT Support</div>
+        <div class="stat-label">Years of IT support experience</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">O365</div>
-        <div class="stat-label">Active Directory &amp; Office 365 Admin</div>
+        <div class="stat-number">M365</div>
+        <div class="stat-label">Microsoft 365 &amp; Active Directory administration</div>
       </div>
       <div class="stat-item">
-        <div class="stat-number">→</div>
-        <div class="stat-label">Pursuing B.S. in Network &amp; Cybersecurity</div>
+        <div class="stat-number">7</div>
+        <div class="stat-label">Live networking &amp; security tools</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<hr class="divider">
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">Technical skills</p>
+  <div class="skills-grid fade-up">
+    <div class="skill-card">
+      <div class="skill-title">Systems &amp; Support</div>
+      <div class="skill-list">
+        <span class="tag">Windows</span>
+        <span class="tag">Microsoft 365</span>
+        <span class="tag">Active Directory</span>
+        <span class="tag">Help Desk</span>
+        <span class="tag">Remote Support</span>
+        <span class="tag">User Training</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-title">Networking</div>
+      <div class="skill-list">
+        <span class="tag">TCP/IP</span>
+        <span class="tag">DNS</span>
+        <span class="tag">DHCP</span>
+        <span class="tag">CIDR</span>
+        <span class="tag">Subnetting</span>
+        <span class="tag">Network Ports</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-title">Security</div>
+      <div class="skill-list">
+        <span class="tag">Password Security</span>
+        <span class="tag">Hashing</span>
+        <span class="tag">IP Intelligence</span>
+        <span class="tag">Security Fundamentals</span>
+        <span class="tag">Risk Awareness</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-title">Development</div>
+      <div class="skill-list">
+        <span class="tag">HTML</span>
+        <span class="tag">CSS</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Web APIs</span>
+        <span class="tag">GitHub</span>
       </div>
     </div>
   </div>
@@ -883,6 +1130,51 @@
   </div>
 </section>
 
+
+<hr class="divider">
+
+<!-- CYBERSECURITY LABS -->
+<section id="labs">
+  <p class="section-label">Cybersecurity labs</p>
+  <p class="labs-intro fade-up">
+    A growing collection of hands-on environments and investigations designed to
+    document practical cybersecurity skills. These labs will include methodology,
+    screenshots, findings, remediation steps, and lessons learned.
+  </p>
+
+  <div class="labs-grid fade-up">
+    <div class="lab-card">
+      <div class="lab-status">// Building</div>
+      <div class="lab-name">Active Directory Security Lab</div>
+      <div class="lab-desc">
+        Windows domain environment for practicing identity administration,
+        group policy, authentication, permissions, and common security controls.
+      </div>
+      <div class="lab-meta">Windows Server · AD DS · GPO</div>
+    </div>
+
+    <div class="lab-card">
+      <div class="lab-status">// Roadmap</div>
+      <div class="lab-name">Network Traffic Analysis</div>
+      <div class="lab-desc">
+        Packet-level investigations focused on DNS, TCP/IP behavior, suspicious
+        connections, and understanding what normal and abnormal traffic looks like.
+      </div>
+      <div class="lab-meta">Wireshark · TCP/IP · DNS</div>
+    </div>
+
+    <div class="lab-card">
+      <div class="lab-status">// Roadmap</div>
+      <div class="lab-name">Security Event Investigation</div>
+      <div class="lab-desc">
+        A defensive-security workflow for reviewing endpoint and authentication
+        events, identifying suspicious activity, and documenting remediation.
+      </div>
+      <div class="lab-meta">Windows Logs · Analysis · Incident Response</div>
+    </div>
+  </div>
+</section>
+
 <hr class="divider">
 
 <!-- EDUCATION -->
@@ -911,7 +1203,7 @@
 
 <!-- CERTIFICATIONS -->
 <section id="certifications">
-  <p class="section-label">Certifications</p>
+  <p class="section-label">Certifications &amp; learning</p>
   <div class="cert-grid fade-up">
     <div class="cert-item">
       <div class="cert-name">CompTIA Security+</div>
@@ -924,7 +1216,7 @@
       <div class="cert-status">— In progress</div>
     </div>
     <div class="cert-item">
-      <div class="cert-name">CySA+</div>
+      <div class="cert-name">CompTIA CySA+</div>
       <div class="cert-org">CompTIA</div>
       <div class="cert-status">— Planned</div>
     </div>
@@ -933,18 +1225,8 @@
       <div class="cert-org">EC-Council</div>
       <div class="cert-status">— Planned</div>
     </div>
-    <div class="cert-item">
-      <div class="cert-name">CCNA Security</div>
-      <div class="cert-org">Cisco</div>
-      <div class="cert-status">— Planned</div>
-    </div>
-    <div class="cert-item">
-      <div class="cert-name">More coming</div>
-      <div class="cert-org">—</div>
-      <div class="cert-status">— Stay tuned</div>
-    </div>
   </div>
-  <p class="cert-note">// Certifications in progress — this section will grow.</p>
+  <p class="cert-note">// Current learning path — completed credentials will be added as earned.</p>
 </section>
 
 <hr class="divider">
@@ -987,8 +1269,8 @@
       <div class="project-code">PRJ_03</div>
       <div class="project-name">VoaxSec AI Assistant</div>
       <div class="project-desc">
-        AI-powered IT support chatbot. Ask anything about your computer,
-        network, or security — powered by Claude AI.
+        AI-powered IT support assistant for common computer, networking, and
+        security questions, integrating a conversational AI workflow into VoaxSec.
       </div>
       <div class="project-tags">
         <span class="project-tag">Claude AI</span>
@@ -1069,21 +1351,21 @@
         <div class="contact-value">voaxsec@gmail.com</div>
       </div>
     </a>
-    <a href="https://github.com/voaxsec" target="_blank" class="contact-item">
+    <a href="https://github.com/voaxsec" target="_blank" rel="noopener noreferrer" class="contact-item">
       <div class="contact-icon">&lt;/&gt;</div>
       <div>
         <div class="contact-label">GitHub</div>
         <div class="contact-value">github.com/voaxsec</div>
       </div>
     </a>
-    <a href="https://x.com/voaxsec" target="_blank" class="contact-item">
+    <a href="https://x.com/voaxsec" target="_blank" rel="noopener noreferrer" class="contact-item">
       <div class="contact-icon">𝕏</div>
       <div>
         <div class="contact-label">X / Twitter</div>
         <div class="contact-value">@voaxsec</div>
       </div>
     </a>
-    <a href="https://linkedin.com/in/xavierolvera" target="_blank" class="contact-item">
+    <a href="https://linkedin.com/in/xavierolvera" target="_blank" rel="noopener noreferrer" class="contact-item">
       <div class="contact-icon">in</div>
       <div>
         <div class="contact-label">LinkedIn</div>
@@ -1094,10 +1376,31 @@
 </section>
 
 <footer>
-  <p class="footer-text">© 2025 <span>Xavier Olvera</span> · voaxsec.com · Built with purpose.</p>
+  <p class="footer-text">© <span id="currentYear">2026</span> <span>Xavier Olvera</span> · voaxsec.com · Built with purpose.</p>
 </footer>
 
 <script>
+
+  // Mobile navigation
+  function toggleMenu() {
+    const nav = document.getElementById('navLinks');
+    const btn = document.querySelector('.menu-toggle');
+    const isOpen = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  document.querySelectorAll('#navLinks a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+      const btn = document.querySelector('.menu-toggle');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Keep footer year current
+  const yearEl = document.getElementById('currentYear');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
   // Fade in on scroll
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(el => {
