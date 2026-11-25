@@ -796,6 +796,17 @@ Reply with exactly one word: YES or NO.`;
   // ─────────────────────────────────────────────
   // MAIN SEND MESSAGE
   // ─────────────────────────────────────────────
+  // Keep the request small: send only the most recent messages (max 10 / ~12,000 chars),
+  // always starting with a user message, so long chats never exceed the proxy limits.
+  function historyForApi() {
+    const MAX_MSGS = 10, MAX_CHARS = 12000;
+    let h = conversationHistory.slice(-MAX_MSGS);
+    const size = arr => arr.reduce((n, m) => n + m.content.length, 0);
+    while (h.length > 1 && size(h) > MAX_CHARS) h.shift();
+    while (h.length > 1 && h[0].role !== 'user') h.shift();
+    return h;
+  }
+
   async function sendMessage() {
     if (isLoading) return;
     const input = document.getElementById('chat-input');
@@ -845,7 +856,7 @@ Reply with exactly one word: YES or NO.`;
           model: 'claude-opus-4-5',
           max_tokens: 1000,
           system: SYSTEM_PROMPT,
-          messages: conversationHistory
+          messages: historyForApi()
         })
       });
 
